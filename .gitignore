@@ -1,0 +1,9 @@
+
+# Environment variables
+.env
+
+#Virtual environment
+.venv
+
+#tests
+tests
