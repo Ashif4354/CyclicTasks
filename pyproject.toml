@@ -11,7 +11,7 @@ package-mode = false
 python = "^3.12"
 firebase-admin = "^6.5.0"
 aiohttp = "^3.10.5"
-flask = "^3.0.3"
+flask = {extras = ["async"], version = "^3.0.3"}
 flask-cors = "^5.0.0"
 
 [tool.poetry.group.dev.dependencies]

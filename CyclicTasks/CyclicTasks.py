@@ -7,12 +7,14 @@ from .lib.Discord import Discord
 from . import start_tasks_queue, stop_task_queue
 
 class CyclicTasks(Firestore, Discord):
+
+    RUNNING_TASKS: dict[str, dict] = {}
+
     def __init__(self, session: ClientSession) -> None:
         super().__init__()
         # Firestore.__init__(self)
         Discord.__init__(self)
         self.session = session
-        self.running_tasks: dict[str, bool] = {}
 
 
     async def get_request(self, url: str, task_name: str, webhook_url: str, webhook_color: int, notify_admin: bool) -> None:
@@ -23,18 +25,18 @@ class CyclicTasks(Firestore, Discord):
             await self.send_vitals(webhook_url, task_name, success=False, notify_admin=notify_admin)
 
 
-    async def create_task(self, task: dict) -> Task:
+    async def create_task(self, task: dict, running_id: int) -> Task:
         
         async def runner_task():
             task_id: str = task['id']
 
-            while self.running_tasks[task_id]:
+            while self.RUNNING_TASKS[task_id]['running_tasks'][running_id]:
 
                 await self.get_request(
                     url = task['url'], 
                     task_name = task['task_name'], 
                     webhook_url= task['discord_webhook_url'],
-                    webhook_color = task['discord_webhook_color'] if task['discord_webhook_color'] else 0xffffff,
+                    webhook_color = hex(int(task['discord_webhook_color'])) if task['discord_webhook_color'] else 0xffffff,
                     notify_admin = task['notify_admin']
                 )
 
@@ -46,12 +48,24 @@ class CyclicTasks(Firestore, Discord):
 
 
     async def start_task(self, task: dict) -> None:
+
+        if task['id'] not in self.RUNNING_TASKS:
+            self.RUNNING_TASKS[task['id']] = {
+                'running_tasks': {},
+                'current_running_task': None
+            }
+
         
-        self.running_tasks[task['id']] = True
+        running_id = str(len(self.RUNNING_TASKS[task['id']]['running_tasks']))
+
+
+        self.RUNNING_TASKS[task['id']]['current_running_task'] = running_id
+        self.RUNNING_TASKS[task['id']]['running_tasks'][running_id] = True
 
         await self.send_start_task_acknowledgement(task)
 
-        async_task: Task = await self.create_task(task)
+        async_task: Task = await self.create_task(task, running_id)
+        
 
         await async_task
 
@@ -70,23 +84,23 @@ class CyclicTasks(Firestore, Discord):
 
         while True:
             task: dict = await start_tasks_queue.get()
-
-            if task['id'] in self.running_tasks:
-                continue
+            # print('Task', task['id'], 'Queued')
 
             asyncio_create_task(self.start_task(task))
 
             # await TASK
             print('Task', task['id'], 'Started')
 
-            # await start_tasks_queue.task_done()
-
-
-            
+            # await start_tasks_queue.task_done()        
 
 
     async def stop_task(self, task: dict) -> None:
-        self.tasks[task['id']] = False
+        current_task_running_id = self.RUNNING_TASKS[task['id']]['current_running_task']
+
+        self.RUNNING_TASKS[task['id']]['running_tasks'][current_task_running_id] = False
+        self.RUNNING_TASKS[task['id']]['current_running_task'] = None
+
+        print('Task', task['id'], 'Stopped')
 
         await self.send_stop_task_acknowledgement(task)
 
@@ -97,8 +111,8 @@ class CyclicTasks(Firestore, Discord):
 
         while True:
             task: dict = await stop_task_queue.get()
-
-            if task['id'] not in self.running_tasks:
+            
+            if task['id'] not in self.RUNNING_TASKS:
                 continue
 
             # await self.stop_task(task)
@@ -113,3 +127,6 @@ class CyclicTasks(Firestore, Discord):
         print('Tasks Started')
 
         await gather(STARTER_TASK, STOPPER_TASK)
+
+
+__all__ = ['CyclicTasks']

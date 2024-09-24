@@ -6,10 +6,11 @@ from string import ascii_letters, digits
 from random import choices
 
 class Firestore(FirebaseConfig):
-    def __init__(self) -> None:
+    def __init__(self, initialized=False) -> None:
         super().__init__()
-
-        self.initialize_firebase()
+        
+        if not initialized:
+            self.initialize_firebase()
         # self.db = firestore_async.client()
         self.db = firestore.client()
 

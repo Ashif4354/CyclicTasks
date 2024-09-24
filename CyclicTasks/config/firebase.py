@@ -23,7 +23,4 @@ class FirebaseConfig:
 
     def initialize_firebase(self):
         cred = credentials.Certificate(self.firebaseConfig)
-        self.app = firebase_admin.initialize_app(cred)
-        
-        
-        return self.app
+        firebase_admin.initialize_app(cred)

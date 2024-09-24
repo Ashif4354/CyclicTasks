@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from . import start_tasks_queue, stop_task_queue
 from .lib.Firestore import Firestore
+from .CyclicTasks import CyclicTasks
 
 app = Flask(__name__)
 CORS(app)
@@ -10,8 +11,9 @@ CORS(app)
 @app.before_request
 def before_request():
     if request.method == "POST":
+        pass
         
-        print('Before Request')
+        # print('Before Request')
 
 @app.route('/')
 def entry():
@@ -19,55 +21,95 @@ def entry():
         'CyclicTasks API': 'Running'
     })
 
+@app.route('/getrunningtasks', methods=['GET'])
+async def get_running_tasks():
+    tasks = CyclicTasks.RUNNING_TASKS
+    return jsonify({
+        'tasks': tasks
+    })
+
 @app.route('/newtask', methods=['POST'])
-def new_task():
+async def new_task():
     task = request.json['task']
 
-    Firestore().add_new_task(task)
+    FS = Firestore(initialized=True)
+    await FS.add_new_task(task)
 
     if task['active']:
-        start_tasks_queue.put(task)
+        await start_tasks_queue.put(task)
 
     return jsonify({
         'message': 'Task has been added'
     })
 
-@app.route('/starttask', methods=['POST'])
-def start_task():
 
-    task = request.json['tasks']
 
-    start_tasks_queue.put(task)
+@app.route('/edittask', methods=['POST'])
+async def change_task():
+    try:
+        task = request.json['task']
+        FS = Firestore(initialized=True)
+        await FS.edit_task(task)
+        # await stop_task_queue.put(task)
+        
+        # task['restart'] = True
+        
+        # print('TASK ACTIVE', task['active'])
+        # print(task)
+        if task['active']:
+            await start_tasks_queue.put(task)
+        else:
+            await stop_task_queue.put(task)
 
-    return jsonify({
-        'message': 'Task has been queued'
-    })
+        return jsonify({
+            'message': 'Task data has been changed'  + ' and restarted' if task['active'] else '',
+            'success': True
 
-@app.route('/stoptask', methods=['POST'])
-def stop_task():
-
-    task = request.json['task']
-
-    stop_task_queue.put(task)
+        })
     
-    return jsonify({
-        'message': 'Task has been stopped'
-    })
+    except Exception as e:
+        print("Error", e)
+        return jsonify({
+            'message': 'Some error occured on server side',
+            'success': False
+        })
+    
 
-@app.route('/changetask', methods=['POST'])
-def change_task():
-    task = request.json['task']
+# @app.route('/starttask', methods=['POST'])
+# async def start_task():
+#     try:
 
-    Firestore().edit_task(task)
+#         task = request.json['tasks']
 
-    stop_task_queue.put(task)
+#         await start_tasks_queue.put(task)
 
-    if task['active']:
-        start_tasks_queue.put(task)
+#         return jsonify({
+#             'message': 'Task has been queued',
+#             'success': True
+#         })
+#     except:
+#         return jsonify({
+#             'message': 'Some error occured on server side',
+#             'success': False
+#         })
 
-    return jsonify({
-        'message': 'Task data has been changed'  + ' and restarted' if task['active'] else ''
-    })
+# @app.route('/stoptask', methods=['POST'])
+# async def stop_task():
+#     try:
+#         task = request.json['task']
+
+#         await stop_task_queue.put(task)
+        
+#         return jsonify({
+#             'message': 'Task has been stopped',
+#             'success': True
+#         })
+#     except Exception as e:
+#         print("Error", e)
+#         return jsonify({
+#             'message': 'Some error occured on server side',
+#             'success': False
+#         })
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
