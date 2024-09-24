@@ -1,0 +1,40 @@
+
+
+.dialog-title {
+    font-size:2rem;
+    font-weight: bold;
+    font-family: 'Vicasso';
+}
+
+.dialog-btns {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 20px;
+    /* padding-top:11px; */
+    font-family: 'Vicasso';
+
+}
+
+.dialog-input-container {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* width:max-content; */
+    padding-top: 20px;   
+}
+
+.enable-switch-container {
+    display:flex;
+    width: 100%;    
+    justify-content: left;
+    align-items: center;
+    /* padding-left: 50px; */
+}
+
+.enable-text {
+    font-size: 1rem;
+    padding-left: 5px;
+}
