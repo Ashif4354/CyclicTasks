@@ -36,7 +36,7 @@ class CyclicTasks(Firestore, Discord):
                     url = task['url'], 
                     task_name = task['task_name'], 
                     webhook_url= task['discord_webhook_url'],
-                    webhook_color = hex(int(task['discord_webhook_color'])) if task['discord_webhook_color'] else 0xffffff,
+                    webhook_color = hex(int(task['discord_webhook_color'], 16)) if task['discord_webhook_color'] else 0xffffff,
                     notify_admin = task['notify_admin']
                 )
 

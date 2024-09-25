@@ -35,7 +35,7 @@ class Firestore(FirebaseConfig):
             self.fetched_tasks.append(task_)
         return self.fetched_tasks
     
-    async def add_new_task(self, task: dict) -> None:
+    async def add_new_task(self, task: dict) -> str:
 
         random_id = ''.join(choices(ascii_letters + digits, k=20))
         user_email = task['user_email']
@@ -55,6 +55,8 @@ class Firestore(FirebaseConfig):
                 'tasks': [random_id],
                 'user_name': task['user_name']
             })
+
+        return random_id
 
     async def delete_task(self, task_id: str, user_email: str) -> None:
         self.tasks_collection.document(task_id).delete()

@@ -33,7 +33,9 @@ async def new_task():
     task = request.json['task']
 
     FS = Firestore(initialized=True)
-    await FS.add_new_task(task)
+    id = await FS.add_new_task(task)
+
+    task['id'] = id
 
     if task['active']:
         await start_tasks_queue.put(task)
