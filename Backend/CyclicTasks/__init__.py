@@ -4,8 +4,32 @@ try:
 except:
     pass
 
+from os import environ
 from asyncio import Queue
+
 
 start_tasks_queue: Queue = Queue()
 stop_task_queue: Queue = Queue()
+
+never_ending_dummy_task = {
+    'id': 'dummy',
+    'task_name': 'Dummy Task',
+    'interval': 3600,
+    'active': True,
+    'notify_admin': True,
+    'discord_webhook_url': '',
+    'discord_webhook_color': '',
+    'user_name': 'Dummy User',
+    'user_email': 'dummy_user@gmail.com',
+    'url': environ['CT_SITE_URL']
+}
+
+
+
+
+__all__ = [
+    'start_tasks_queue',
+    'stop_task_queue',
+    'never_ending_dummy_task'
+]
 
