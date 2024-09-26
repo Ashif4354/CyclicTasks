@@ -16,7 +16,7 @@ def run_main_in_thread() -> None:
     set_event_loop(loop)
     loop.run_until_complete(main())
 
-Thread(target=run_main_in_thread).start()
+Thread(target=run_main_in_thread).start() # Starting ina separate thread to avoid blocking the Flask app
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

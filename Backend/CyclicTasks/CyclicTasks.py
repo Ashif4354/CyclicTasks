@@ -6,14 +6,12 @@ from .lib.Firestore import Firestore
 from .lib.Discord import Discord
 from . import start_tasks_queue, stop_task_queue
 
-class CyclicTasks(Firestore, Discord):
+class CyclicTasks(Firestore):
 
     RUNNING_TASKS: dict[str, dict] = {}
 
     def __init__(self, session: ClientSession) -> None:
         super().__init__()
-        # Firestore.__init__(self)
-        Discord.__init__(self)
         self.session = session
 
 

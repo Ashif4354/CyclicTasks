@@ -39,6 +39,7 @@ class Firestore(FirebaseConfig):
 
         random_id = ''.join(choices(ascii_letters + digits, k=20))
         user_email = task['user_email']
+        del task['id']
 
         self.tasks_collection.document(random_id).set(task)
 
@@ -70,7 +71,10 @@ class Firestore(FirebaseConfig):
             })
 
     async def edit_task(self, task: dict) -> None:
-        self.tasks_collection.document(task['id']).update(task)
+        taskRef = self.tasks_collection.document(task['id'])
+        del task['id']
+        
+        taskRef.update(task)
 
 
   

@@ -30,19 +30,28 @@ async def get_running_tasks():
 
 @app.route('/newtask', methods=['POST'])
 async def new_task():
-    task = request.json['task']
+    try:
+        task = request.json['task']
 
-    FS = Firestore(initialized=True)
-    id = await FS.add_new_task(task)
+        with Firestore(initialized=True) as FS:
+            id = await FS.add_new_task(task)
 
-    task['id'] = id
+        task['id'] = id
 
-    if task['active']:
-        await start_tasks_queue.put(task)
+        if task['active']:
+            await start_tasks_queue.put(task)
 
-    return jsonify({
-        'message': 'Task has been added'
-    })
+        return jsonify({
+            'message': 'Task has been added',
+            'success': True,
+            'new_task_id': id
+        })
+    except Exception as e:
+        print("Error", e)
+        return jsonify({
+            'message': 'Some error occured on server side',
+            'success': False
+        })
 
 
 
@@ -50,14 +59,13 @@ async def new_task():
 async def change_task():
     try:
         task = request.json['task']
-        FS = Firestore(initialized=True)
-        await FS.edit_task(task)
-        # await stop_task_queue.put(task)
+        id = task['id']
+
+        with Firestore(initialized=True) as FS:
+            await FS.edit_task(task)
+
+        task['id'] = id
         
-        # task['restart'] = True
-        
-        # print('TASK ACTIVE', task['active'])
-        # print(task)
         if task['active']:
             await start_tasks_queue.put(task)
         else:
@@ -76,42 +84,27 @@ async def change_task():
             'success': False
         })
     
+@app.route('/deletetask', methods=['POST'])
+async def delete_task():
+    try:
+        task = request.json['task']
+        with Firestore(initialized=True) as FS:
+            await FS.delete_task(task['id'], task['user_email'])
 
-# @app.route('/starttask', methods=['POST'])
-# async def start_task():
-#     try:
+        await stop_task_queue.put(task)
 
-#         task = request.json['tasks']
+        return jsonify({
+            'message': 'Task has been deleted',
+            'success': True
+        })
+    except Exception as e:
+        print("Error", e)
+        return jsonify({
+            'message': 'Some error occured on server side',
+            'success': False
+        })
+    
 
-#         await start_tasks_queue.put(task)
 
-#         return jsonify({
-#             'message': 'Task has been queued',
-#             'success': True
-#         })
-#     except:
-#         return jsonify({
-#             'message': 'Some error occured on server side',
-#             'success': False
-#         })
 
-# @app.route('/stoptask', methods=['POST'])
-# async def stop_task():
-#     try:
-#         task = request.json['task']
-
-#         await stop_task_queue.put(task)
-        
-#         return jsonify({
-#             'message': 'Task has been stopped',
-#             'success': True
-#         })
-#     except Exception as e:
-#         print("Error", e)
-#         return jsonify({
-#             'message': 'Some error occured on server side',
-#             'success': False
-#         })
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+__all__ = ['app']
