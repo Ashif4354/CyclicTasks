@@ -6,12 +6,13 @@ from .lib.Firestore import Firestore
 from .lib.Discord import Discord
 from . import start_tasks_queue, stop_task_queue
 
-class CyclicTasks(Firestore):
+class CyclicTasks(Firestore, Discord):
 
     RUNNING_TASKS: dict[str, dict] = {}
 
     def __init__(self, session: ClientSession) -> None:
         super().__init__()
+        Discord.__init__(self)
         self.session = session
 
 
@@ -94,6 +95,10 @@ class CyclicTasks(Firestore):
 
     async def stop_task(self, task: dict) -> None:
         current_task_running_id = self.RUNNING_TASKS[task['id']]['current_running_task']
+
+        if current_task_running_id is None:
+            print('Task', task['id'], 'Already Stopped')
+            return
 
         self.RUNNING_TASKS[task['id']]['running_tasks'][current_task_running_id] = False
         self.RUNNING_TASKS[task['id']]['current_running_task'] = None

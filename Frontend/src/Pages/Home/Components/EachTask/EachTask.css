@@ -9,7 +9,7 @@
     width: 100%;
     margin-bottom: 10px;
     border-radius: 20px;
-    background-color: #212121;
+    background-color: rgba(18, 18, 18, 0.8);
 }
 
 .details-container {
@@ -48,6 +48,7 @@
 }
 .edit-btn-container {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100%;

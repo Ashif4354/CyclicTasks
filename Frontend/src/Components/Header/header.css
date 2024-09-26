@@ -1,0 +1,34 @@
+.header {
+    display: flex;
+    /* background-color: #212121; */
+    height: 8vh;
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    color: white;
+    /* justify-content: center; */
+    /* background-color: aquamarine; */
+  }
+  
+  .heading-text-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    /* padding-left: 50px; */
+    height: 100%;
+    width: 100%;
+    /* background-color: aqua; */
+  }
+  
+  .login-logout-btn-container {
+    display: flex;
+    position: absolute;
+    right: 0;
+    align-items: center;
+    justify-content: center;
+    height: 8vh;
+    width: 10%;
+    padding-right: 35px;
+    /* background-color: red; */
+  }

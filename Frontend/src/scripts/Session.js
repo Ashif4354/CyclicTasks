@@ -19,7 +19,7 @@ const GoogleLogin = async (setUser) => {
     )
 }
 
-const logout = async (setUser) => {
+const logout = (setUser) => {
     // console.log(auth)
     signOut(auth)
     setUser(null);

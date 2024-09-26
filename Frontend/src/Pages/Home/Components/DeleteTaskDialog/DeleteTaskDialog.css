@@ -1,0 +1,21 @@
+.dialog-title {
+    text-align: center;
+}
+
+.dialog-btns {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 20px;
+    width: 94px;
+    height: 35.55px;
+    /* padding-top:11px; */
+    font-family: 'Vicasso';
+    padding: 0px;
+
+}
+
+.dialog-btns:disabled {
+    background-color: #2f2f2f;
+}

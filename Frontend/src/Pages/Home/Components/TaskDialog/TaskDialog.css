@@ -1,9 +1,7 @@
 
 
 .dialog-title {
-    font-size:2rem;
-    font-weight: bold;
-    font-family: 'Vicasso';
+    text-align: center;
 }
 
 .dialog-btns {
@@ -12,9 +10,20 @@
     align-items: center;
     border: none;
     border-radius: 20px;
+    width: 94px;
+    height: 35.55px;
     /* padding-top:11px; */
     font-family: 'Vicasso';
+    padding: 0px;
 
+}
+
+.dialog-btns:hover {
+    background-color: #2f2f2f;
+}
+
+.dialog-btns:disabled {
+    background-color: #2f2f2f;
 }
 
 .dialog-input-container {
@@ -23,7 +32,7 @@
     align-items: center;
     justify-content: center;
     /* width:max-content; */
-    padding-top: 20px;   
+    /* padding-top: 10px;    */
 }
 
 .enable-switch-container {

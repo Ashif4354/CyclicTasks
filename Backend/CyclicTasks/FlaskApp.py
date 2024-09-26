@@ -33,8 +33,8 @@ async def new_task():
     try:
         task = request.json['task']
 
-        with Firestore(initialized=True) as FS:
-            id = await FS.add_new_task(task)
+        FS = Firestore(initialized=True)
+        id = await FS.add_new_task(task)
 
         task['id'] = id
 
@@ -61,15 +61,15 @@ async def change_task():
         task = request.json['task']
         id = task['id']
 
-        with Firestore(initialized=True) as FS:
-            await FS.edit_task(task)
+        FS = Firestore(initialized=True)
+        await FS.edit_task(task)
+        
+        await stop_task_queue.put(task)
 
         task['id'] = id
         
         if task['active']:
             await start_tasks_queue.put(task)
-        else:
-            await stop_task_queue.put(task)
 
         return jsonify({
             'message': 'Task data has been changed'  + ' and restarted' if task['active'] else '',
@@ -88,8 +88,9 @@ async def change_task():
 async def delete_task():
     try:
         task = request.json['task']
-        with Firestore(initialized=True) as FS:
-            await FS.delete_task(task['id'], task['user_email'])
+
+        FS = Firestore(initialized=True)
+        await FS.delete_task(task['id'], task['user_email'])
 
         await stop_task_queue.put(task)
 

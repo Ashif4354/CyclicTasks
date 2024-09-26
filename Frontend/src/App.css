@@ -90,6 +90,8 @@ p {
     /* width: 85%; */
     width: 1000px;
     border-radius: 20px;
+    margin-right: 10px;
+    margin-left: 10px;
     
     background-color: #2f2f2f;
 }
