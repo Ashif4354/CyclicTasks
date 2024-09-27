@@ -5,10 +5,12 @@ const handleSave = async (type, task, taskName, url, interval,
     setOpen, setTaskNameError, setUrlError, setIntervalError, setDiscordWebhookUrlError,
     setDiscordWebhookColorError, setTaskNameHelperText, setUrlHelperText, setIntervalHelperText,
     setDiscordWebhookUrlHelperText, setDiscordWebhookColorHelperText, recaptchaRef, setLoadingOpen, setSaveBtnDisabled,    
-    setSuccessUpdateSnackBarOpen, setFailedUpdateSnackBarOpen, setSuccessAddSnackBarOpen, setFailedAddSnackBarOpen
+    setSuccessUpdateSnackBarOpen, setFailedUpdateSnackBarOpen, setSuccessAddSnackBarOpen, setFailedAddSnackBarOpen,
+    setServerErrorMesssage
 ) => {
     
     const recaptchaPromise = recaptchaRef.current.executeAsync(); // Returns a promise
+    setServerErrorMesssage('');
 
     let validData = validate(
         taskName, url, interval, discordWebhookUrl, discordWebhookColor,
@@ -69,7 +71,9 @@ const handleSave = async (type, task, taskName, url, interval,
                 } else {
                     setFailedUpdateSnackBarOpen(true);
                 }
+                setServerErrorMesssage("*" + response.message);
             }
+            recaptchaRef.current.reset();
             setLoadingOpen(false);
             setSaveBtnDisabled(false);
         })
@@ -82,6 +86,7 @@ const handleSave = async (type, task, taskName, url, interval,
             } else {
                 setFailedUpdateSnackBarOpen(true);
             }
+            setServerErrorMesssage("*An error occurred. Please try again later.");
         });
 
     recaptchaRef.current.reset();

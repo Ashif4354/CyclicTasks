@@ -81,6 +81,8 @@ class Discord:
         headers: dict = {
             'Content-Type': 'application/json'
         }
+        if url == '':
+            return
 
         try:
             await self.session.post(
@@ -88,8 +90,8 @@ class Discord:
                 headers=headers,
                 json=data
             )
-        except Exception as _:
-            pass
+        except Exception as e:
+            print(e)
 
 
 

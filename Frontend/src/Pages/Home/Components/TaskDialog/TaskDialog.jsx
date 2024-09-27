@@ -25,6 +25,7 @@ const TaskDialog = (props) => {
 
     const [loadingOpen, setLoadingOpen] = useState(false);
     const [saveBtnDisabled, setSaveBtnDisabled] = useState(true);
+    const [serverErrorMessage, setServerErrorMesssage] = useState('');
 
     const [taskNameError, setTaskNameError] = useState(false);
     const [urlError, setUrlError] = useState(false);
@@ -97,10 +98,18 @@ const TaskDialog = (props) => {
 
         setSaveBtnDisabled(true);
         setLoadingOpen(false);
+        setServerErrorMesssage('');
     }
 
     const handleDataChange = (e, dataName, defaultValue, setFunction) => {
-        const value = e.target.value;
+        let value
+        if (dataName == 'active') {
+            value = e.target.checked;
+        } else {
+            value = e.target.value;
+        }
+
+        // const value = e.target.value;
         setFunction(value);
 
         if (type == 'Add') {
@@ -120,11 +129,6 @@ const TaskDialog = (props) => {
         // Object.keys(dataChanges).map((i, j) => console.log(i, dataChanges[i]))
         Object.values(dataChanges).includes(true) ? setSaveBtnDisabled(false) : setSaveBtnDisabled(true)
     }
-
-
-
-
-
 
     return (
         <Dialog open={open} onClose={handleCancelClose} fullWidth>
@@ -236,6 +240,7 @@ const TaskDialog = (props) => {
                             }}
                         />
                     </div>
+                    <p style={{color: 'red', fontWeight:'bold'}}>{serverErrorMessage}</p>
 
                     <ReCAPTCHA
                         sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
@@ -284,7 +289,8 @@ const TaskDialog = (props) => {
                             setSuccessUpdateSnackBarOpen,
                             setFailedUpdateSnackBarOpen,
                             setSuccessAddSnackBarOpen,
-                            setFailedAddSnackBarOpen
+                            setFailedAddSnackBarOpen,
+                            setServerErrorMesssage
                         )
                     }}
                 >{

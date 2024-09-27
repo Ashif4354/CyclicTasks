@@ -1,19 +1,32 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from os import environ
+from aiohttp import ClientSession
 
 from . import start_tasks_queue, stop_task_queue
 from .lib.Firestore import Firestore
 from .CyclicTasks import CyclicTasks
+from .lib.VerifyRecaptcha import verify_recaptcha
 
 app = Flask(__name__)
 CORS(app)
 
 @app.before_request
-def before_request():
+async def before_request():
     if request.method == "POST":
-        pass
-        
-        # print('Before Request')
+        if 'recaptchaToken' in request.json:
+            recaptcha_token = request.json['recaptchaToken']
+            verified = await verify_recaptcha(recaptcha_token, environ['G_RECAPTCHA_SECRET_KEY'])
+            if not verified:
+                return jsonify({
+                    'message': 'Recaptcha verification failed',
+                    'success': False
+                })
+        else:
+            return jsonify({
+                'message': 'Recaptcha token not found',
+                'success': False
+            })
 
 @app.route('/')
 def entry():

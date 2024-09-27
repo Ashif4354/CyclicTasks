@@ -13,12 +13,14 @@ const DeleteTaskDialog = (props) => {
     const [currentTask, setCurrentTask] = useState(task);
     const [loadingOpen, setLoadingOpen] = useState(false);
     const [deleteBtnDisabled, setDeleteBtnDisabled] = useState(false);
+    const [serverErrorMessage, setServerErrorMesssage] = useState('');
 
     const recaptchaRef = useRef();
 
     const onDelete = async () => {
         setDeleteBtnDisabled(true);
         setLoadingOpen(true);
+        setServerErrorMesssage('');
         const recaptchaToken = await recaptchaRef.current.executeAsync();
 
         fetch(import.meta.env.VITE_CT_SERVER_URL + '/deletetask', {
@@ -40,6 +42,7 @@ const DeleteTaskDialog = (props) => {
                     setSuccessDeleteSnackBarOpen(true);
                 } else {
                     setFailedDeleteSnackBarOpen(true);
+                    setServerErrorMesssage("*" + response.message);
                 }
                 setLoadingOpen(false);
                 setDeleteBtnDisabled(false);
@@ -49,6 +52,7 @@ const DeleteTaskDialog = (props) => {
                 setLoadingOpen(false);
                 setDeleteBtnDisabled(false);
                 setFailedDeleteSnackBarOpen(true);
+                setServerErrorMesssage("*An error occurred. Please try again later.");
             });
 
         recaptchaRef.current.reset();
@@ -58,6 +62,7 @@ const DeleteTaskDialog = (props) => {
         setOpen(false);
         setLoadingOpen(false);
         setDeleteBtnDisabled(false);
+        setServerErrorMesssage('');
     }
 
     return (
@@ -77,6 +82,7 @@ const DeleteTaskDialog = (props) => {
                     <p>Are you sure you want to delete this task?</p>
                     <p>Task ID: {task.id}</p>
                     <p>Task Name: {task.task_name}</p>
+                    <p style={{color: 'red', fontWeight:'bold', overflow:'hidden'}}>{serverErrorMessage}</p>
                     <ReCAPTCHA
                         sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
                         size='invisible'

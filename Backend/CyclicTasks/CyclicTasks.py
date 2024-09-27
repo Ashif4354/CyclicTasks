@@ -4,7 +4,7 @@ from aiohttp import ClientSession
 
 from .lib.Firestore import Firestore
 from .lib.Discord import Discord
-from . import start_tasks_queue, stop_task_queue
+from . import start_tasks_queue, stop_task_queue, never_ending_dummy_task
 
 class CyclicTasks(Firestore, Discord):
 
@@ -19,6 +19,7 @@ class CyclicTasks(Firestore, Discord):
     async def get_request(self, url: str, task_name: str, webhook_url: str, webhook_color: int, notify_admin: bool) -> None:
         try:
             await self.session.get(url)
+            # print(await response.text())
             await self.send_vitals(webhook_url, task_name, webhook_color, notify_admin=notify_admin)
         except Exception as _:
             await self.send_vitals(webhook_url, task_name, success=False, notify_admin=notify_admin)
@@ -35,7 +36,7 @@ class CyclicTasks(Firestore, Discord):
                     url = task['url'], 
                     task_name = task['task_name'], 
                     webhook_url= task['discord_webhook_url'],
-                    webhook_color = hex(int(task['discord_webhook_color'], 16)) if task['discord_webhook_color'] else 0xffffff,
+                    webhook_color = int(task['discord_webhook_color'], 16) if task['discord_webhook_color'] else 0xffffff,
                     notify_admin = task['notify_admin']
                 )
 
@@ -51,7 +52,10 @@ class CyclicTasks(Firestore, Discord):
         if task['id'] not in self.RUNNING_TASKS:
             self.RUNNING_TASKS[task['id']] = {
                 'running_tasks': {},
-                'current_running_task': None
+                'current_running_task': None,
+                'task_name': task['task_name'],
+                'user_name': task['user_name'],
+                'user_email': task['user_email']
             }
 
         
@@ -75,6 +79,7 @@ class CyclicTasks(Firestore, Discord):
 
         tasks: list[dict] = await self.get_all_tasks()
         # print(tasks)
+        tasks.append(never_ending_dummy_task)
 
         for task in tasks:
             await start_tasks_queue.put(task)
