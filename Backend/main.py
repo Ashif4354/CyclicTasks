@@ -8,6 +8,8 @@ from CyclicTasks.FlaskApp import app
 async def main() -> None:
     async with ClientSession() as session:
         cyclic_tasks = CyclicTasks(session)
+        await cyclic_tasks.LOG_EVENT('main', 'CyclicTasks', 'CyclicTasks initiated', None)
+
         await cyclic_tasks.run()
 
 

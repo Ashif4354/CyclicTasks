@@ -45,7 +45,9 @@ const handleSave = async (type, task, taskName, url, interval,
         recaptchaToken: await recaptchaPromise
     }
 
-    fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/newtask' : '/edittask'), {
+    console.log(body);
+
+    fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/newtask' : '/updatetask'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
