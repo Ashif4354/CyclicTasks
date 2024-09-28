@@ -51,7 +51,7 @@ async def before_request():
                     })
                 elif (not isinstance(request.json['task'], dict) or 
                       request.json['task'].keys() != dummy_task.keys() or
-                      validate_incoming_task(request.json['task'])
+                      not validate_incoming_task(request.json['task'])
                       ):
                     await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'Task data is not valid JSON', request)
                     return jsonify({
@@ -97,10 +97,10 @@ async def new_task():
         try:
             FS = Firestore(initialized=True)
             id = await FS.add_new_task(task)
+            task['id'] = id
 
             await logger.LOG_EVENT(f'FlaskApp/new_task/{currentframe().f_lineno}', 'FlaskApp', 'Task added to Database', task)
 
-            task['id'] = id
 
             if task['active']:
                 await start_tasks_queue.put(task)
@@ -123,26 +123,28 @@ async def new_task():
 @app.route('/updatetask', methods=['POST'])
 async def update_task():
     task = request.json['task']
-    with ClientSession() as session:
+    async with ClientSession() as session:
         logger = Logger(session)
         try:        
             id = task['id']
 
             FS = Firestore(initialized=True)
             await FS.edit_task(task)
+            task['id'] = id
 
             await logger.LOG_EVENT(f'FlaskApp/update_task/{currentframe().f_lineno}', 'FlaskApp', 'Task data has been updated', task)
             await logger.LOG_EVENT(f'FlaskApp/update_task/{currentframe().f_lineno}', 'FlaskApp', 'Task yet to be restarted', task)
             
             await stop_task_queue.put(task)
+            print(stop_task_queue.qsize())
 
             await logger.LOG_EVENT(f'FlaskApp/update_task/{currentframe().f_lineno}', 'FlaskApp', f'Task Queued for Stopping: {task["id"]}', task)
 
 
-            task['id'] = id
             
             if task['active']:
                 await start_tasks_queue.put(task)
+                print(start_tasks_queue.qsize())
 
                 await logger.LOG_EVENT(f'FlaskApp/update_task/{currentframe().f_lineno}', 'FlaskApp', f'Task Queued for Starting: {task["id"]}', task)
 
@@ -163,7 +165,7 @@ async def update_task():
 async def delete_task():
     task = request.json['task']
 
-    with ClientSession() as session:
+    async with ClientSession() as session:
         logger = Logger(session)
         try:
 

@@ -32,7 +32,7 @@ def validate_incoming_task(task: dict) -> bool:
     if not isinstance(task['discord_webhook_color'], str):
         return False
     
-    if len(task['discord_webhook_color']) != 6:
+    if len(task['discord_webhook_color']) not in (0, 6):
         return False
     
     for char in task['discord_webhook_color']:
