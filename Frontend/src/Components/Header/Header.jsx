@@ -1,5 +1,5 @@
 
-import './Header.css'
+import './header.css'
 import { GoogleLogin, logout } from '../../scripts/Session'
 
 
