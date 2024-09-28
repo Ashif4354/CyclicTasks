@@ -1,21 +1,16 @@
 @import url(https://db.onlinewebfonts.com/c/afe27afa1552f15b1f4f7090a35260bb?family=Vicasso);
 
-
 p {
   margin-block-start: 0px;
   margin-block-end: 0px;
 }
 
 .main-container {
-  /* display: flex; */
-  /* align-items: center; */
-  /* justify-content: center; */
   font-family: 'Vicasso';
   flex-direction: column;
   height: 100vh;
   width: 100vw;
   overflow-x: hidden;
-  /* background-color: #242424; */
   background-image: url('../../assets/images/background.jpg');
   background-size: cover;
 }
@@ -29,7 +24,6 @@ p {
   color: black;
   border: none;
   height: 30px;
-  /* width: 90px; */
   border-radius: 20px;
 }
 
@@ -44,25 +38,18 @@ p {
   justify-content: center;
   height: 92vh;
   width: 100vw;
-  /* background-color: #8e0e0e; */
-  /* opacity: 0.7; */
 }
 
 .middle-container {
   display: flex;
-  /* align-items: center; */
-  /* justify-content: center; */
   flex-direction: column;
   height: 90%;
-  /* width: 85%; */
   width: 1000px;
   border-radius: 20px;
   margin-right: 10px;
   margin-left: 10px;
-  /* opacity: 0; */
 
   background-color: rgb(47, 47, 47, .2);
-  /* background-color: white; */
   box-shadow: 0px 0px 150px rgba(0, 0, 0);
 }
 
@@ -94,12 +81,9 @@ p {
 .task-container {
   display: flex;
   align-items: center;
-  /* justify-content: center; */
   flex-direction: column;
   height: 90%;
   width: 100%;
-  /* opacity: .5; */
-  /* background-color: #b81313; */
 }
 
 .tasks-btn-container {
@@ -116,7 +100,6 @@ p {
 }
 
 .tasks-list-container {
-  /* display: flex; */
   align-self: center;
   flex-direction: column;
   align-items: center;
@@ -125,7 +108,6 @@ p {
   height: 75%;
   width: 90%;
   overflow-y: scroll;
-  /* background-color: #b81313; */
 }
 
 .tasks-list-container::-webkit-scrollbar {
@@ -136,9 +118,7 @@ p {
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: center; */
   height: 100%;
   width: 100%;
   color: white;
 }
-

@@ -24,7 +24,7 @@ class CyclicTasks(Firestore, Logger):
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], task['discord_webhook_color'], notify_admin=task['notify_admin'])
             await self.LOG_EVENT(f'CyclicTasks/get_request/{currentframe().f_lineno}', 'CyclicTasks', 'One pulse sent', task)
         except Exception as e:
-            self.LOG_ERROR(f'CyclicTasks/get_request/{currentframe().f_lineno}', e, task, True)
+            await self.LOG_ERROR(f'CyclicTasks/get_request/{currentframe().f_lineno}', e, task, True)
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], success=False, notify_admin=task['notify_admin'])
 
 

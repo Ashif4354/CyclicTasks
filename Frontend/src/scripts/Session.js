@@ -29,7 +29,6 @@ const GoogleLogin = async (setUser) => {
 const logout = (setUser) => {
     logEvent(analytics, 'user-logout');
 
-
     signOut(auth)
     setUser(null);
     localStorage.removeItem('user');

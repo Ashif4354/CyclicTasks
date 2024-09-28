@@ -1,22 +1,21 @@
 import { useState, useEffect } from 'react'
+import { Skeleton } from '@mui/material';
+
 import { analytics } from '../../config/firebase';
 import { logEvent } from 'firebase/analytics';
 
 import './Home.css'
-import { getTasks } from './scripts/getTasks';
-
 import EachTask from './Components/EachTask/EachTask';
-import { TaskDialog } from './Components/TaskDialog/TaskDialog';
 import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
-import { Skeleton } from '@mui/material';
 import SnackBar from './Components/SnackBar/Snackbar';
+import { getTasks } from './scripts/getTasks';
+import { TaskDialog } from './Components/TaskDialog/TaskDialog';
 
 const Home = () => {
     const [user, setUser] = useState(null);
     const [tasks, setTasks] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
-    // const [tasksMessage, setTasksMessage] = useState('Loading tasks...');
     const [noTask, setNoTask] = useState(false);
     const [successDeleteSnackBarOpen, setSuccessDeleteSnackBarOpen] = useState(false);
     const [failedDeleteSnackBarOpen, setFailedDeleteSnackBarOpen] = useState(false);
@@ -31,20 +30,22 @@ const Home = () => {
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
         const User = JSON.parse(loggedInUser);
+
         if (loggedInUser) {
             setUser(User);
         } else {
             return;
         }
+
     }, []);
 
     useEffect(() => {
         setTasks(null)
         setNoTask(false);
+
         if (user) {
             getTasks(user.email, setTasks, setNoTask);
         }
-
 
     }, [user])
 
@@ -70,9 +71,6 @@ const Home = () => {
                                 <p>Login to continue</p>
                             )
                         }
-
-
-
                     </div>
 
                     {
@@ -93,9 +91,7 @@ const Home = () => {
                                     {
                                         tasks ? (
                                             tasks.map((task, index) => {
-                                                // console.log(task.task_name, index);
                                                 return (
-                                                    // <p key={index}>{task.task_name}</p>
                                                     <div key={index}>
                                                         <EachTask
                                                             index={index}
@@ -106,9 +102,7 @@ const Home = () => {
                                                             setFailedDeleteSnackBarOpen={setFailedDeleteSnackBarOpen}
                                                         />
                                                     </div>
-
                                                 )
-
                                             })
                                         ) : (
                                             <div className='no-task-container'>
@@ -142,31 +136,18 @@ const Home = () => {
                                                                 sx={{ bgcolor: 'rgba(18, 18, 18, 0.3)', borderRadius: '20px', marginBottom: '10px' }}
                                                             />
                                                         </>
-
                                                     )
                                                 }
-
                                             </div>
-
                                         )
-
-
                                     }
-
                                 </div>
-
-
                             </div>
-
                         ) : (
-                            // <div>Hello</div>
                             <div />
                         )
                     }
-
-
                 </div>
-
             </div>
             <Footer />
             <TaskDialog
@@ -201,7 +182,6 @@ const Home = () => {
                 success={false}
                 message='Failed to delete task! Try again.' 
             />
-
         </div>
     )
 }

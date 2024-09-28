@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Button, CircularProgress, DialogActions, DialogContent, Switch } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import ReCAPTCHA from "react-google-recaptcha";
-
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -19,16 +17,16 @@ const TaskDialog = (props) => {
     const { open, setOpen, type, task, setTask, tasks, setTasks,
         setSuccessUpdateSnackBarOpen, setFailedUpdateSnackBarOpen, setSuccessAddSnackBarOpen, setFailedAddSnackBarOpen } = props;
 
+    const [loadingOpen, setLoadingOpen] = useState(false);
+    const [saveBtnDisabled, setSaveBtnDisabled] = useState(true);
+    const [serverErrorMessage, setServerErrorMesssage] = useState('');
+
     const [taskName, setTaskName] = useState('');
     const [url, setUrl] = useState('');
     const [interval, setInterval] = useState('');
     const [active, setActive] = useState(false);
     const [discordWebhookUrl, setDiscordWebhookUrl] = useState('');
     const [discordWebhookColor, setDiscordWebhookColor] = useState('');
-
-    const [loadingOpen, setLoadingOpen] = useState(false);
-    const [saveBtnDisabled, setSaveBtnDisabled] = useState(true);
-    const [serverErrorMessage, setServerErrorMesssage] = useState('');
 
     const [taskNameError, setTaskNameError] = useState(false);
     const [urlError, setUrlError] = useState(false);
@@ -91,7 +89,8 @@ const TaskDialog = (props) => {
             setDiscordWebhookUrl(task.discord_webhook_url);
             setDiscordWebhookColor(task.discord_webhook_color);
         }
-        if (type == 'Add'){
+
+        if (type == 'Add') {
             logEvent(analytics, 'add-task-dialog-cancel-close')
         }
 
@@ -100,6 +99,7 @@ const TaskDialog = (props) => {
         setIntervalError(false);
         setDiscordWebhookUrlError(false);
         setDiscordWebhookColorError(false);
+
         setTaskNameHelperText('');
         setUrlHelperText('');
         setIntervalHelperText('Interval in seconds');
@@ -116,8 +116,9 @@ const TaskDialog = (props) => {
         if (!defaultValue) {
             defaultValue = ''
         }
-        console.log(defaultValue)
+
         let value
+
         if (dataName == 'active') {
             value = e.target.checked;
         } else {
@@ -127,7 +128,7 @@ const TaskDialog = (props) => {
         setFunction(value);
 
         let prevData = dataChanges
-        
+
         if (value != defaultValue) {
             prevData[dataName] = true
             setDataChanges(prevData)
@@ -135,11 +136,6 @@ const TaskDialog = (props) => {
             prevData[dataName] = false
             setDataChanges(prevData)
         }
-        
-        // console.log(dataChanges)
-
-        // let newData = {...dataChanges}
-
 
         Object.values(dataChanges).includes(true) ? setSaveBtnDisabled(false) : setSaveBtnDisabled(true)
     }
@@ -254,18 +250,15 @@ const TaskDialog = (props) => {
                             }}
                         />
                     </div>
-                    <p style={{color: 'red', fontWeight:'bold'}}>{serverErrorMessage}</p>
+
+                    <p style={{ color: 'red', fontWeight: 'bold' }}>{serverErrorMessage}</p>
 
                     <ReCAPTCHA
                         sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
                         size='invisible'
                         ref={recaptchaRef}
-                    // asyncScriptOnLoad={() => recaptchaRef.current.execute()}
                     />
-
                 </div>
-
-
             </DialogContent>
             <DialogActions>
                 <button className='dialog-btns' onClick={handleCancelClose}>Cancel</button>
@@ -307,7 +300,8 @@ const TaskDialog = (props) => {
                             setServerErrorMesssage
                         )
                     }}
-                >{
+                >
+                    {
                         loadingOpen ? (
                             <CircularProgress size={20} color='inherit' />
                         ) : (
@@ -317,7 +311,6 @@ const TaskDialog = (props) => {
                 </button>
             </DialogActions>
         </Dialog>
-
     )
 }
 
