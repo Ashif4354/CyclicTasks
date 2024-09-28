@@ -1,9 +1,16 @@
 import { signInWithPopup ,signOut } from "firebase/auth";
 import { auth, provider } from "../config/firebase";
 
+import { analytics } from "../config/firebase";
+import { logEvent } from "firebase/analytics";
+
 const GoogleLogin = async (setUser) => {
     signInWithPopup(auth, provider)
         .then((result) => {
+            logEvent(analytics, 'user-login', {
+                method: 'google',
+            });
+
             const user = result.user;
             
             const loggedInUser = {
@@ -20,7 +27,9 @@ const GoogleLogin = async (setUser) => {
 }
 
 const logout = (setUser) => {
-    // console.log(auth)
+    logEvent(analytics, 'user-logout');
+
+
     signOut(auth)
     setUser(null);
     localStorage.removeItem('user');

@@ -9,6 +9,9 @@ import ReCAPTCHA from "react-google-recaptcha";
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 
+import { analytics } from '../../../../config/firebase';
+import { logEvent } from 'firebase/analytics';
+
 import './TaskDialog.css';
 import { handleSave } from "./scripts/handleSave";
 
@@ -76,8 +79,11 @@ const TaskDialog = (props) => {
     }, [open])
 
     const handleCancelClose = () => {
+        logEvent(analytics, 'task-dialog-cancel-close')
+
         setOpen(false);
         if (type == 'Update') {
+            logEvent(analytics, 'update-task-dialog-cancel-close')
             setTaskName(task.task_name);
             setUrl(task.url);
             setInterval(task.interval);
@@ -85,6 +91,10 @@ const TaskDialog = (props) => {
             setDiscordWebhookUrl(task.discord_webhook_url);
             setDiscordWebhookColor(task.discord_webhook_color);
         }
+        if (type == 'Add'){
+            logEvent(analytics, 'add-task-dialog-cancel-close')
+        }
+
         setTaskNameError(false);
         setUrlError(false);
         setIntervalError(false);
@@ -102,6 +112,11 @@ const TaskDialog = (props) => {
     }
 
     const handleDataChange = (e, dataName, defaultValue, setFunction) => {
+
+        if (!defaultValue) {
+            defaultValue = ''
+        }
+        console.log(defaultValue)
         let value
         if (dataName == 'active') {
             value = e.target.checked;
@@ -109,15 +124,10 @@ const TaskDialog = (props) => {
             value = e.target.value;
         }
 
-        // const value = e.target.value;
         setFunction(value);
 
-        if (type == 'Add') {
-            return;
-        }
-
         let prevData = dataChanges
-
+        
         if (value != defaultValue) {
             prevData[dataName] = true
             setDataChanges(prevData)
@@ -125,8 +135,12 @@ const TaskDialog = (props) => {
             prevData[dataName] = false
             setDataChanges(prevData)
         }
+        
+        // console.log(dataChanges)
 
-        // Object.keys(dataChanges).map((i, j) => console.log(i, dataChanges[i]))
+        // let newData = {...dataChanges}
+
+
         Object.values(dataChanges).includes(true) ? setSaveBtnDisabled(false) : setSaveBtnDisabled(true)
     }
 
@@ -155,7 +169,7 @@ const TaskDialog = (props) => {
                         margin="normal"
                         helperText={taskNameHelperText}
                         onChange={(e) => {
-                            handleDataChange(e, 'taskName', task.task_name, setTaskName);
+                            handleDataChange(e, 'taskName', task?.task_name, setTaskName);
                             setTaskNameError(false);
                             setTaskNameHelperText('');
                         }}
@@ -171,7 +185,7 @@ const TaskDialog = (props) => {
                         margin="normal"
                         helperText={urlHelperText}
                         onChange={(e) => {
-                            handleDataChange(e, 'url', task.url, setUrl);
+                            handleDataChange(e, 'url', task?.url, setUrl);
                             setUrlError(false);
                             setUrlHelperText('');
                         }}
@@ -187,7 +201,7 @@ const TaskDialog = (props) => {
                         margin="normal"
                         helperText={intervalHelperText}
                         onChange={(e) => {
-                            handleDataChange(e, 'interval', task.interval, setInterval);
+                            handleDataChange(e, 'interval', task?.interval, setInterval);
                             setIntervalError(false);
                             setIntervalHelperText('Interval in seconds');
                         }}
@@ -205,7 +219,7 @@ const TaskDialog = (props) => {
                         // helperText='The discord webhook url to send the notifications'
                         helperText={discordWebhookUrlHelperText}
                         onChange={(e) => {
-                            handleDataChange(e, 'discordWebhookUrl', task.discord_webhook_url, setDiscordWebhookUrl);
+                            handleDataChange(e, 'discordWebhookUrl', task?.discord_webhook_url, setDiscordWebhookUrl);
                             setDiscordWebhookUrlError(false);
                             setDiscordWebhookUrlHelperText('The discord webhook url to send notifications or updates');
                         }}
@@ -223,7 +237,7 @@ const TaskDialog = (props) => {
                         // helperText='Hex only, dont include #, DEFAULT: ffffff'
                         helperText={discordWebhookColorHelperText}
                         onChange={(e) => {
-                            handleDataChange(e, 'discordWebhookColor', task.discord_webhook_color, setDiscordWebhookColor);
+                            handleDataChange(e, 'discordWebhookColor', task?.discord_webhook_color, setDiscordWebhookColor);
                             setDiscordWebhookColorError(false);
                             setDiscordWebhookColorHelperText('Hex only, dont include #, DEFAULT: ffffff');
                         }}
@@ -236,7 +250,7 @@ const TaskDialog = (props) => {
                             checked={active}
                             onChange={(e) => {
                                 // setActive(e.target.checked)
-                                handleDataChange(e, 'active', task.active, setActive);
+                                handleDataChange(e, 'active', task?.active, setActive);
                             }}
                         />
                     </div>
