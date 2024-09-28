@@ -4,8 +4,10 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import ReCAPTCHA from 'react-google-recaptcha';
 
+import { analytics } from '../../../../config/firebase';
+import { logEvent } from 'firebase/analytics';
+
 import './DeleteTaskDialog.css'
-import SnackBar from '../SnackBar/Snackbar';
 
 const DeleteTaskDialog = (props) => {
     const { open, setOpen, task, tasks, setTasks, setSuccessDeleteSnackBarOpen, setFailedDeleteSnackBarOpen } = props;
@@ -36,11 +38,13 @@ const DeleteTaskDialog = (props) => {
             .then(response => response.json())
             .then(response => {
                 if (response.success) {
+                    logEvent(analytics, 'successful-delete-task')
                     const newTasks = tasks.filter((task) => task.id != currentTask.id);
                     setTasks(newTasks);
                     setOpen(false);
                     setSuccessDeleteSnackBarOpen(true);
                 } else {
+                    logEvent(analytics, 'failed-delete-task')
                     setFailedDeleteSnackBarOpen(true);
                     setServerErrorMesssage("*" + response.message);
                 }
@@ -48,7 +52,7 @@ const DeleteTaskDialog = (props) => {
                 setDeleteBtnDisabled(false);
             })
             .catch(error => {
-                console.log("Error", error)
+                logEvent(analytics, 'failed-delete-task')
                 setLoadingOpen(false);
                 setDeleteBtnDisabled(false);
                 setFailedDeleteSnackBarOpen(true);
@@ -59,6 +63,7 @@ const DeleteTaskDialog = (props) => {
     }
 
     const handleCancelClose = () => {
+        logEvent(analytics, 'delete-task-dialog-cancel-close')
         setOpen(false);
         setLoadingOpen(false);
         setDeleteBtnDisabled(false);

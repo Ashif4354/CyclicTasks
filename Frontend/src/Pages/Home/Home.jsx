@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { analytics } from '../../config/firebase';
+import { logEvent } from 'firebase/analytics';
 
 import './Home.css'
 import { getTasks } from './scripts/getTasks';
@@ -20,6 +22,11 @@ const Home = () => {
     const [failedDeleteSnackBarOpen, setFailedDeleteSnackBarOpen] = useState(false);
     const [successAddSnackBarOpen, setSuccessAddSnackBarOpen] = useState(false);
     const [failedAddSnackBarOpen, setFailedAddSnackBarOpen] = useState(false);
+
+    const onAddTask = () => {
+        logEvent(analytics, 'add-task-dialog-open')
+        setDialogOpen(true);    
+    }
 
     useEffect(() => {
         const loggedInUser = localStorage.getItem('user');
@@ -78,7 +85,7 @@ const Home = () => {
                                 <div className='tasks-btn-container'>
                                     <button
                                         className='btn taskBtn'
-                                        onClick={() => setDialogOpen(true)}
+                                        onClick={onAddTask}
                                     >Add Task</button>
                                 </div>
 

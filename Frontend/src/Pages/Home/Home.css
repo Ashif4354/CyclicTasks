@@ -128,6 +128,10 @@ p {
   /* background-color: #b81313; */
 }
 
+.tasks-list-container::-webkit-scrollbar {
+  display: none;
+}
+
 .no-task-container {
   display: flex;
   flex-direction: column;

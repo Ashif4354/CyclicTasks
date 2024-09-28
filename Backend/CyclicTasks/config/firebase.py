@@ -7,7 +7,7 @@ from firebase_admin import credentials
 class FirebaseConfig:
     def __init__(self):
         self.firebaseConfig = {
-            "type": "service_account",
+            "type": environ['FIREBASE_TYPE'],
             "project_id": environ['FIREBASE_PROJECT_ID'],
             "private_key_id":   environ['FIREBASE_PRIVATE_KEY_ID'],
             "private_key": environ['FIREBASE_PRIVATE_KEY'].replace('\\n', '\n'),

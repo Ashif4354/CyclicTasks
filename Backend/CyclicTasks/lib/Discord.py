@@ -1,4 +1,5 @@
 from os import environ
+from inspect import currentframe
 from .GetIstTime import get_ist_time
 
 class Discord:
@@ -35,6 +36,8 @@ class Discord:
         if task['notify_admin']:
             await self.send_webhook(self.dev_webhook_url, data)
 
+        await self.LOG_EVENT(f'Discord/send_start_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Start Task Acknowledgement sent in discord', task)
+
 
     async def send_stop_task_acknowledgement(self, task: dict) -> None:
         data = {
@@ -51,6 +54,8 @@ class Discord:
 
         if task['notify_admin']:
             await self.send_webhook(self.dev_webhook_url, data)
+
+        await self.LOG_EVENT(f'Discord/send_stop_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Stop Task Acknowledgement sent in discord', task)
 
 
 
@@ -71,18 +76,13 @@ class Discord:
         if notify_admin:
             await self.send_webhook(self.dev_vitals_webhook_url, data)
 
-
-
-
-
-
     async def send_webhook(self, url: str, data: dict):
+        if url == '':
+            return
 
         headers: dict = {
             'Content-Type': 'application/json'
         }
-        if url == '':
-            return
 
         try:
             await self.session.post(

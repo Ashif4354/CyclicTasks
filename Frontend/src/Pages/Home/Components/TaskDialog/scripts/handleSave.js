@@ -1,4 +1,5 @@
-
+import { analytics } from "../../../../../config/firebase";
+import { logEvent } from "firebase/analytics";
 
 const handleSave = async (type, task, taskName, url, interval,
     active, discordWebhookUrl, discordWebhookColor, setTask, tasks, setTasks,
@@ -28,7 +29,7 @@ const handleSave = async (type, task, taskName, url, interval,
     const user = JSON.parse(localStorage.getItem('user'))
 
     const newData = {
-        id: (type == 'Add' ? null : task.id),
+        id: (type == 'Add' ? 'no id' : task.id),
         task_name: taskName,
         url: url,
         interval: parseInt(interval),
@@ -45,7 +46,9 @@ const handleSave = async (type, task, taskName, url, interval,
         recaptchaToken: await recaptchaPromise
     }
 
-    fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/newtask' : '/edittask'), {
+    console.log(body);
+
+    fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/newtask' : '/updatetask'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -56,10 +59,12 @@ const handleSave = async (type, task, taskName, url, interval,
         .then(response => {
             if (response.success) {
                 if (type == 'Add') {
+                    logEvent(analytics, 'successful-add-task')
                     newData.id = response.new_task_id;
                     setTasks([...tasks, newData])
                     setSuccessAddSnackBarOpen(true);
                 } else {
+                    logEvent(analytics, 'successful-update-task')
                     setTask(newData)
                     setSuccessUpdateSnackBarOpen(true);
                 }
@@ -67,8 +72,10 @@ const handleSave = async (type, task, taskName, url, interval,
                 setOpen(false);
             } else {
                 if (type == 'Add') {
+                    logEvent(analytics, 'failed-add-task')
                     setFailedAddSnackBarOpen(true);
                 } else {
+                    logEvent(analytics, 'failed-update-task')
                     setFailedUpdateSnackBarOpen(true);
                 }
                 setServerErrorMesssage("*" + response.message);
@@ -78,7 +85,12 @@ const handleSave = async (type, task, taskName, url, interval,
             setSaveBtnDisabled(false);
         })
         .catch(error => {
-            console.log("Error", error)
+            if (type == 'Add') {
+                logEvent(analytics, 'failed-add-task')
+            } else {
+                logEvent(analytics, 'failed-update-task')
+            }
+            
             setLoadingOpen(false);
             setSaveBtnDisabled(false);
             if (type == 'Add') {

@@ -1,28 +1,28 @@
 import { doc, getDoc, collection, query, where } from "firebase/firestore";
 import { db } from "../../../config/firebase";
 
+import { analytics } from "../../../config/firebase";
+import { logEvent } from "firebase/analytics";
+
 const getTasks = async (email, setTasks, setNoTask) => {
-    // console.log("in getTasks", email)
+    logEvent(analytics, 'get-tasks', {
+        method: 'get-tasks'
+    });
     
     let task;
     let tasks = [];
 
     const tasksIDs = await getTasksIDs(email);
-    // const Query = query(collection(db, "Tasks"), where("id", "in", tasksIDs));
-    // const querySnapshot = await getDoc(Query);
     
     for(let taskID of tasksIDs) {
         const docRef = doc(db, "Tasks", taskID);
         const docSnap = await getDoc(docRef);
-        // console.log("DOC SNAP", docSnap.data())
         task = docSnap.data();
         task.id = taskID;          
 
         tasks.push(task);
     }
 
-    // console.log("Tasks", typeof tasks, tasks)
-    // console.log(tasks)
     if (tasks.length === 0) {
         setTasks(null);
         setNoTask(true);

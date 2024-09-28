@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
@@ -8,6 +8,9 @@ import './EachTask.css';
 import { TaskDialog } from '../TaskDialog/TaskDialog';
 import { DeleteTaskDialog } from '../DeleteTaskDialog/DeleteTaskDialog';
 import SnackBar from '../SnackBar/Snackbar';
+
+import { analytics } from '../../../../config/firebase';
+import { logEvent } from 'firebase/analytics';
 
 
 const EachTask = (props) => {
@@ -22,14 +25,14 @@ const EachTask = (props) => {
     const [failedUpdateSnackBarOpen, setFailedUpdateSnackBarOpen] = useState(false);
 
     const handleUpdate = () => {
+        logEvent(analytics, 'update-task-dialog-open')
         setTaskDialogOpen(true);
     }
 
     const handleDelete = () => {
+        logEvent(analytics, 'delete-task-dialog-open')
         setDeleteTaskDialogOpen(true);
     }
-
-
 
     return (
         <div className="each-task-container">
