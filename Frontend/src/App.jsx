@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './Pages/Home/Home';
+import Start from './Pages/Start/Start';
 import { analytics } from './config/firebase';
 import { logEvent } from 'firebase/analytics';
 
@@ -17,7 +18,8 @@ const App = () => {
     return (
         <BrowserRouter>
             <Routes>
-                <Route path='/' element={<Home />} />
+                <Route path='/' element={<Start />} />
+                <Route path='/home' element={<Home />} />
             </Routes>
         </BrowserRouter>
     )

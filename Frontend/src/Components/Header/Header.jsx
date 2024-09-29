@@ -1,6 +1,6 @@
 
-import './header.css'
 import { GoogleLogin, logout } from '../../scripts/Session'
+import './Header.css'
 
 
 const Header = (props) => {
@@ -10,7 +10,7 @@ const Header = (props) => {
         <header className='header'>
             <div className='heading-text-container'>
                 <div className='heading-text'>
-                    <h2>Cyclic Tasks</h2>
+                    <p className='header-heading-text'>Cyclic Tasks</p>
                 </div>
             </div>
 
@@ -22,7 +22,6 @@ const Header = (props) => {
                         <button className='btn' onClick={() => GoogleLogin(setUser)}>Login</button>
                     )
                 }
-
             </div>
 
         </header>

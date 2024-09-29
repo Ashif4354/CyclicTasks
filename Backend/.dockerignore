@@ -1,0 +1,4 @@
+.venv
+tests
+.env
+.env.txt
