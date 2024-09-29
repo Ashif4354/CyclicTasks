@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import Home from './Pages/Home/Home';
 import Start from './Pages/Start/Start';
+import Admin from './Pages/Admin/Admin';
 import { analytics } from './config/firebase';
 import { logEvent } from 'firebase/analytics';
 
@@ -20,6 +21,7 @@ const App = () => {
             <Routes>
                 <Route path='/' element={<Start />} />
                 <Route path='/home' element={<Home />} />
+                <Route path='/admin' element={<Admin />} />
             </Routes>
         </BrowserRouter>
     )
