@@ -1,0 +1,13 @@
+version: "3"
+services:
+    web:
+        build: ./Frontend
+        ports:
+            - "3000:3000"
+        env_file: ./Frontend/.env
+
+    server: 
+        build: ./Backend
+        ports:
+            - "5000:5000"
+        env_file: ./Backend/.env

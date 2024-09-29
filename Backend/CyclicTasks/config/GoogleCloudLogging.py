@@ -1,6 +1,5 @@
 from google.cloud.logging import Client
 from google.cloud.logging.handlers import CloudLoggingHandler
-# from google.cloud.logging_v2.handlers import setup_logging
 from logging import getLogger, INFO
 
 from os import environ
@@ -23,10 +22,6 @@ client = Client.from_service_account_info(google_cloud_logger_json)
 
 flask_app_logging_handler = CloudLoggingHandler(client, name='flask_app', async_=True, buffer_size=10, flush_interval=2)
 CyclicTasks_logging_handler = CloudLoggingHandler(client, name='cyclic_tasks', async_=True, buffer_size=10, flush_interval=2)
-
-
-# setup_logging(handler=flask_app_logging_handler, log_level=logging.INFO)
-# setup_logging(handler=CyclicTasks_logging_handler, log_level=logging.INFO)
 
 flask_app_logger = getLogger('flask_app')
 flask_app_logger.addHandler(flask_app_logging_handler)

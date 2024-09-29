@@ -17,6 +17,7 @@ const getTasks = async (email, setTasks, setNoTask) => {
     for(let taskID of tasksIDs) {
         const docRef = doc(db, "Tasks", taskID);
         const docSnap = await getDoc(docRef);
+
         task = docSnap.data();
         task.id = taskID;          
 
@@ -28,18 +29,17 @@ const getTasks = async (email, setTasks, setNoTask) => {
         setNoTask(true);
         return;
     } 
+
     setNoTask(false);   
     setTasks(tasks);
 }
 
 const getTasksIDs = async (email) => {
-    // console.log("in getTasksIDs", email)
 
     const docRef = doc(db, "Users", email);
     const docSnap = await getDoc(docRef);
 
     if(docSnap.exists()) {
-        // console.log(docSnap.data().tasks);
         return docSnap.data().tasks    
     } else {
         return [];

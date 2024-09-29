@@ -10,10 +10,8 @@
     border-radius: 20px;
     width: 94px;
     height: 35.55px;
-    /* padding-top:11px; */
     font-family: 'Vicasso';
     padding: 0px;
-
 }
 
 .dialog-btns:disabled {

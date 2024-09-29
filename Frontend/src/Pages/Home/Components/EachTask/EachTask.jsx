@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -20,7 +19,6 @@ const EachTask = (props) => {
     const [taskDialogOpen, setTaskDialogOpen] = useState(false);
     const [deleteTaskDialogOpen, setDeleteTaskDialogOpen] = useState(false);
     const [currentTask, setCurrentTask] = useState(task);
-
     const [successUpdateSnackBarOpen, setSuccessUpdateSnackBarOpen] = useState(false);
     const [failedUpdateSnackBarOpen, setFailedUpdateSnackBarOpen] = useState(false);
 
@@ -36,8 +34,6 @@ const EachTask = (props) => {
 
     return (
         <div className="each-task-container">
-
-
             <div className="details-container">
                 <div className='task-number-container'>
                     <p>{index + 1}.</p>
@@ -58,14 +54,12 @@ const EachTask = (props) => {
                         }
 
                     </div>
-
                 </div>
             </div>
             <div className='edit-btn-container'>
                 <IconButton
                     sx={{ '&:hover': { backgroundColor: '#242424' } }}
                     onClick={handleUpdate}
-
                 >
                     <EditIcon sx={{ color: 'white' }} />
                 </IconButton>
@@ -82,7 +76,6 @@ const EachTask = (props) => {
                 task={currentTask} setTask={setCurrentTask} tasks={null} setTasks={null}
                 setSuccessUpdateSnackBarOpen={setSuccessUpdateSnackBarOpen}
                 setFailedUpdateSnackBarOpen={setFailedUpdateSnackBarOpen}
-
             />
             <DeleteTaskDialog
                 open={deleteTaskDialogOpen} setOpen={setDeleteTaskDialogOpen}
@@ -90,27 +83,20 @@ const EachTask = (props) => {
                 setSuccessDeleteSnackBarOpen={setSuccessDeleteSnackBarOpen}
                 setFailedDeleteSnackBarOpen={setFailedDeleteSnackBarOpen}
             />
-
-            
-
             <SnackBar
                 open={successUpdateSnackBarOpen}
                 handleClose={() => setSuccessUpdateSnackBarOpen(false)}
                 success={true}
                 message='Task updated successfully!'
             />
-
             <SnackBar
                 open={failedUpdateSnackBarOpen}
                 handleClose={() => setFailedUpdateSnackBarOpen(false)}
                 success={false}
                 message='Failed to update task! Try again.'
             />
-
-
         </div>
     )
-
 }
 
 export default EachTask;

@@ -23,6 +23,7 @@ const handleSave = async (type, task, taskName, url, interval,
     if (!validData) {
         setLoadingOpen(false);
         setSaveBtnDisabled(false);
+
         return;
     }
 
@@ -46,8 +47,6 @@ const handleSave = async (type, task, taskName, url, interval,
         recaptchaToken: await recaptchaPromise
     }
 
-    console.log(body);
-
     fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/newtask' : '/updatetask'), {
         method: 'POST',
         headers: {
@@ -60,15 +59,16 @@ const handleSave = async (type, task, taskName, url, interval,
             if (response.success) {
                 if (type == 'Add') {
                     logEvent(analytics, 'successful-add-task')
+
                     newData.id = response.new_task_id;
                     setTasks([...tasks, newData])
                     setSuccessAddSnackBarOpen(true);
                 } else {
                     logEvent(analytics, 'successful-update-task')
+
                     setTask(newData)
                     setSuccessUpdateSnackBarOpen(true);
                 }
-
                 setOpen(false);
             } else {
                 if (type == 'Add') {
@@ -93,17 +93,17 @@ const handleSave = async (type, task, taskName, url, interval,
             
             setLoadingOpen(false);
             setSaveBtnDisabled(false);
+
             if (type == 'Add') {
                 setFailedAddSnackBarOpen(true);
             } else {
                 setFailedUpdateSnackBarOpen(true);
             }
+
             setServerErrorMesssage("*An error occurred. Please try again later.");
         });
 
     recaptchaRef.current.reset();
-
-
 }
 
 

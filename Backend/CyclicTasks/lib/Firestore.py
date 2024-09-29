@@ -11,7 +11,6 @@ class Firestore(FirebaseConfig):
         
         if not initialized:
             self.initialize_firebase()
-        # self.db = firestore_async.client()
         self.db = firestore.client()
 
         self.tasks_collection = self.db.collection('Tasks')
@@ -21,10 +20,8 @@ class Firestore(FirebaseConfig):
         self.fetched_tasks = []
         
         for task in self.tasks_collection.stream():
-        # async for task in self.tasks_collection.stream():
 
             task_: dict = task.to_dict()
-            # print(task_)
 
             if not task_['active']:
                 continue
@@ -38,7 +35,6 @@ class Firestore(FirebaseConfig):
             await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 'CyclicTasks', 'No tasks available', None)
         else:
             await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 'CyclicTasks', f'Tasks fetched: {len(self.fetched_tasks)}', None)
-
 
         return self.fetched_tasks
     

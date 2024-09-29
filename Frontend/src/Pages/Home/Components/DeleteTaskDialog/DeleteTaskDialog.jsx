@@ -23,6 +23,7 @@ const DeleteTaskDialog = (props) => {
         setDeleteBtnDisabled(true);
         setLoadingOpen(true);
         setServerErrorMesssage('');
+
         const recaptchaToken = await recaptchaRef.current.executeAsync();
 
         fetch(import.meta.env.VITE_CT_SERVER_URL + '/deletetask', {
@@ -39,7 +40,9 @@ const DeleteTaskDialog = (props) => {
             .then(response => {
                 if (response.success) {
                     logEvent(analytics, 'successful-delete-task')
+
                     const newTasks = tasks.filter((task) => task.id != currentTask.id);
+
                     setTasks(newTasks);
                     setOpen(false);
                     setSuccessDeleteSnackBarOpen(true);
@@ -48,11 +51,13 @@ const DeleteTaskDialog = (props) => {
                     setFailedDeleteSnackBarOpen(true);
                     setServerErrorMesssage("*" + response.message);
                 }
+
                 setLoadingOpen(false);
                 setDeleteBtnDisabled(false);
             })
             .catch(error => {
                 logEvent(analytics, 'failed-delete-task')
+
                 setLoadingOpen(false);
                 setDeleteBtnDisabled(false);
                 setFailedDeleteSnackBarOpen(true);
@@ -64,6 +69,7 @@ const DeleteTaskDialog = (props) => {
 
     const handleCancelClose = () => {
         logEvent(analytics, 'delete-task-dialog-cancel-close')
+
         setOpen(false);
         setLoadingOpen(false);
         setDeleteBtnDisabled(false);
@@ -74,7 +80,6 @@ const DeleteTaskDialog = (props) => {
         <Dialog open={open} onClose={handleCancelClose} fullWidth>
             <DialogTitle className='dialog-title' fontWeight={'bold'} fontFamily={'Vicasso'} fontSize={'1.5rem'}>
                 Delete Task
-
                 <IconButton
                     sx={{ position: 'absolute', right: '5px', top: '5px', '&:hover': { backgroundColor: '#ff000030' } }}
                     onClick={handleCancelClose}
@@ -82,6 +87,7 @@ const DeleteTaskDialog = (props) => {
                     <CloseIcon sx={{ color: 'black' }} />
                 </IconButton>
             </DialogTitle>
+
             <DialogContent>
                 <div className="delete-task-container">
                     <p>Are you sure you want to delete this task?</p>
@@ -92,10 +98,10 @@ const DeleteTaskDialog = (props) => {
                         sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
                         size='invisible'
                         ref={recaptchaRef}
-                    // asyncScriptOnLoad={() => recaptchaRef.current.execute()}
                     />
                 </div>
             </DialogContent>
+
             <DialogActions>
                 <button className='dialog-btns' onClick={handleCancelClose}>Cancel</button>
                 <button className='dialog-btns' disabled={deleteBtnDisabled} onClick={onDelete}>
@@ -109,7 +115,6 @@ const DeleteTaskDialog = (props) => {
 
                 </button>
             </DialogActions>
-
         </Dialog>
     )
 }

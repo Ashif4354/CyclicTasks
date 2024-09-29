@@ -60,13 +60,20 @@ async def before_request():
                     })
             
         if request.path in ['/getrunningtasks']:
-            if  request.args.get('pwd') != environ['ADMIN_PWD']:
-                await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
-                    f'Someone tried to access running_tasks without authorization\nUsed Password: {request.args.get('pwd')}', 
-                    request)
-                
+            try:
+                if  request.args.get('pwd') != environ['ADMIN_PWD']:
+                    await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                        f'Someone tried to access running_tasks without authorization\nUsed Password: {request.args.get('pwd')}', 
+                        request)
+                    
+                    return jsonify({
+                        'message': 'Unauthorized',
+                        'success': False
+                    })
+            except Exception as e:
+                await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'Some error occured while checking password', request)
                 return jsonify({
-                    'message': 'Unauthorized',
+                    'message': 'Some error occured on server side',
                     'success': False
                 })
                 
@@ -136,12 +143,9 @@ async def update_task():
             await logger.LOG_EVENT(f'FlaskApp/update_task/{currentframe().f_lineno}', 'FlaskApp', 'Task yet to be restarted', task)
             
             await stop_task_queue.put(task)
-            print(stop_task_queue.qsize())
 
             await logger.LOG_EVENT(f'FlaskApp/update_task/{currentframe().f_lineno}', 'FlaskApp', f'Task Queued for Stopping: {task["id"]}', task)
 
-
-            
             if task['active']:
                 await start_tasks_queue.put(task)
                 print(start_tasks_queue.qsize())
