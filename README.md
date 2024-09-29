@@ -5,6 +5,8 @@
 CyclicTasks is a powerful tool designed to keep your backend apps alive 24/7 when using free deployment services that don't offer full-time uptime. It sends automated pulses to your server apps, ensuring they remain active and responsive.
 
 ---
+Check out [How To Run](./How-to-run.md) for more information on how to run this project.  
+Its open-source and free to use. Iam open to contributions and suggestions.
 
 ## Features
 
