@@ -91,7 +91,7 @@ class Discord:
                 json=data
             )
         except Exception as e:
-            print(e)
+            await self.LOG_ERROR(f'Discord/send_webhook/{currentframe().f_lineno}', e, None)
 
 
 

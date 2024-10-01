@@ -23,7 +23,7 @@ class CyclicTasks(Firestore, Logger):
             await self.session.get(task['url'])
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], task['discord_webhook_color'], notify_admin=task['notify_admin'])
             
-            await self.LOG_EVENT(f'CyclicTasks/get_request/{currentframe().f_lineno}', 'CyclicTasks', 'One pulse sent', task)
+            await self.LOG_EVENT(f'CyclicTasks/get_request/{currentframe().f_lineno}', 'CyclicTasks', f'One pulse sent: {task['id']}', task)
         except Exception as e:
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], success=False, notify_admin=task['notify_admin'])
             
@@ -44,7 +44,7 @@ class CyclicTasks(Firestore, Logger):
                 await sleep(task['interval'])
         
         async_task: Task = asyncio_create_task(runner_task())
-        await self.LOG_EVENT(f'CyclicTasks/create_task/{currentframe().f_lineno}', 'CyclicTasks', 'Runner Task Created', task)
+        await self.LOG_EVENT(f'CyclicTasks/create_task/{currentframe().f_lineno}', 'CyclicTasks', f'Runner Task Created: {task['id']}', task)
 
         return async_task
 
@@ -60,11 +60,11 @@ class CyclicTasks(Firestore, Logger):
                 'user_email': task['user_email']
             }
 
-            await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task added to RUNNING_TASKS map', task)
+            await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task added to RUNNING_TASKS map: {task['id']}', task)
 
         
         running_id = str(len(self.RUNNING_TASKS[task['id']]['running_tasks']))
-        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Running ID Assigned: {running_id}', task)
+        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Running ID Assigned: {running_id} : {task['id']}', task)
 
 
         self.RUNNING_TASKS[task['id']]['current_running_task'] = running_id
@@ -74,7 +74,7 @@ class CyclicTasks(Firestore, Logger):
 
         async_task: Task = await self.create_task(task, running_id)   
 
-        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', 'Task Started', task)     
+        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Started: {task['id']}', task)     
 
         await async_task
 
@@ -107,15 +107,14 @@ class CyclicTasks(Firestore, Logger):
             current_task_running_id = self.RUNNING_TASKS[task['id']]['current_running_task']
 
             if current_task_running_id is None:
-                await self.LOG_EVENT(f'CyclicTasks/stop_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task already stopped', task)
+                await self.LOG_EVENT(f'CyclicTasks/stop_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task already stopped: {task['id']}', task)
 
                 return
 
             self.RUNNING_TASKS[task['id']]['running_tasks'][current_task_running_id] = False
             self.RUNNING_TASKS[task['id']]['current_running_task'] = None
 
-            # print('Task', task['id'], 'Stopped')
-            await self.LOG_EVENT(f'CyclicTasks/stop_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Stopped', task)
+            await self.LOG_EVENT(f'CyclicTasks/stop_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Stopped: {task['id']}', task)
 
             await self.send_stop_task_acknowledgement(task)
         except Exception as e:
@@ -131,13 +130,10 @@ class CyclicTasks(Firestore, Logger):
             await self.LOG_EVENT(f'CyclicTasks/stopper_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Dequeued stopping: {task["id"]}', task)
             
             if task['id'] not in self.RUNNING_TASKS:
-                await self.LOG_EVENT(f'CyclicTasks/stopper_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task not running', task)
+                await self.LOG_EVENT(f'CyclicTasks/stopper_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task not running: {task['id']}', task)
                 continue
 
-            # await self.stop_task(task)
             asyncio_create_task(self.stop_task(task))
-
-            # await stop_task_queue.task_done()
 
     async def run(self) -> None:
 

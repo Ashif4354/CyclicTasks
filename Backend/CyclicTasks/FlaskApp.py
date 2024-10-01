@@ -148,7 +148,6 @@ async def update_task():
 
             if task['active']:
                 await start_tasks_queue.put(task)
-                print(start_tasks_queue.qsize())
 
                 await logger.LOG_EVENT(f'FlaskApp/update_task/{currentframe().f_lineno}', 'FlaskApp', f'Task Queued for Starting: {task["id"]}', task)
 
