@@ -19,6 +19,9 @@ class CyclicTasks(Firestore, Logger):
 
 
     async def get_request(self, task: dict) -> None:
+        """
+        Send a get request to the given URL.
+        """
         try:
             await self.session.get(task['url'])
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], task['discord_webhook_color'], notify_admin=task['notify_admin'])
@@ -31,8 +34,11 @@ class CyclicTasks(Firestore, Logger):
 
 
     async def create_task(self, task: dict, running_id: int) -> Task:
+        """
+        Creates a task that will run the get request at the given interval and returns it.
+        """
         
-        async def runner_task():
+        async def runner_task() -> None:
             task_id: str = task['id']
 
             while self.RUNNING_TASKS[task_id]['running_tasks'][running_id]:
@@ -50,6 +56,9 @@ class CyclicTasks(Firestore, Logger):
 
 
     async def start_task(self, task: dict) -> None:
+        """
+        Starts the task and adds it to the RUNNING_TASK
+        """
 
         if task['id'] not in self.RUNNING_TASKS:
             self.RUNNING_TASKS[task['id']] = {
@@ -63,7 +72,7 @@ class CyclicTasks(Firestore, Logger):
             await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task added to RUNNING_TASKS map: {task['id']}', task)
 
         
-        running_id = str(len(self.RUNNING_TASKS[task['id']]['running_tasks']))
+        running_id: str = str(len(self.RUNNING_TASKS[task['id']]['running_tasks']))
         await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Running ID Assigned: {running_id} : {task['id']}', task)
 
 
@@ -80,6 +89,11 @@ class CyclicTasks(Firestore, Logger):
 
 
     async def starter_task(self) -> None:
+        """
+        This task will get all the active task from the database and starts them.\n
+        It will also add a dummy task to the queue to keep the queue running.
+        It will be listening for new tasks to be added to the queue and start them asynchronusly.
+        """
         global start_tasks_queue
         await self.LOG_EVENT(f'CyclicTasks/starter_task/{currentframe().f_lineno}', 'CyclicTasks', 'Starter Task Started', None)
 
@@ -95,7 +109,7 @@ class CyclicTasks(Firestore, Logger):
 
 
         while True:
-            task: dict = await start_tasks_queue.get()
+            task = await start_tasks_queue.get()
 
             await self.LOG_EVENT(f'CyclicTasks/starter_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Dequeued for starting: {task["id"]}', task)
 
@@ -103,8 +117,11 @@ class CyclicTasks(Firestore, Logger):
 
 
     async def stop_task(self, task: dict) -> None:
+        """
+        Stops running tasks.
+        """
         try:
-            current_task_running_id = self.RUNNING_TASKS[task['id']]['current_running_task']
+            current_task_running_id: str | None = self.RUNNING_TASKS[task['id']]['current_running_task']
 
             if current_task_running_id is None:
                 await self.LOG_EVENT(f'CyclicTasks/stop_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task already stopped: {task['id']}', task)
@@ -122,11 +139,14 @@ class CyclicTasks(Firestore, Logger):
 
         
     async def stopper_task(self) -> None:
+        """
+        This task will keep listening for tasks to be stopped in the stop_task_queueand stops them.
+        """
         global stop_task_queue
         await self.LOG_EVENT(f'CyclicTasks/stopper_task/{currentframe().f_lineno}', 'CyclicTasks', 'Stopper Task Started', None)
 
         while True:
-            task: dict = await stop_task_queue.get()
+            task = await stop_task_queue.get()
             await self.LOG_EVENT(f'CyclicTasks/stopper_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Dequeued stopping: {task["id"]}', task)
             
             if task['id'] not in self.RUNNING_TASKS:
@@ -136,12 +156,17 @@ class CyclicTasks(Firestore, Logger):
             asyncio_create_task(self.stop_task(task))
 
     async def run(self) -> None:
+        """
+        Starts the CyclicTasks Engine.
+        It starts both the starter_task and stopper_task asynchronusly.
+        Call this function to start the engine.
+        """
 
-        STARTER_TASK = asyncio_create_task(self.starter_task())
-        STOPPER_TASK = asyncio_create_task(self.stopper_task())
+        STARTER_TASK: Task = asyncio_create_task(self.starter_task())
+        STOPPER_TASK: Task = asyncio_create_task(self.stopper_task())
         await self.LOG_EVENT(f'CyclicTasks/run/{currentframe().f_lineno}', 'CyclicTasks', 'CyclicTasks Engine Started', None)
 
         await gather(STARTER_TASK, STOPPER_TASK)
 
 
-__all__ = ['CyclicTasks']
+__all__ = ['CyclicTasks'] # Exports 

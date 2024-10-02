@@ -1,6 +1,9 @@
 
 
 def validate_incoming_task(task: dict) -> bool:
+    """
+    Validates the incoming task data.
+    """
 
     if not isinstance(task['id'], str):
         return False

@@ -26,6 +26,9 @@ class Logger(Discord):
         
 
     async def REQUESTS(self, request: LocalProxy) -> None:
+        """
+        This function logs any incoming request to the API.
+        """
         request_headers: dict = request.headers
 
         try:
@@ -37,7 +40,7 @@ class Logger(Discord):
         request_path: str = request.path
         request_url: str = request.url
         request_ip: str = request.remote_addr
-        request_size = str((request.content_length if request.content_length else 0) + sum([len(key) + len(value) for key, value in request_headers.items()]))
+        request_size: str = str((request.content_length if request.content_length else 0) + sum([len(key) + len(value) for key, value in request_headers.items()]))
         
         if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True':
 
@@ -58,7 +61,7 @@ class Logger(Discord):
             })
         
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            log_data = {
+            log_data: dict = {
                 'title': 'New Request Recieved',
                 'description': f'TIME_STAMP: {get_ist_time()}',
                 'fields': [
@@ -71,16 +74,19 @@ class Logger(Discord):
                 ],
                 'color': 0xffffff
             }
-            discord_embed_data = {
+            discord_embed_data: dict = {
                 'embeds': [
                     log_data
                 ]
             }
-            await self.send_webhook(self.dev_logs_request_url, discord_embed_data)
+            await self.send_to_webhook(self.dev_logs_request_url, discord_embed_data)
 
 
     async def LOG_ERROR(self, location: str, error: Exception, task: dict | None = None, error_not_exception: bool = False) -> None:
-        error_data = {
+        """
+        This function logs any error that occurs in the application.
+        """
+        error_data: dict = {
             'location': location,
             'error': str(error),
             'traceback': format_exc(),
@@ -90,14 +96,14 @@ class Logger(Discord):
 
             if location.startswith('CyclicTasks'):
                 if task:
-                    labels = {
+                    labels: dict = {
                         'task_id': task['id'],
                         'task_name': task['task_name'],
                         'user_email': task['user_email'],
                         'url': task['url'],
                     }
                 else:
-                    labels = {
+                    labels: dict = {
                         'task': 'Not a task related error'
                     }
                 labels['log_type'] = 'error'
@@ -114,14 +120,14 @@ class Logger(Discord):
                     })
             else:
                 if task:
-                    labels = {
+                    labels: dict = {
                         'task_id': task['id'],
                         'task_name': task['task_name'],
                         'user_email': task['user_email'],
                         'url': task['url'],
                     }
                 else:
-                    labels = {
+                    labels: dict = {
                         "end_point": '/' + '/'.join(location.split('/')[1:]).rstrip('/'),
                         'task': 'Not a task related error'
                     }
@@ -145,7 +151,7 @@ class Logger(Discord):
 
 
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            data = {
+            data: dict = {
                 'embeds': [
                     {
                         'title': 'Error Occured',
@@ -161,10 +167,13 @@ class Logger(Discord):
                 ]
             }
 
-            await self.send_webhook(self.dev_logs_error_url, data)
+            await self.send_to_webhook(self.dev_logs_error_url, data)
 
 
     async def ALERT(self, location: str, message: str, request: LocalProxy) -> None:
+        """
+        This function logs any critical events that occurs in the application.
+        """
 
         if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True':
 
@@ -197,7 +206,7 @@ class Logger(Discord):
 
 
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            data = {
+            data: dict = {
                 'embeds': [
                     {
                         'title': 'Alert',
@@ -210,9 +219,12 @@ class Logger(Discord):
                 ]
             }
 
-            await self.send_webhook(self.dev_logs_event_url, data)
+            await self.send_to_webhook(self.dev_logs_event_url, data)
     
     async def LOG_EVENT(self, location: str, For: str, message: str, task: dict | None) -> None:
+        """
+        This function logs every event that occurs in the application.
+        """
 
         if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True':
 
@@ -250,7 +262,7 @@ class Logger(Discord):
 
 
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            data = {
+            data: dict = {
                 'embeds': [
                     {
                         'title': 'Event',
@@ -265,7 +277,7 @@ class Logger(Discord):
                 ]
             }
 
-            await self.send_webhook(self.dev_logs_event_url, data)
+            await self.send_to_webhook(self.dev_logs_event_url, data)
 
 
 __all__ = ['Logger']

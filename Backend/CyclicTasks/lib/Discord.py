@@ -8,6 +8,9 @@ class Discord:
         self.dev_vitals_webhook_url = environ['DISCORD_WEBHOOK_URL_DEV_VITALS']
 
     async def send_start_task_acknowledgement(self, task: dict, success: bool=True) -> None:
+        """
+        Sends a embed to the discord channel that the task has been started.
+        """
         embed: dict = {}
         data: dict = {
             'embeds': []
@@ -31,16 +34,19 @@ class Discord:
 
         data['embeds'].append(embed)
 
-        await self.send_webhook(task['discord_webhook_url'], data)
+        await self.send_to_webhook(task['discord_webhook_url'], data)
 
         if task['notify_admin']:
-            await self.send_webhook(self.dev_webhook_url, data)
+            await self.send_to_webhook(self.dev_webhook_url, data)
 
         await self.LOG_EVENT(f'Discord/send_start_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Start Task Acknowledgement sent in discord', task)
 
 
     async def send_stop_task_acknowledgement(self, task: dict) -> None:
-        data = {
+        """
+        Sends a embed to the discord channel that the task has been stopped.
+        """
+        data: dict = {
             'embeds' : [
                 {
                     'title': f'Task Stopped: {task["task_name"]}',
@@ -50,16 +56,19 @@ class Discord:
             ]
         }
 
-        await self.send_webhook(task['discord_webhook_url'], data)
+        await self.send_to_webhook(task['discord_webhook_url'], data)
 
         if task['notify_admin']:
-            await self.send_webhook(self.dev_webhook_url, data)
+            await self.send_to_webhook(self.dev_webhook_url, data)
 
         await self.LOG_EVENT(f'Discord/send_stop_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Stop Task Acknowledgement sent in discord', task)
 
 
 
     async def send_vitals(self, url: str, task_name: str, color: int=0xff0000, success: bool=True, notify_admin: bool=False) -> None:
+        """
+        Send an acknowledgement to the discord channel that the pulse has been sent.
+        """
 
         data: dict = {
             'embeds': [
@@ -71,12 +80,15 @@ class Discord:
             ]
         }
 
-        await self.send_webhook(url, data)
+        await self.send_to_webhook(url, data)
 
         if notify_admin:
-            await self.send_webhook(self.dev_vitals_webhook_url, data)
+            await self.send_to_webhook(self.dev_vitals_webhook_url, data)
 
-    async def send_webhook(self, url: str, data: dict):
+    async def send_to_webhook(self, url: str, data: dict):
+        """
+        This functiomn sends the embed to the discord webhook.
+        """
         if url == '':
             return
 
@@ -91,7 +103,7 @@ class Discord:
                 json=data
             )
         except Exception as e:
-            await self.LOG_ERROR(f'Discord/send_webhook/{currentframe().f_lineno}', e, None)
+            await self.LOG_ERROR(f'Discord/send_to_webhook/{currentframe().f_lineno}', e, None)
 
 
 

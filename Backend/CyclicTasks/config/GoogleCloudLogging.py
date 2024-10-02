@@ -4,7 +4,7 @@ from logging import getLogger, INFO
 
 from os import environ
 
-google_cloud_logger_json = {
+google_cloud_logger_json: dict = {
     "type": environ['GOOGLE_CLOUD_TYPE'],
     "project_id": environ['GOOGLE_CLOUD_PROJECT_ID'],
     "private_key_id":   environ['GOOGLE_CLOUD_PRIVATE_KEY_ID'],
@@ -18,15 +18,20 @@ google_cloud_logger_json = {
     "universe_domain": "googleapis.com"
 }
 
-client = Client.from_service_account_info(google_cloud_logger_json)
+client = Client.from_service_account_info(google_cloud_logger_json) # Creates a client using the credentials for logging
 
+
+# Create a CloudLoggingHandler for the flask_app and CyclicTasks to be attached to the respective loggers
 flask_app_logging_handler = CloudLoggingHandler(client, name='flask_app', async_=True, buffer_size=10, flush_interval=2)
 CyclicTasks_logging_handler = CloudLoggingHandler(client, name='cyclic_tasks', async_=True, buffer_size=10, flush_interval=2)
 
+
+# Initializing the Flask_app logger
 flask_app_logger = getLogger('flask_app')
 flask_app_logger.addHandler(flask_app_logging_handler)
 flask_app_logger.setLevel(INFO)
 
+# Initializing the CyclicTasks logger
 cyclic_tasks_logger = getLogger('cyclic_tasks')
 cyclic_tasks_logger.addHandler(CyclicTasks_logging_handler)
 cyclic_tasks_logger.setLevel(INFO)

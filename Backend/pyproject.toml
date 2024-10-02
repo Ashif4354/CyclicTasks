@@ -15,6 +15,7 @@ flask = {extras = ["async"], version = "^3.0.3"}
 flask-cors = "^5.0.0"
 google-cloud-logging = "^3.11.2"
 gunicorn = "^23.0.0"
+flask-restful = "^0.3.10"
 
 [tool.poetry.group.dev.dependencies]
 python-dotenv = "^1.0.1"
