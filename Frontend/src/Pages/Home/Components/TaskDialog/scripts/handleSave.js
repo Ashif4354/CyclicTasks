@@ -149,7 +149,6 @@ const validate = (
         setIntervalError(true);
         setIntervalHelperText('Interval should be a number');
         validData = false;
-        console.log(validData);
     } else if (parseInt(interval) < 60) {
         setIntervalError(true);
         setIntervalHelperText('Interval should be atleast 60 seconds');

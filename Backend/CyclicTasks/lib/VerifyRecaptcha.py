@@ -1,9 +1,12 @@
 from aiohttp import ClientSession
 
 async def verify_recaptcha(session: ClientSession, token: str, api_key: str) -> bool:
-    url = "https://www.google.com/recaptcha/api/siteverify"
+    """
+    Verify the recaptcha token using the given api_key.
+    """
+    url: str = "https://www.google.com/recaptcha/api/siteverify"
 
-    data = {
+    data: dict = {
         'secret': api_key,
         'response': token
     }

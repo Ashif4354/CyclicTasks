@@ -6,7 +6,7 @@ CyclicTasks is a powerful tool designed to keep your backend apps alive 24/7 whe
 
 ---
 Check out [How To Run](./How-to-run.md) for more information on how to run this project.  
-Its open-source and free to use. Iam open to contributions and suggestions.
+Its open-source and free to use. I AM OPEN TO CONTRIBUTIONS AND SUGGESTIONS.
 
 ## Features
 
@@ -23,3 +23,6 @@ Its open-source and free to use. Iam open to contributions and suggestions.
 If you’re using free hosting services that put your backend to sleep after periods of inactivity, CyclicTasks is the solution. It regularly pings your backend services to prevent them from going offline, ensuring seamless performance for your users.
 
 ---
+
+
+###### [Credits](./Credits.md)

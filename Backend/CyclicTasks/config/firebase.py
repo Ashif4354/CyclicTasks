@@ -6,7 +6,7 @@ from firebase_admin import credentials
 
 class FirebaseConfig:
     def __init__(self):
-        self.firebaseConfig = {
+        self.firebaseConfig: dict = {
             "type": environ['FIREBASE_TYPE'],
             "project_id": environ['FIREBASE_PROJECT_ID'],
             "private_key_id":   environ['FIREBASE_PRIVATE_KEY_ID'],
@@ -22,5 +22,8 @@ class FirebaseConfig:
         
 
     def initialize_firebase(self):
+        """
+        Initialize the firebase admin SDK with the provided credentials
+        """
         cred = credentials.Certificate(self.firebaseConfig)
         firebase_admin.initialize_app(cred)

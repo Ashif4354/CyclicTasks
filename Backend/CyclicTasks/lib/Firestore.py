@@ -11,13 +11,18 @@ class Firestore(FirebaseConfig):
         
         if not initialized:
             self.initialize_firebase()
+
         self.db = firestore.client()
 
         self.tasks_collection = self.db.collection('Tasks')
         self.users_collection = self.db.collection('Users')
 
     async def get_all_tasks(self) -> list[dict]:
-        self.fetched_tasks = []
+        """
+        Fetches all the tasks from the Firestore database
+        Returns only the active tasks
+        """
+        self.fetched_tasks: list = []
         
         for task in self.tasks_collection.stream():
 
@@ -39,6 +44,9 @@ class Firestore(FirebaseConfig):
         return self.fetched_tasks
     
     async def add_new_task(self, task: dict) -> str:
+        """
+        This function is used to add a new task to the Firestore database mapping to its respective user.
+        """
         
         while True:
             random_id = ''.join(choices(ascii_letters + digits, k=20))
@@ -47,7 +55,7 @@ class Firestore(FirebaseConfig):
             if not taskDoc.exists:
                 break
 
-        user_email = task['user_email']
+        user_email: str = task['user_email']
         del task['id']
 
         self.tasks_collection.document(random_id).set(task)
@@ -69,6 +77,9 @@ class Firestore(FirebaseConfig):
         return random_id
 
     async def delete_task(self, task_id: str, user_email: str) -> None:
+        """
+        This function is used to delete a task from the Firestore database.
+        """
         self.tasks_collection.document(task_id).delete()
 
         userDocRef = self.users_collection.document(user_email)
@@ -80,6 +91,9 @@ class Firestore(FirebaseConfig):
             })
 
     async def edit_task(self, task: dict) -> None:
+        """
+        This function is used to edit a task in the Firestore database.
+        """
         taskRef = self.tasks_collection.document(task['id'])
         del task['id']
         

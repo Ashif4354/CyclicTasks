@@ -26,6 +26,9 @@ class Logger(Discord):
         
 
     async def REQUESTS(self, request: LocalProxy) -> None:
+        """
+        This function logs any incoming request to the API.
+        """
         request_headers: dict = request.headers
 
         try:
@@ -37,26 +40,28 @@ class Logger(Discord):
         request_path: str = request.path
         request_url: str = request.url
         request_ip: str = request.remote_addr
-        request_size = str((request.content_length if request.content_length else 0) + sum([len(key) + len(value) for key, value in request_headers.items()]))
+        request_size: str = str((request.content_length if request.content_length else 0) + sum([len(key) + len(value) for key, value in request_headers.items()]))
         
-        self.flask_app_logger.info('New Request recieved', extra={
-            'json_fields' : {
-                'remote_ip': request_ip,
-                'request_method': request_method,
-                'request_path': request_path,
-                'request_url': request_url,
-                'request_size': request_size,
-                'request_headers': {key: value for key, value in request_headers.items()},
-                'request_body': request_body
-            },
-            'labels': {
-                'remote_ip': request_ip,
-                'log_type': 'request',
-            }
-        })
+        if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True':
+
+            self.flask_app_logger.info('New Request recieved', extra={
+                'json_fields' : {
+                    'remote_ip': request_ip,
+                    'request_method': request_method,
+                    'request_path': request_path,
+                    'request_url': request_url,
+                    'request_size': request_size,
+                    'request_headers': {key: value for key, value in request_headers.items()},
+                    'request_body': request_body
+                },
+                'labels': {
+                    'remote_ip': request_ip,
+                    'log_type': 'request',
+                }
+            })
         
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            log_data = {
+            log_data: dict = {
                 'title': 'New Request Recieved',
                 'description': f'TIME_STAMP: {get_ist_time()}',
                 'fields': [
@@ -69,71 +74,76 @@ class Logger(Discord):
                 ],
                 'color': 0xffffff
             }
-            discord_embed_data = {
+            discord_embed_data: dict = {
                 'embeds': [
                     log_data
                 ]
             }
-            await self.send_webhook(self.dev_logs_request_url, discord_embed_data)
+            await self.send_to_webhook(self.dev_logs_request_url, discord_embed_data)
 
 
     async def LOG_ERROR(self, location: str, error: Exception, task: dict | None = None, error_not_exception: bool = False) -> None:
-        error_data = {
+        """
+        This function logs any error that occurs in the application.
+        """
+        error_data: dict = {
             'location': location,
             'error': str(error),
             'traceback': format_exc(),
-        }                        
+        }  
 
-        if location.startswith('CyclicTasks'):
-            if task:
-                labels = {
-                    'task_id': task['id'],
-                    'task_name': task['task_name'],
-                    'user_email': task['user_email'],
-                    'url': task['url'],
-                }
-            else:
-                labels = {
-                    'task': 'Not a task related error'
-                }
-            labels['log_type'] = 'error'
-            
-            if error_not_exception:
-                self.cyclic_tasks_logger.error('CyclicTasks Error', extra={
-                    'json_fields': error_data,
-                    'labels': labels
-                })
-            else:
-                self.cyclic_tasks_logger.exception('CyclicTasks Exception', extra={
-                    'json_fields': error_data,
-                    'labels': labels
-                })
-        else:
-            if task:
-                labels = {
-                    'task_id': task['id'],
-                    'task_name': task['task_name'],
-                    'user_email': task['user_email'],
-                    'url': task['url'],
-                }
-            else:
-                labels = {
-                    "end_point": '/' + '/'.join(location.split('/')[1:]).rstrip('/'),
-                    'task': 'Not a task related error'
-                }
-            
-            labels['log_type'] = 'error'
+        if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True':                      
 
-            if error_not_exception:
-                self.flask_app_logger.error('FlaskApp Error', extra={
-                    'json_fields': error_data,
-                    'labels': labels
-                })
+            if location.startswith('CyclicTasks'):
+                if task:
+                    labels: dict = {
+                        'task_id': task['id'],
+                        'task_name': task['task_name'],
+                        'user_email': task['user_email'],
+                        'url': task['url'],
+                    }
+                else:
+                    labels: dict = {
+                        'task': 'Not a task related error'
+                    }
+                labels['log_type'] = 'error'
+                
+                if error_not_exception:
+                    self.cyclic_tasks_logger.error('CyclicTasks Error', extra={
+                        'json_fields': error_data,
+                        'labels': labels
+                    })
+                else:
+                    self.cyclic_tasks_logger.exception('CyclicTasks Exception', extra={
+                        'json_fields': error_data,
+                        'labels': labels
+                    })
             else:
-                self.flask_app_logger.exception('FlaskApp Exception', extra={
-                    'json_fields': error_data,
-                    'labels': labels
-                })
+                if task:
+                    labels: dict = {
+                        'task_id': task['id'],
+                        'task_name': task['task_name'],
+                        'user_email': task['user_email'],
+                        'url': task['url'],
+                    }
+                else:
+                    labels: dict = {
+                        "end_point": '/' + '/'.join(location.split('/')[1:]).rstrip('/'),
+                        'task': 'Not a task related error'
+                    }
+                
+                labels['log_type'] = 'error'
+
+                if error_not_exception:
+                    self.flask_app_logger.error('FlaskApp Error', extra={
+                        'json_fields': error_data,
+                        'labels': labels
+                    })
+                else:
+                    self.flask_app_logger.exception('FlaskApp Exception', extra={
+                        'json_fields': error_data,
+                        'labels': labels
+                    })
 
         if environ['ENABLE_TERMINAL_LOGS'] == 'True':
             for key in error_data:
@@ -141,7 +151,7 @@ class Logger(Discord):
 
 
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            data = {
+            data: dict = {
                 'embeds': [
                     {
                         'title': 'Error Occured',
@@ -157,41 +167,46 @@ class Logger(Discord):
                 ]
             }
 
-            await self.send_webhook(self.dev_logs_error_url, data)
+            await self.send_to_webhook(self.dev_logs_error_url, data)
 
 
     async def ALERT(self, location: str, message: str, request: LocalProxy) -> None:
+        """
+        This function logs any critical events that occurs in the application.
+        """
 
-        if location.startswith('CyclicTasks'):
-            self.cyclic_tasks_logger.critical('CyclicTasks Alert', extra={
-                'json_fields': {
-                    'info': message,
-                    'location': location
-                },
-                'labels': {
-                    'log_type': 'alert'
-                }
-            })
+        if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True':
 
-        else:
-            self.flask_app_logger.critical('FlaskApp Alert', extra={
-                'json_fields': {
-                    'info': message,
-                    'location': location,
-                    'remote_ip': request.remote_addr
-                },
-                'labels': {
-                    'log_type': 'alert',
-                    'remote_ip': request.remote_addr
-                }
-            })
+            if location.startswith('CyclicTasks'):
+                self.cyclic_tasks_logger.critical('CyclicTasks Alert', extra={
+                    'json_fields': {
+                        'info': message,
+                        'location': location
+                    },
+                    'labels': {
+                        'log_type': 'alert'
+                    }
+                })
+
+            else:
+                self.flask_app_logger.critical('FlaskApp Alert', extra={
+                    'json_fields': {
+                        'info': message,
+                        'location': location,
+                        'remote_ip': request.remote_addr
+                    },
+                    'labels': {
+                        'log_type': 'alert',
+                        'remote_ip': request.remote_addr
+                    }
+                })
 
         if environ['ENABLE_TERMINAL_LOGS'] == 'True':
             print(f'ALERT: {message}')
 
 
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            data = {
+            data: dict = {
                 'embeds': [
                     {
                         'title': 'Alert',
@@ -204,45 +219,50 @@ class Logger(Discord):
                 ]
             }
 
-            await self.send_webhook(self.dev_logs_event_url, data)
+            await self.send_to_webhook(self.dev_logs_event_url, data)
     
     async def LOG_EVENT(self, location: str, For: str, message: str, task: dict | None) -> None:
+        """
+        This function logs every event that occurs in the application.
+        """
 
-        data: dict = {
-            'location': location,
-            'message': message,
-        }
+        if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True':
 
-        labels: dict = {
-            'log_type': 'event'
-        }
+            data: dict = {
+                'location': location,
+                'message': message,
+            }
 
-        if task:
-            labels['task_id'] = task['id']
-            labels['task_name'] = task['task_name']
-            labels['user_email'] = task['user_email']
-            labels['url'] = task['url']
-        else:
-            labels['task'] = 'Not a task related event'
+            labels: dict = {
+                'log_type': 'event'
+            }
 
-        if For == 'FlaskApp':
-            self.flask_app_logger.info(message, extra={
-                'json_fields': data,
-                'labels': labels
-            })
+            if task:
+                labels['task_id'] = task['id']
+                labels['task_name'] = task['task_name']
+                labels['user_email'] = task['user_email']
+                labels['url'] = task['url']
+            else:
+                labels['task'] = 'Not a task related event'
 
-        elif For == 'CyclicTasks':
-            self.cyclic_tasks_logger.info(message, extra={
-                'json_fields': data,
-                'labels': labels
-            })
+            if For == 'FlaskApp':
+                self.flask_app_logger.info(message, extra={
+                    'json_fields': data,
+                    'labels': labels
+                })
+
+            elif For == 'CyclicTasks':
+                self.cyclic_tasks_logger.info(message, extra={
+                    'json_fields': data,
+                    'labels': labels
+                })
 
         if environ['ENABLE_TERMINAL_LOGS'] == 'True':
             print(f'EVENT: {message}')
 
 
         if environ['ENABLE_DISCORD_LOGS'] == 'True':
-            data = {
+            data: dict = {
                 'embeds': [
                     {
                         'title': 'Event',
@@ -257,7 +277,7 @@ class Logger(Discord):
                 ]
             }
 
-            await self.send_webhook(self.dev_logs_event_url, data)
+            await self.send_to_webhook(self.dev_logs_event_url, data)
 
 
 __all__ = ['Logger']

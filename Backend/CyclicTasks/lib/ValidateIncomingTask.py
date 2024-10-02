@@ -1,6 +1,9 @@
 
 
 def validate_incoming_task(task: dict) -> bool:
+    """
+    Validates the incoming task data.
+    """
 
     if not isinstance(task['id'], str):
         return False
@@ -36,7 +39,7 @@ def validate_incoming_task(task: dict) -> bool:
         return False
     
     for char in task['discord_webhook_color']:
-        if char not in '0123456789abcdef':
+        if char not in '0123456789abcdefABCDEF':
             return False
     
     if not isinstance(task['user_name'], str):
