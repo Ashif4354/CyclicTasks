@@ -108,7 +108,7 @@ const Home = () => {
                                             <div className='no-task-container'>
                                                 {
                                                     noTask ? (
-                                                        <h4>You dont have any tasks yet, Add a task to proceed</h4>
+                                                        <h4>You don't have any tasks yet, Add a task to proceed</h4>
                                                     ) : (
                                                         <>
                                                             <Skeleton
@@ -152,7 +152,7 @@ const Home = () => {
             <Footer />
             <TaskDialog
                 open={dialogOpen} setOpen={setDialogOpen} type={'Add'}
-                task={null} settask={null} tasks={tasks} setTasks={setTasks}                
+                task={null} setTask={null} tasks={tasks} setTasks={setTasks}                
                 setSuccessAddSnackBarOpen={setSuccessAddSnackBarOpen}
                 setFailedAddSnackBarOpen={setFailedAddSnackBarOpen}
             />

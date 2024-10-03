@@ -15,14 +15,14 @@ const DeleteTaskDialog = (props) => {
     const [currentTask, setCurrentTask] = useState(task);
     const [loadingOpen, setLoadingOpen] = useState(false);
     const [deleteBtnDisabled, setDeleteBtnDisabled] = useState(false);
-    const [serverErrorMessage, setServerErrorMesssage] = useState('');
+    const [serverErrorMessage, setServerErrorMessage] = useState('');
 
     const recaptchaRef = useRef();
 
     const onDelete = async () => {
         setDeleteBtnDisabled(true);
         setLoadingOpen(true);
-        setServerErrorMesssage('');
+        setServerErrorMessage('');
 
         const recaptchaToken = await recaptchaRef.current.executeAsync();
 
@@ -49,7 +49,7 @@ const DeleteTaskDialog = (props) => {
                 } else {
                     logEvent(analytics, 'failed-delete-task')
                     setFailedDeleteSnackBarOpen(true);
-                    setServerErrorMesssage("*" + response.message);
+                    setServerErrorMessage("*" + response.message);
                 }
 
                 setLoadingOpen(false);
@@ -61,7 +61,7 @@ const DeleteTaskDialog = (props) => {
                 setLoadingOpen(false);
                 setDeleteBtnDisabled(false);
                 setFailedDeleteSnackBarOpen(true);
-                setServerErrorMesssage("*An error occurred. Please try again later.");
+                setServerErrorMessage("*An error occurred. Please try again later.");
             });
 
         recaptchaRef.current.reset();
@@ -73,7 +73,7 @@ const DeleteTaskDialog = (props) => {
         setOpen(false);
         setLoadingOpen(false);
         setDeleteBtnDisabled(false);
-        setServerErrorMesssage('');
+        setServerErrorMessage('');
     }
 
     return (

@@ -36,7 +36,12 @@ async def before_request() -> Response | None:
                 verified = await verify_recaptcha(session, recaptcha_token, environ['G_RECAPTCHA_SECRET_KEY'])
 
                 if not verified:
-                    await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'Recaptcha verification failed', request)
+                    await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                        'Recaptcha verification failed', 
+                                        request,
+                                        labels={
+                                            'alert_type': 'Recaptcha Verification Failed'
+                                        })
 
                     return jsonify({
                         'message': 'Recaptcha verification failed',
@@ -45,7 +50,12 @@ async def before_request() -> Response | None:
                 
                 await logger.LOG_EVENT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'FlaskApp', 'Recaptcha verification success', None)
             else:
-                await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'Recaptcha token not found', request)
+                await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                    'Recaptcha token not found', 
+                                    request,
+                                    labels={
+                                        'alert_type': 'Recaptcha Token Not Found'
+                                    })
 
                 return jsonify({
                     'message': 'Recaptcha token not found',
@@ -53,7 +63,12 @@ async def before_request() -> Response | None:
                 })
             if request.path in ('/newtask', '/updatetask', '/deletetask'):
                 if 'task' not in request.json:
-                    await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'Task data not found', request)
+                    await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                        'Task data not found', 
+                                        request,
+                                        labels={
+                                           'alert_type': 'Task Data Not Found'
+                                        })
                     return jsonify({
                         'message': 'Task data not found',
                         'success': False
@@ -63,7 +78,12 @@ async def before_request() -> Response | None:
                       not validate_incoming_task(request.json['task'])
                       ):
                     
-                    await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'Task data is not valid JSON', request)
+                    await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                        'Task data is not valid JSON', 
+                                        request,
+                                        labels={
+                                           'alert_type': 'Task Data Not Valid JSON'
+                                        })
 
                     return jsonify({
                         'message': 'Task data is not valid JSON',
@@ -82,37 +102,42 @@ async def get_running_tasks():
     """
     async with ClientSession() as session:
         logger = Logger(session)
+
         try:
             if request.args.get('pwd') != environ['ADMIN_PWD']:
 
                 await logger.ALERT(f'FlaskApp/GetRunningTasks/{currentframe().f_lineno}', 
                                     f'Someone tried to access running_tasks without authorization\nUsed Password: {request.args.get('pwd')}',
-                                    request)
-                return {
+                                    request,
+                                    labels={
+                                        'alert_type': 'Wrong Password'                                        
+                                    })
+
+                return jsonify({
                     'message': 'Unauthorized',
                     'success': False
-                }
+                })
             tasks = CyclicTasks.RUNNING_TASKS
-            return {
+            return jsonify({
                 'tasks': tasks
-            }
+            })
         except Exception as e:
             await logger.ALERT(f'FlaskApp/GetRunningTasks/{currentframe().f_lineno}', 
                                 f'Error: {e}', 
                                 request)
-            return {
+            return jsonify({
                 'message': 'Internal Server Error',
                 'success': False
-            }
+            })
 
-@app.route('getversion', methods=['GET'])
+@app.route('/getversion', methods=['GET'])
 async def get_version():
     """
     This endpoint will return the version of the API.
     """
-    return {
+    return jsonify({
         'version': '1.0'
-    }
+    })
 
 @app.route('/newtask', methods=['POST'])
 async def new_task():
@@ -144,7 +169,7 @@ async def new_task():
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/new_task/line {currentframe().f_lineno}', e, task)
             return jsonify({
-                'message': 'Some error occured on server side',
+                'message': 'Some error occurred on server side',
                 'success': False
             })
         
@@ -184,7 +209,7 @@ async def update_task():
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/update_task/line {currentframe().f_lineno}', e, task)
             return jsonify({
-                'message': 'Some error occured on server side',
+                'message': 'Some error occurred on server side',
                 'success': False
             })
 
@@ -216,7 +241,7 @@ async def delete_task():
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/delete_task/line {currentframe().f_lineno}', e, task)
             return jsonify({
-                'message': 'Some error occured on server side',
+                'message': 'Some error occurred on server side',
                 'success': False
             })
 
