@@ -1,0 +1,5 @@
+.console-container {
+    display: flex;
+    height: 92vh;
+    width: 100%;
+}

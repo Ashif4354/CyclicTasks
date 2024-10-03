@@ -4,7 +4,9 @@
 
 .dialog-btns {
     display:flex;
+    font-size: 1rem;
     justify-content: center;
+    background-color: #1a1a1a;
     align-items: center;
     border: none;
     border-radius: 20px;
@@ -12,6 +14,7 @@
     height: 35.55px;
     font-family: 'Vicasso';
     padding: 0px;
+    cursor: pointer;
 }
 
 .dialog-btns:hover {
