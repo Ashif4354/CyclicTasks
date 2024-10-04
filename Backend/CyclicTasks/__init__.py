@@ -5,6 +5,8 @@ except:
     pass
 
 from os import environ
+from random import choices
+from string import ascii_letters, digits
 from asyncio import Queue
 
 from .config.GoogleCloudLogging import *   # Initialize Google Cloud Logging
@@ -24,6 +26,8 @@ dummy_task = {
     'user_email': 'dummy_user@gmail.com',
     'url': environ['CT_SITE_URL']
 }
+
+environ['host_token'] = ''.join(choices(ascii_letters + digits, k=50))
 
 __all__ = [
     'start_tasks_queue',
