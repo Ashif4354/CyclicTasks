@@ -25,8 +25,9 @@ const DeleteTaskDialog = (props) => {
         setServerErrorMessage('');
 
         const recaptchaToken = await recaptchaRef.current.executeAsync();
+        recaptchaRef.current.reset();
 
-        fetch(import.meta.env.VITE_CT_SERVER_URL + '/deletetask', {
+        fetch(import.meta.env.VITE_CT_SERVER_URL + '/tasks/deletetask', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -64,7 +65,7 @@ const DeleteTaskDialog = (props) => {
                 setServerErrorMessage("*An error occurred. Please try again later.");
             });
 
-        recaptchaRef.current.reset();
+        
     }
 
     const handleCancelClose = () => {

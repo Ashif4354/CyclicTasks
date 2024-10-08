@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import './EachTask.css';
 import { TaskDialog } from '../TaskDialog/TaskDialog';
 import { DeleteTaskDialog } from '../DeleteTaskDialog/DeleteTaskDialog';
-import SnackBar from '../SnackBar/Snackbar';
+import SnackBar from '../../../../Components/SnackBar/Snackbar';
 
 import { analytics } from '../../../../config/firebase';
 import { logEvent } from 'firebase/analytics';

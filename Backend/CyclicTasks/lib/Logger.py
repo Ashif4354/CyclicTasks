@@ -46,11 +46,12 @@ class Logger(Discord):
             labels_: dict = {
                 'remote_ip': request_ip,
                 'log_type': 'request',
-                'host': environ['CT_SERVER_URL']
+                'host': environ['CT_SERVER_URL'],
+                'path': request_path
             }
             labels_.update(labels)
 
-            self.flask_app_logger.info('New Request received', extra={
+            self.flask_app_logger.info(f'New Request received:  {request_path}', extra={
                 'json_fields' : {
                     'remote_ip': request_ip,
                     'request_method': request_method,
@@ -73,7 +74,7 @@ class Logger(Discord):
                     {'name': 'Path', 'value': request_path},
                     {'name': 'URL', 'value': request_url},
                     {'name': 'Headers', 'value': '\n'.join([f'{key}: {value}' for key, value in request_headers.items()])},
-                    {'name': 'Body', 'value': '\n'.join([f'{key}: {request_body[key]}' for key, value in request_body])}
+                    {'name': 'Body', 'value': '\n'.join([f'{key}: {request_body[key]}' for key in request_body])}
                 ],
                 'color': 0xffffff
             }
@@ -230,7 +231,7 @@ class Logger(Discord):
 
             await self.send_to_webhook(self.dev_logs_event_url, data)
     
-    async def LOG_EVENT(self, location: str, For: str, message: str, task: dict | None, labels: dict = {}) -> None:
+    async def LOG_EVENT(self, location: str, For: str, message: str, task: dict | None, labels: dict = {}, extra_payload: dict = {}) -> None:
         """
         This function logs every event that occurs in the application.
         """
@@ -241,6 +242,8 @@ class Logger(Discord):
                 'location': location,
                 'message': message,
             }
+
+            data.update(extra_payload)
 
             labels_: dict = {
                 'log_type': 'event',

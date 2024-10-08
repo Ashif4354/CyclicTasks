@@ -1,6 +1,7 @@
 from asyncio import run, new_event_loop, set_event_loop
 from aiohttp import ClientSession
 from threading import Thread
+from asgiref.wsgi import WsgiToAsgi
 
 from CyclicTasks.CyclicTasks import CyclicTasks
 from CyclicTasks.FlaskAPI import app
@@ -26,7 +27,9 @@ def run_main_in_thread() -> None:
     set_event_loop(loop)
     loop.run_until_complete(main())
 
+asgi_app = WsgiToAsgi(app)
 Thread(target=run_main_in_thread).start()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+    # RUN command "hypercorn main:asgi_app --bind "0.0.0.0:5000" --workers 20"

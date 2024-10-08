@@ -1,4 +1,4 @@
-import { signInWithPopup ,signOut } from "firebase/auth";
+import { signInWithPopup, signOut } from "firebase/auth";
 import { auth, provider } from "../config/firebase";
 
 import { analytics } from "../config/firebase";
@@ -12,7 +12,7 @@ const GoogleLogin = async (setUser) => {
             });
 
             const user = result.user;
-            
+
             const loggedInUser = {
                 name: user.displayName,
                 email: user.email,
@@ -22,8 +22,13 @@ const GoogleLogin = async (setUser) => {
             setUser(loggedInUser);
 
             localStorage.setItem('user', JSON.stringify(loggedInUser));
+
+            auth.currentUser.getIdToken(true)
+                .then((idToken) => {
+                    // console.log(idToken);
+                })
         }
-    )
+        )
 }
 
 const logout = (setUser) => {

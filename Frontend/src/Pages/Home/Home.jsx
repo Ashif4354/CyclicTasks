@@ -8,7 +8,7 @@ import './Home.css'
 import EachTask from './Components/EachTask/EachTask';
 import Header from '../../Components/Header/Header';
 import Footer from '../../Components/Footer/Footer';
-import SnackBar from './Components/SnackBar/Snackbar';
+import SnackBar from '../../Components/SnackBar/Snackbar';
 import { getTasks } from './scripts/getTasks';
 import { TaskDialog } from './Components/TaskDialog/TaskDialog';
 

@@ -27,3 +27,6 @@ class FirebaseConfig:
         """
         cred = credentials.Certificate(self.firebaseConfig)
         firebase_admin.initialize_app(cred)
+
+
+__all__ = ['FirebaseConfig']

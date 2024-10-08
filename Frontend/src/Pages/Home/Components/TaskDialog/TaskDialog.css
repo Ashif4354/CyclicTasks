@@ -23,6 +23,7 @@
 
 .dialog-btns:disabled {
     background-color: #2f2f2f;
+    cursor: not-allowed;
 }
 
 .dialog-input-container {

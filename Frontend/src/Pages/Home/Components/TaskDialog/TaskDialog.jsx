@@ -19,7 +19,8 @@ const TaskDialog = (props) => {
 
     const [loadingOpen, setLoadingOpen] = useState(false);
     const [saveBtnDisabled, setSaveBtnDisabled] = useState(true);
-    const [serverErrorMessage, setServerErrorMesssage] = useState('');
+    const [serverErrorMessage, setServerErrorMessage] = useState('');
+    const [formDisabled, setFormDisabled] = useState(false);
 
     const [taskName, setTaskName] = useState('');
     const [url, setUrl] = useState('');
@@ -38,7 +39,7 @@ const TaskDialog = (props) => {
     const [urlHelperText, setUrlHelperText] = useState('');
     const [intervalHelperText, setIntervalHelperText] = useState('Interval in seconds');
     const [discordWebhookUrlHelperText, setDiscordWebhookUrlHelperText] = useState('The discord webhook url to send notifications or updates');
-    const [discordWebhookColorHelperText, setDiscordWebhookColorHelperText] = useState('Hex only, dont include #, DEFAULT: ffffff');
+    const [discordWebhookColorHelperText, setDiscordWebhookColorHelperText] = useState("Hex only, don't include #, DEFAULT: ffffff");
 
     const recaptchaRef = useRef();
 
@@ -99,16 +100,18 @@ const TaskDialog = (props) => {
         setIntervalError(false);
         setDiscordWebhookUrlError(false);
         setDiscordWebhookColorError(false);
+        setFormDisabled(false);
 
         setTaskNameHelperText('');
         setUrlHelperText('');
         setIntervalHelperText('Interval in seconds');
         setDiscordWebhookUrlHelperText('The discord webhook url to send notifications or updates');
-        setDiscordWebhookColorHelperText('Hex only, dont include #, DEFAULT: ffffff');
+        setDiscordWebhookColorHelperText("Hex only, don't include #, DEFAULT: ffffff");
 
         setSaveBtnDisabled(true);
         setLoadingOpen(false);
-        setServerErrorMesssage('');
+        setServerErrorMessage('');
+        recaptchaRef.current.reset();
     }
 
     const handleDataChange = (e, dataName, defaultValue, setFunction) => {
@@ -155,6 +158,7 @@ const TaskDialog = (props) => {
             <DialogContent>
                 <div className='dialog-input-container'>
                     <TextField
+                        disabled={formDisabled}
                         error={taskNameError}
                         required
                         id="outlined-basic"
@@ -171,6 +175,7 @@ const TaskDialog = (props) => {
                         }}
                     />
                     <TextField
+                        disabled={formDisabled}
                         error={urlError}
                         required
                         id="outlined-basic"
@@ -187,6 +192,7 @@ const TaskDialog = (props) => {
                         }}
                     />
                     <TextField
+                        disabled={formDisabled}
                         error={intervalError}
                         required
                         id="outlined-basic"
@@ -205,6 +211,7 @@ const TaskDialog = (props) => {
                     />
 
                     <TextField
+                        disabled={formDisabled}
                         error={discordWebhookUrlError}
                         id="outlined-basic"
                         label="Discord Webhook URL (optional)"
@@ -223,6 +230,7 @@ const TaskDialog = (props) => {
                     />
 
                     <TextField
+                        disabled={formDisabled}
                         error={discordWebhookColorError}
                         id="outlined-basic"
                         label="Discord Webhook Color(optional)"
@@ -230,12 +238,11 @@ const TaskDialog = (props) => {
                         fullWidth={true}
                         value={discordWebhookColor}
                         margin="normal"
-                        // helperText='Hex only, dont include #, DEFAULT: ffffff'
                         helperText={discordWebhookColorHelperText}
                         onChange={(e) => {
                             handleDataChange(e, 'discordWebhookColor', task?.discord_webhook_color, setDiscordWebhookColor);
                             setDiscordWebhookColorError(false);
-                            setDiscordWebhookColorHelperText('Hex only, dont include #, DEFAULT: ffffff');
+                            setDiscordWebhookColorHelperText("Hex only, don't include #, DEFAULT: ffffff");
                         }}
 
                     />
@@ -243,6 +250,7 @@ const TaskDialog = (props) => {
                     <div className='enable-switch-container'>
                         <p className="enable-text">ENABLE</p>
                         <Switch
+                            disabled={formDisabled}
                             checked={active}
                             onChange={(e) => {
                                 // setActive(e.target.checked)
@@ -297,7 +305,8 @@ const TaskDialog = (props) => {
                             setFailedUpdateSnackBarOpen,
                             setSuccessAddSnackBarOpen,
                             setFailedAddSnackBarOpen,
-                            setServerErrorMesssage
+                            setServerErrorMessage,
+                            setFormDisabled,
                         )
                     }}
                 >

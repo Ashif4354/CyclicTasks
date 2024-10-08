@@ -7,25 +7,28 @@ const handleSave = async (type, task, taskName, url, interval,
     setDiscordWebhookColorError, setTaskNameHelperText, setUrlHelperText, setIntervalHelperText,
     setDiscordWebhookUrlHelperText, setDiscordWebhookColorHelperText, recaptchaRef, setLoadingOpen, setSaveBtnDisabled,    
     setSuccessUpdateSnackBarOpen, setFailedUpdateSnackBarOpen, setSuccessAddSnackBarOpen, setFailedAddSnackBarOpen,
-    setServerErrorMesssage
+    setServerErrorMessage, setFormDisabled
 ) => {
     
-    const recaptchaPromise = recaptchaRef.current.executeAsync(); // Returns a promise
-    setServerErrorMesssage('');
-
+    setServerErrorMessage('');
+    
     let validData = validate(
         taskName, url, interval, discordWebhookUrl, discordWebhookColor,
         setTaskNameError, setUrlError, setIntervalError, setDiscordWebhookUrlError,
         setDiscordWebhookColorError, setTaskNameHelperText, setUrlHelperText, setIntervalHelperText,
         setDiscordWebhookUrlHelperText, setDiscordWebhookColorHelperText 
     ); 
-
+    
     if (!validData) {
         setLoadingOpen(false);
         setSaveBtnDisabled(false);
-
+        
         return;
     }
+    
+    const recaptchaToken = await recaptchaRef.current.executeAsync();
+    recaptchaRef.current.reset();
+    setFormDisabled(true);
 
     const user = JSON.parse(localStorage.getItem('user'))
 
@@ -44,10 +47,10 @@ const handleSave = async (type, task, taskName, url, interval,
 
     const body = {
         task: newData,
-        recaptchaToken: await recaptchaPromise
+        recaptchaToken: recaptchaToken
     }
 
-    fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/newtask' : '/updatetask'), {
+    fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/tasks/newtask' : '/tasks/updatetask'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -70,6 +73,7 @@ const handleSave = async (type, task, taskName, url, interval,
                     setSuccessUpdateSnackBarOpen(true);
                 }
                 setOpen(false);
+                setFormDisabled(false);
             } else {
                 if (type == 'Add') {
                     logEvent(analytics, 'failed-add-task')
@@ -78,9 +82,9 @@ const handleSave = async (type, task, taskName, url, interval,
                     logEvent(analytics, 'failed-update-task')
                     setFailedUpdateSnackBarOpen(true);
                 }
-                setServerErrorMesssage("*" + response.message);
+                setServerErrorMessage("*" + response.message);
             }
-            recaptchaRef.current.reset();
+            
             setLoadingOpen(false);
             setSaveBtnDisabled(false);
         })
@@ -93,6 +97,7 @@ const handleSave = async (type, task, taskName, url, interval,
             
             setLoadingOpen(false);
             setSaveBtnDisabled(false);
+            setFormDisabled(false);
 
             if (type == 'Add') {
                 setFailedAddSnackBarOpen(true);
@@ -100,10 +105,8 @@ const handleSave = async (type, task, taskName, url, interval,
                 setFailedUpdateSnackBarOpen(true);
             }
 
-            setServerErrorMesssage("*An error occurred. Please try again later.");
+            setServerErrorMessage("*An error occurred. Please try again later.", error);
         });
-
-    recaptchaRef.current.reset();
 }
 
 
@@ -151,7 +154,7 @@ const validate = (
         validData = false;
     } else if (parseInt(interval) < 60) {
         setIntervalError(true);
-        setIntervalHelperText('Interval should be atleast 60 seconds');
+        setIntervalHelperText('Interval should be at least 60 seconds');
         validData = false;
     } else {
         setIntervalError(false);
@@ -181,7 +184,7 @@ const validate = (
             validData = false;
         } else {
             setDiscordWebhookColorError(false);
-            setDiscordWebhookColorHelperText('Hex only, dont include #, DEFAULT: ffffff');
+            setDiscordWebhookColorHelperText("Hex only, don't include #, DEFAULT: ffffff");
         }
         for (let i = 0; i < discordWebhookColor.length; i++) {
             if (!characters.includes(discordWebhookColor[i])) {
@@ -203,7 +206,7 @@ const validate = (
         setUrlHelperText('');
         setIntervalHelperText('Interval in seconds');
         setDiscordWebhookUrlHelperText('The discord webhook url to send notifications or updates');
-        setDiscordWebhookColorHelperText('Hex only, dont include #, DEFAULT: ffffff');
+        setDiscordWebhookColorHelperText("Hex only, don't include #, DEFAULT: ffffff");
 
         return true;
     } else {

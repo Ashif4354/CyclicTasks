@@ -90,9 +90,9 @@ class Firestore(FirebaseConfig):
                 'tasks': firestore.ArrayRemove([task_id])
             })
 
-    async def edit_task(self, task: dict) -> None:
+    async def update_task(self, task: dict) -> None:
         """
-        This function is used to edit a task in the Firestore database.
+        This function is used to update a task in the Firestore database.
         """
         taskRef = self.tasks_collection.document(task['id'])
         del task['id']
