@@ -1,0 +1,126 @@
+.console-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.nothing-container {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding-right: 15%;
+    padding-left: 15%;
+}
+
+.canvases {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-content: center;
+    /* flex-direction: column; */
+    /* align-items: center; */
+    width: 85%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.canvases::-webkit-scrollbar {
+    display: none;
+}
+
+@media (max-width: 1400px) {
+    .canvases {
+        width: 100%;
+        justify-content: center;
+        grid-template-columns: auto;
+    }
+}
+
+.first-pane {
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    padding-right: 50px;
+}
+
+@media (max-width: 1400px) {
+    .first-pane {
+        align-items: center;
+        padding-right: 0;
+    }
+}
+
+.second-pane {
+    height: min-content;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* margin-right: 25px; */
+    padding-right: 25px;
+}
+
+@media (max-width: 1400px) {
+    .second-pane {
+        padding-right: 0;
+    }
+}
+
+.console-canvas {
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    min-width: 400px;
+    max-width: 1000px;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: fit-content;
+    background-color: rgb(47, 47, 47, .2);
+    border-radius: 20px;
+    box-shadow: 0px 0px 50px rgba(0, 0, 0);
+}
+
+@media (max-width: 1500px) {
+    .console-canvas {
+        max-width: 1500px;
+    }
+}
+
+@media (max-width: 890px) {
+    .console-canvas {
+        max-width: 700px;
+    }
+}
+
+@media (max-width: 750px) {
+    .console-canvas {
+        min-width: 350px;
+        max-width: 350px;
+        font-size: 13px;    
+    }
+}
+
+.console-canvas-heading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    height: 70px;
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+    background-color: rgba(18, 18, 18, 0.85);
+    color: white;
+}
+
+.console-canvas-heading {
+    align-self: center;    
+}
+
+.console-canvas-content {
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+}

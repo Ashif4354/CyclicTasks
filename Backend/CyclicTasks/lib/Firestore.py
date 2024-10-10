@@ -6,7 +6,7 @@ from inspect import currentframe
 from ..config.Firebase import FirebaseConfig
 
 class Firestore(FirebaseConfig):
-    def __init__(self, initialized=False) -> None:
+    def __init__(self, initialized: bool = False) -> None:
         super().__init__()
         
         if not initialized:
@@ -100,4 +100,21 @@ class Firestore(FirebaseConfig):
         taskRef.update(task)
 
 
-  
+    async def get_all_task_of_user(self, user_email: str) -> list[dict]:
+        """
+        Fetches all the tasks of the user from the Firestore database
+        """
+        self.fetched_tasks: list = []
+        
+        userDoc = self.users_collection.document(user_email).get()
+
+        if userDoc.exists:
+            tasks = userDoc.to_dict()['tasks']
+
+            for task_id in tasks:
+                task = self.tasks_collection.document(task_id).get().to_dict()
+                task['id'] = task_id
+
+                self.fetched_tasks.append(task)
+
+        return self.fetched_tasks

@@ -5,6 +5,7 @@ except:
     pass
 
 from os import environ
+from datetime import datetime
 from random import choices
 from string import ascii_letters, digits
 from asyncio import Queue
@@ -28,6 +29,7 @@ dummy_task = {
 }
 
 environ['host_token'] = ''.join(choices(ascii_letters + digits, k=50))
+environ['start_time'] = datetime.now().replace(microsecond=0).strftime('%Y-%m-%d %H:%M:%S')
 
 __all__ = [
     'start_tasks_queue',

@@ -5,46 +5,47 @@ from inspect import currentframe
 from .. import dummy_task, start_tasks_queue, stop_task_queue
 from ..lib.Logger import Logger
 from ..lib.Firestore import Firestore
+from ..CyclicTasks import CyclicTasks
 from .lib.ValidateIncomingTask import validate_incoming_task
-
 
 Tasks = Blueprint('tasks', __name__, url_prefix='/tasks')
 
 @Tasks.before_request
 async def before_request():
     """
-    If the request is to /newtask, /updatetask, /deletetask, it will check for task data and validate it.\n
+    It will check for task data and validate it.\n
     """    
-    async with ClientSession as session:
+    async with ClientSession() as session:
         logger = Logger(session)
-        if request.path in ('/tasks/newtask', '/tasks/updatetask', '/tasks/deletetask'):
-            if 'task' not in request.json:
-                await logger.ALERT(f'FlaskApp/Tasks/before_request/{currentframe().f_lineno}', 
-                                    'Task data not found', 
-                                    request,
-                                    labels={
-                                        'alert_type': 'Task Data Not Found'
-                                    })
-                return jsonify({
-                    'message': 'Task data not found',
-                    'success': False
-                })
-            elif (not isinstance(request.json['task'], dict) or 
-                    request.json['task'].keys() != dummy_task.keys() or
-                    not validate_incoming_task(request.json['task'])
-                    ):
-                
-                await logger.ALERT(f'FlaskApp/Tasks/before_request/{currentframe().f_lineno}', 
-                                    'Task data is not valid JSON', 
-                                    request,
-                                    labels={
-                                        'alert_type': 'Task Data Not Valid JSON'
-                                    })
+        if request.method == 'POST':
+            if request.path in ('/tasks/newtask', '/tasks/updatetask', '/tasks/deletetask'):
+                if 'task' not in request.json:
+                    await logger.ALERT(f'FlaskApp/Tasks/before_request/{currentframe().f_lineno}', 
+                                        'Task data not found', 
+                                        request,
+                                        labels={
+                                            'alert_type': 'Task Data Not Found'
+                                        })
+                    return jsonify({
+                        'message': 'Task data not found',
+                        'success': False
+                    })
+                elif (not isinstance(request.json['task'], dict) or 
+                        request.json['task'].keys() != dummy_task.keys() or
+                        not validate_incoming_task(request.json['task'])
+                        ):
+                    
+                    await logger.ALERT(f'FlaskApp/Tasks/before_request/{currentframe().f_lineno}', 
+                                        'Task data is not valid JSON', 
+                                        request,
+                                        labels={
+                                            'alert_type': 'Task Data Not Valid JSON'
+                                        })
 
-                return jsonify({
-                    'message': 'Task data is not valid JSON',
-                    'success': False
-                })
+                    return jsonify({
+                        'message': 'Task data is not valid JSON',
+                        'success': False
+                    })
             
 
 
@@ -95,7 +96,7 @@ async def update_task():
             id = task['id']
 
             FS = Firestore(initialized=True)
-            await FS.edit_task(task)
+            await FS.update_task(task)
             task['id'] = id
 
             await logger.LOG_EVENT(f'FlaskApp/Tasks/update_task/{currentframe().f_lineno}', 'FlaskApp', 'Task data has been updated', task)
@@ -136,6 +137,7 @@ async def delete_task():
 
             FS = Firestore(initialized=True)
             await FS.delete_task(task['id'], task['user_email'])
+            CyclicTasks.RUNNING_TASKS['tasks'][task['id']]['deleted'] = True
 
             await logger.LOG_EVENT(f'FlaskApp/Tasks/delete_task/{currentframe().f_lineno}', 'FlaskApp', f'Task has been deleted from Database: {task['id']}', task)
 

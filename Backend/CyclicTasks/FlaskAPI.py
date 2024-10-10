@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request, Response, jsonify
 from flask_cors import CORS
 from aiohttp import ClientSession
 from inspect import currentframe
+from datetime import datetime
 
 from .lib.Logger import Logger
 from .lib.VerifyRecaptcha import verify_recaptcha
@@ -66,6 +67,10 @@ async def before_request() -> Response | None:
                         'message': 'Host token verification failed',
                         'success': False
                     })
+                
+            elif request.path in ('/admin/usersignin',):
+                pass
+
             else:
 
                 await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
@@ -89,6 +94,28 @@ async def entry():
     return jsonify({'message': 'CyclicTasks API is running'})
 
 
+@app.route('/status', methods=['GET'])
+async def status():
+    """
+    This endpoint will return the status of the API.
+    """
+    return jsonify({
+        'success': True,
+        'status': True
+    })
+
+@app.route('/getserveruptime', methods=['GET'])
+async def get_server_uptime():
+    """
+    This endpoint will return the uptime of the server.
+    """
+    return jsonify({
+        'success': True,
+        'start_time': datetime.strptime(environ['start_time'], '%Y-%m-%d %H:%M:%S').strftime('%d-%m-%Y  %H:%M:%S'),
+        'uptime': str(datetime.now().replace(microsecond=0) - datetime.strptime(environ['start_time'], '%Y-%m-%d %H:%M:%S'))
+    })
+
+
 
 @app.route('/getversion', methods=['GET'])
 async def get_version():
@@ -96,7 +123,8 @@ async def get_version():
     This endpoint will return the version of the API.
     """
     return jsonify({
-        'version': '1.0'
+        'success': True,
+        'version': '1.0.0'
     })
 
 

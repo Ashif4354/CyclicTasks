@@ -11,17 +11,45 @@ import { logEvent } from 'firebase/analytics';
 import './PasswordDialog.css';
 
 const PasswordDialog = (props) => {
-    const {open, setOpen} = props;
+    const { open, setOpen, setSignedIn, setAdminPassword } = props;
 
     const [password, setPassword] = useState('');
     const [errorText, setErrorText] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [pwdFieldError, setPwdFieldError] = useState(false);
+    const [pwdFieldHelperText, setPwdFieldHelperText] = useState('');
+    const [pwdBtnDisabled, setPwdBtnDisabled] = useState(false);
+
     const recaptchaRef = useRef();
 
+    const validatePassword = () => {
+        if (password === '') {
+            setPwdFieldError(true);
+            setPwdFieldHelperText('Password cannot be empty');
+            return false;
+        } else if (password.toLowerCase() === 'admin password') {
+            setPwdFieldError(true);
+            setPwdFieldHelperText('The developer is not stupid');
+            return false;
+
+        } else {
+            setPwdFieldError(false);
+            setPwdFieldHelperText('');
+            return true;
+        }
+    };
+
     const onEnter = async () => {
-        setErrorText('');
+        logEvent(analytics, 'admin-login-attempt');
+
+        if (!validatePassword()) {
+            return;
+        }
+        setLoading(true);
+        setPwdBtnDisabled(true);
         const recaptchaToken = await recaptchaRef.current.executeAsync();
 
-        fetch(import.meta.VITE_CT_SERVER_URL + '/admin/verify', {
+        fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/verifyadminpwd', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -35,7 +63,9 @@ const PasswordDialog = (props) => {
             .then((response) => {
                 if (response.success && response.verified) {
                     logEvent(analytics, 'successful-admin-login');
+                    setAdminPassword(password);
                     setOpen(false);
+                    setSignedIn(true);
                 } else if (response.success && !response.verified) {
                     logEvent(analytics, 'admin-incorrect-password');
                     setErrorText('Incorrect Password');
@@ -43,13 +73,17 @@ const PasswordDialog = (props) => {
                     logEvent(analytics, 'failed-admin-login');
                     setErrorText('Some Error Occurred');
                 }
+                setLoading(false);
+                setPwdBtnDisabled(false);
 
             })
             .catch((error) => {
                 logEvent(analytics, 'failed-admin-login');
                 setErrorText('Some Error Occurred');
+                setLoading(false);
+                setPwdBtnDisabled(false);
             });
-        
+
         recaptchaRef.current.reset();
     };
 
@@ -60,7 +94,7 @@ const PasswordDialog = (props) => {
             className='delete-task-dialog'
             fullWidth
         >
-            <DialogTitle>
+            <DialogTitle textAlign={'center'}>
                 Enter Admin Password
                 <IconButton
                     aria-label='close'
@@ -73,12 +107,19 @@ const PasswordDialog = (props) => {
             </DialogTitle>
             <DialogContent>
                 <TextField
+                    error={pwdFieldError}
                     label='Admin Password'
                     type='password'
                     variant='outlined'
                     value={password}
                     margin="normal"
-                    onChange={(e) => setPassword(e.target.value)}
+                    helperText={pwdFieldHelperText}
+                    onChange={(e) => {
+                        setErrorText('');
+                        setPwdFieldError(false);
+                        setPwdFieldHelperText('');
+                        setPassword(e.target.value)
+                    }}
                     fullWidth
                 />
 
@@ -87,14 +128,10 @@ const PasswordDialog = (props) => {
 
             </DialogContent>
             <DialogActions>
-                <button
-                    className='dialog-btns'
-                    onClick={() => {
-                        logEvent(analytics, 'admin-login-attempt');
-                        onEnter();
-                    }}
-                >
-                    Enter
+                <button className='dialog-btns' onClick={onEnter} disabled={pwdBtnDisabled}>
+                    {
+                        loading ? <CircularProgress size={20} color='inherit' /> : 'Enter'
+                    }
                 </button>
             </DialogActions>
             <ReCAPTCHA

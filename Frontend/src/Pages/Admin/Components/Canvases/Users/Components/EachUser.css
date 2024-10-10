@@ -1,0 +1,106 @@
+.each-user-container {
+    display: flex;
+    flex-direction: row;
+    height: 100px;
+    /* width: 95%; */
+    background-color: rgba(18, 18, 18, 0.5);
+    margin-bottom: 10px;
+    border-radius: 20px;
+}
+
+@media (max-width: 750px) {
+    .each-user-container {
+        height: 155px;
+    }
+}
+
+.checkbox-container {
+    display: flex;
+    background-color: rgba(18, 18, 18, 0.85);
+    border-radius: 20px 0 0 20px;
+    justify-content: center;
+}
+
+.inner-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.user-info-container {
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+    height: 50%;
+    align-items: center;
+}
+
+@media (max-width: 750px) {
+    .user-info-container {
+        margin-top: 10px;
+        flex-direction: column;
+        align-items: start;
+        height: 35%;
+    }
+}
+
+.user-actions-container {
+    display: grid;
+    grid-template-columns: auto auto auto;
+    /* flex-direction: row; */
+    width: 100%;
+    height: 50%;
+    /* align-items: end; */
+    justify-content: center;
+}
+
+@media (max-width: 750px) {
+    .user-actions-container {
+        grid-template-columns: auto auto;
+    }
+}
+
+
+.user-btn {
+    margin-right: 10px;
+    margin-left: 10px;
+    height: 30px;
+    min-width:100px;
+    max-width: fit-content;
+    padding-left: 10px;
+    padding-right: 10px;;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+    font-family: 'Vicasso';
+}
+
+@media (max-width: 750px) {
+    .user-btn {
+        margin-bottom: 10px;
+    }
+}
+
+.user-btn:hover {
+    background-color: #bdbdbd;
+}
+
+.user-btn:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+}
+
+.user-btn-blocked {
+    background-color: rgb(255, 0, 0);
+    color: white;    
+}
+
+.user-btn-blocked:hover {
+    background-color: rgba(255, 0, 0, 0.752);
+}
+
+.skeleton {
+    height: 1000px
+}
