@@ -60,8 +60,15 @@ const Tasks = (props) => {
             .then(data => {
                 if (data.success) {
 
-                    setRunningTasks(Object.keys(data.tasks).map((id) => data.tasks[id].task_data))
-                        
+                    // setRunningTasks(Object.keys(data.tasks).map((id) => data.tasks[id].task_data))
+                    setRunningTasks(Object.keys(data.tasks).map((id) => {
+                        return {
+                            ...data.tasks[id].task_data, 
+                            active: data.tasks[id].current_running_task ? true : false,
+                            deleted: data.tasks[id].deleted
+                        }
+                    }))
+
                 } else {
                     console.error("Server Error: ", data.message);
                 }
@@ -102,21 +109,21 @@ const Tasks = (props) => {
                         }
 
                     </TabList>
-                    <TabPanel value="1" sx ={{padding:'0px'}}>
+                    <TabPanel value="1" sx={{ padding: '0px' }}>
                         <Panel
                             tabValue={tabValue}
                             recaptchaRef={recaptchaRef}
                             adminPassword={adminPassword}
                             tasks={allTasks}
                             setTasks={setAllTasks}
-                            
+
                         />
                     </TabPanel>
-                    <TabPanel value="2" sx ={{padding:'0px'}}>
-                        <Panel tasks={runningTasks} tabValue={tabValue} />
+                    <TabPanel value="2" sx={{ padding: '0px' }}>
+                        <Panel tasks={runningTasks} tabValue={tabValue} adminPassword={adminPassword} />
                     </TabPanel>
-                    <TabPanel value="3" sx ={{padding:'0px'}}>
-                        <Panel tasks={userTasks} tabValue={tabValue} user={showTasksUser} />
+                    <TabPanel value="3" sx={{ padding: '0px' }}>
+                        <Panel tasks={userTasks} tabValue={tabValue} user={showTasksUser} adminPassword={adminPassword} />
                     </TabPanel>
                 </TabContext>
 

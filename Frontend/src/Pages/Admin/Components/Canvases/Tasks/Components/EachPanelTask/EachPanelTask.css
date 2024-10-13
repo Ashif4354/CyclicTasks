@@ -69,8 +69,19 @@
     background-color: #bdbdbd;
 }
 
+.panel-task-action-button:disabled {
+    background-color: #bdbdbd;
+    cursor: not-allowed;
+}
+
 @media (max-width: 750px) {
     .panel-task-action-button {
         font-size: .7rem;
     }
+}
+
+.deleted-text {
+    color: red;
+    font-size: 1rem;
+    font-family: 'Vicasso';
 }

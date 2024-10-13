@@ -1,7 +1,7 @@
 import './Panel.css';
 import EachPanelTask from '../EachPanelTask/EachPanelTask';
 import { useEffect, useState } from 'react';
-import { Paper, TextField, MenuItem, Menu } from '@mui/material';
+import { Paper, TextField, MenuItem, Menu, Skeleton } from '@mui/material';
 import SnackBar from '../../../../../../../Components/SnackBar/Snackbar';
 import SuspendTasksDialog from '../SuspendTasksDialog/SuspendTasksDialog';
 
@@ -12,6 +12,7 @@ const Panel = (props) => {
     const [searchBy, setSearchBy] = useState('task_name');
     const [selectedTasks, setSelectedTasks] = useState([]);
     const [selectNone, setSelectNone] = useState(false);
+    const [tasksLoading, setTasksLoading] = useState(false);
 
     const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
     const [suspendSuccessSnackBarOpen, setSuspendSuccessSnackBarOpen] = useState(false);
@@ -30,6 +31,7 @@ const Panel = (props) => {
 
 
     const getAllTasks = async () => {
+        setTasksLoading(true);
         const recaptchaToken = await recaptchaRef.current.executeAsync();
         recaptchaRef.current.reset();
 
@@ -50,6 +52,7 @@ const Panel = (props) => {
                 } else {
                     console.error("Server Error: ", data.message);
                 }
+                setTasksLoading(false);
             })
             .catch((error) => {
                 console.error('Error:', error);
@@ -161,43 +164,72 @@ const Panel = (props) => {
             }
 
             <div className='panel-tasks-container'>
-                {   
-                    tasks?.filter(task => {
-                        if (searchBy === 'task_name') {
-                            return task.task_name.toLowerCase().includes(searchText);
-                        } else if (searchBy === 'task_id') {
-                            return task.id.toLowerCase().includes(searchText);
-                        } else if (searchBy === 'url') {
-                            return task.url.toLowerCase().includes(searchText);
-                        } else if (searchBy === 'user_name') {
-                            return task.user_name.toLowerCase().includes(searchText);
-                        } else if (searchBy === 'user_email') {
-                            return task.user_email.toLowerCase().includes(searchText);
-                        } else {
+
+                {
+                    !tasksLoading ? (
+
+                        tasks.filter(task => {
+                            if (searchBy === 'task_name') {
+                                return task.task_name.toLowerCase().includes(searchText);
+                            } else if (searchBy === 'task_id') {
+                                return task.id.toLowerCase().includes(searchText);
+                            } else if (searchBy === 'url') {
+                                return task.url.toLowerCase().includes(searchText);
+                            } else if (searchBy === 'user_name') {
+                                return task.user_name.toLowerCase().includes(searchText);
+                            } else if (searchBy === 'user_email') {
+                                return task.user_email.toLowerCase().includes(searchText);
+                            } else {
+                                return (
+                                    task.task_name.toLowerCase().includes(searchText) ||
+                                    task.id.toLowerCase().includes(searchText) ||
+                                    task.url.toLowerCase().includes(searchText) ||
+                                    task.user_name.toLowerCase().includes(searchText) ||
+                                    task.user_email.toLowerCase().includes(searchText)
+                                );
+                            }
+                        }).map((task, index) => {
                             return (
-                                task.task_name.toLowerCase().includes(searchText) ||
-                                task.id.toLowerCase().includes(searchText) ||
-                                task.url.toLowerCase().includes(searchText) ||
-                                task.user_name.toLowerCase().includes(searchText) ||
-                                task.user_email.toLowerCase().includes(searchText)
-                            );
-                        }
-                    }).map((task, index) => {
-                        return (
-                            <div key={index}>
-                                <EachPanelTask
-                                    task={task}
-                                    tabValue={tabValue}
-                                    selectNone={selectNone}
-                                    setSelectNone={setSelectNone}
-                                    selectedTasks={selectedTasks}
-                                    setSelectedTasks={setSelectedTasks}
-                                    adminPassword={adminPassword}
-                                />
-                            </div>
-                        )
-                    })
+                                <div key={index}>
+                                    <EachPanelTask
+                                        task={task}
+                                        tabValue={tabValue}
+                                        selectNone={selectNone}
+                                        setSelectNone={setSelectNone}
+                                        selectedTasks={selectedTasks}
+                                        setSelectedTasks={setSelectedTasks}
+                                        adminPassword={adminPassword}
+                                    />
+                                </div>
+                            )
+                        })
+
+
+                    ) : (
+                        <div>
+                            <Skeleton
+                                variant='rectangular'
+                                width={'720px'}
+                                height={window.innerWidth > 750 ? '213px' : '184px'}
+                                sx={{ bgcolor: 'rgba(18, 18, 18, 0.3)', borderRadius: '20px', marginBottom: '10px' }}
+                            />
+                            <Skeleton
+                                variant='rectangular'
+                                width={'720px'}
+                                height={window.innerWidth > 750 ? '213px' : '184px'}
+                                sx={{ bgcolor: 'rgba(18, 18, 18, 0.3)', borderRadius: '20px', marginBottom: '10px' }}
+                            />
+                            <Skeleton
+                                variant='rectangular'
+                                width={'720px'}
+                                height={window.innerWidth > 750 ? '213px' : '184px'}
+                                sx={{ bgcolor: 'rgba(18, 18, 18, 0.3)', borderRadius: '20px', marginBottom: '10px' }}
+                            />
+                        </div>
+
+                    )
                 }
+
             </div>
             {
                 tasks.length != 0 ? (

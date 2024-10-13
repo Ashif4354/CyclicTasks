@@ -38,19 +38,20 @@ const EachPanelTask = (props) => {
             setChecked(false);
         }
     }, [selectNone])
-    
+
 
     return (
         <div className='each-panel-task-container'>
             <div className='checkbox-container'>
                 <Checkbox
+                    disabled={!active || task.deleted}
                     checked={checked}
                     onChange={onCheckboxChange}
                     sx={{
                         color: 'white',
                         '&.Mui-checked': {
                             color: 'white'
-                        }
+                        },
                     }}
                 />
             </div>
@@ -82,12 +83,15 @@ const EachPanelTask = (props) => {
                                     <span className='task-detail-text-active task-inactive' style={{ fontSize: '1rem', marginLeft: '10px' }}>Inactive</span>
                                 )
                         }
-
-
                     </div>
+                    <span className='deleted-text'>
+                        {
+                            task.deleted ? 'Deleted' : ''
+                        }
+                    </span>
                 </div>
                 <div className='panel-task-actions-container'>
-                    <button className='panel-task-action-button' disabled={task.active} onClick={onSuspend}>Suspend</button>
+                    <button className='panel-task-action-button' disabled={!active || task.deleted} onClick={onSuspend}>Suspend</button>
                 </div>
             </div>
 
@@ -115,7 +119,7 @@ const EachPanelTask = (props) => {
                 handleClose={() => setSuspendFailedSnackBarOpen(false)}
             />
 
-            
+
         </div>
     )
 }
