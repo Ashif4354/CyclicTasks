@@ -45,12 +45,10 @@ const Panel = (props) => {
         })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
                 if (data.success) {
                     setTasks(data.tasks);
-                    console.log(data.tasks);
                 } else {
-                    console.log(data.message);
+                    console.error("Server Error: ", data.message);
                 }
             })
             .catch((error) => {

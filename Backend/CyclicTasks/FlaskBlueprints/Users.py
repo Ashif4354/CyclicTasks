@@ -40,7 +40,6 @@ async def suspend_user():
 
                 for task in user_tasks:
                     task['active'] = False
-                    # print(task)
                     
                     await stop_task_queue.put(task.copy())
                     await FS.update_task(task)

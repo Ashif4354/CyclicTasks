@@ -45,7 +45,7 @@ const Tasks = (props) => {
                 if (data.success) {
                     setUserTasks(data.tasks);
                 } else {
-                    console.log(data.message);
+                    console.error("Server Error ", data.message);
                 }
             })
             .catch((error) => {
@@ -63,7 +63,7 @@ const Tasks = (props) => {
                     setRunningTasks(Object.keys(data.tasks).map((id) => data.tasks[id].task_data))
                         
                 } else {
-                    console.log(data.message);
+                    console.error("Server Error: ", data.message);
                 }
             })
             .catch((error) => {

@@ -42,7 +42,6 @@ const ServerStats = () => {
                 }
             })
             .catch(error => {
-                console.log('in catch');
                 setServerStatusLoading(false);
                 setServerStatus(false);
 

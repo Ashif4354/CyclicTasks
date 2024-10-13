@@ -2,7 +2,6 @@
 const onSuspendTasks = async (setLoading, setBtnDisabled, recaptchaRef, adminPassword,
     emails, setSelectNone, setSuccessSnackBarOpen, setOpen, setFailedSnackBarOpen, setErrorText
 ) => {
-    console.log('onSuspendTasks');
     setLoading(true);
     setBtnDisabled(true);
 

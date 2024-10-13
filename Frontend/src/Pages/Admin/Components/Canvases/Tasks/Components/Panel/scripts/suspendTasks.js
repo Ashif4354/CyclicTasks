@@ -4,8 +4,6 @@ const suspendTasks = async (tasks, recaptchaRef, adminPassword, setDialogOpen,
     setLoading(true);   
     setErrorText(''); 
 
-    console.log(tasks)
-
     const recaptchaToken = await recaptchaRef.current.executeAsync();
     recaptchaRef.current.reset();
 

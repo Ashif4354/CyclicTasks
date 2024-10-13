@@ -22,11 +22,6 @@ const GoogleLogin = async (setUser) => {
             setUser(loggedInUser);
 
             localStorage.setItem('user', JSON.stringify(loggedInUser));
-
-            auth.currentUser.getIdToken(true)
-                .then((idToken) => {
-                    // console.log(idToken);
-                })
         }
         )
 }

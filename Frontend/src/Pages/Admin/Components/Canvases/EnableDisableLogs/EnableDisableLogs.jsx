@@ -107,33 +107,27 @@ const EnableDisableLogs = (props) => {
 
         if (value !== defaultValue) {
             if (valueName === 'google') {
-                console.log('google true')
                 prevData.google = true;
                 setLoggingStatusCheck(prevData);
 
             } else if (valueName === 'discord') {
-                console.log('discord true')
                 prevData.discord = true;
                 setLoggingStatusCheck(prevData);
 
             } else if (valueName === 'terminal') {
-                console.log('terminal true')
                 prevData.terminal = true;
                 setLoggingStatusCheck(prevData);
             }
         } else {
             if (valueName === 'google') {
-                console.log('google false')
                 prevData.google = false;
                 setLoggingStatusCheck(prevData);
 
             } else if (valueName === 'discord') {
-                console.log('discord false')
                 prevData.discord = false;
                 setLoggingStatusCheck(prevData);
 
             } else if (valueName === 'terminal') {
-                console.log('terminal false')
                 prevData.terminal = false;
                 setLoggingStatusCheck(prevData);
 
