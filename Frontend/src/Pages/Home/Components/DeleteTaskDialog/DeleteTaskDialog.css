@@ -2,7 +2,7 @@
     text-align: center;
 }
 
-.dialog-btns {
+/* .dialog-btns {
     display:flex;
     justify-content: center;
     align-items: center;
@@ -17,4 +17,4 @@
 .dialog-btns:disabled {
     background-color: #2f2f2f;
     cursor: not-allowed;
-}
+} */

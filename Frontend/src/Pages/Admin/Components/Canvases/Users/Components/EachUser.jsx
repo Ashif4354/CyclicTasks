@@ -8,7 +8,8 @@ import BlockUnblockUserDialog from './Dialogs/BlockUnblockUserDialog/BlockUnbloc
 
 
 const EachUser = (props) => {
-    const { user, selectNone, setSelectNone, selectedUsers, setSelectedUsers, adminPassword } = props;
+    const { user, selectNone, setSelectNone, selectedUsers, setSelectedUsers, 
+        adminPassword, setShowTasksUser } = props;
 
     const [blocked, setBlocked] = useState(user.blocked);
     const [checked, setChecked] = useState(false);
@@ -72,7 +73,7 @@ const EachUser = (props) => {
                             blocked ? 'Unblock' : 'Block'
                         }
                     </button>
-                    <button className='user-btn'>Show Tasks</button>
+                    <button className='user-btn' onClick={() => setShowTasksUser(user)}>Show Tasks</button>
                     <button className='user-btn' onClick={onSuspendTasks}>Suspend Tasks</button>
                 </div>
             </div>
@@ -119,6 +120,7 @@ const EachUser = (props) => {
                 open={blockUnblockDialogOpen}
                 setOpen={setBlockUnblockDialogOpen}
                 users={[{...user, setBlocked: setBlocked}]}
+                setSelectNone={(x) => x}
                 block={!blocked}
                 setSuccessSnackBarOpen={setBlockUnblockSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setBlockUnblockFailedSnackBarOpen}

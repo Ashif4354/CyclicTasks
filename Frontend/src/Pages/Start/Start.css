@@ -1,3 +1,14 @@
+.start-heading {
+    font-size: 3rem;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media screen and (max-width: 750px) {
+    .start-heading {
+        font-size: 1.9rem;
+    }
+}
 
 .middle-box {
     display: flex;
@@ -18,9 +29,10 @@
     box-shadow: 0px 0px 150px rgba(0, 0, 0);  
 }
 
-/* .middle-box::-webkit-scrollbar {
-    display: none;
-  } */
+.start-sub-heading {
+    font-size: 1.6rem;
+    margin-top: 30px;
+}
 
 .text-container {
     display: flex;
@@ -47,10 +59,17 @@
   }
 
 .homepage-text {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     /* margin-bottom: 30px; */
     font-family: 'Vicasso';
     /* color:aqua */
+}
+
+@media screen and (max-width: 750px) {
+    .homepage-text {
+        font-size: 0.9rem;
+    }
+    
 }
 
 .get-started-btn-container {

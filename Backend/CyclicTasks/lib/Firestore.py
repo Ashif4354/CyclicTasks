@@ -4,20 +4,23 @@ from random import choices
 from inspect import currentframe
 
 from ..config.Firebase import FirebaseConfig
+from .Logger import Logger
 
-class Firestore(FirebaseConfig):
+class Firestore(FirebaseConfig, Logger):
     def __init__(self, initialized: bool = False) -> None:
         super().__init__()
         
         if not initialized:
             self.initialize_firebase()
 
+        Logger.__init__(self)            
+
         self.db = firestore.client()
 
         self.tasks_collection = self.db.collection('Tasks')
         self.users_collection = self.db.collection('Users')
 
-    async def get_all_tasks(self) -> list[dict]:
+    async def get_all_tasks(self, include_inactive_tasks: bool = False) -> list[dict]:
         """
         Fetches all the tasks from the Firestore database
         Returns only the active tasks
@@ -29,7 +32,8 @@ class Firestore(FirebaseConfig):
             task_: dict = task.to_dict()
 
             if not task_['active']:
-                continue
+                if not include_inactive_tasks:
+                    continue
 
             task_['id'] = task.id
 

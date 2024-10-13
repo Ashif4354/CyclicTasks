@@ -137,7 +137,7 @@ async def delete_task():
 
             FS = Firestore(initialized=True)
             await FS.delete_task(task['id'], task['user_email'])
-            CyclicTasks.RUNNING_TASKS['tasks'][task['id']]['deleted'] = True
+            CyclicTasks.RUNNING_TASKS[task['id']]['deleted'] = True
 
             await logger.LOG_EVENT(f'FlaskApp/Tasks/delete_task/{currentframe().f_lineno}', 'FlaskApp', f'Task has been deleted from Database: {task['id']}', task)
 
@@ -155,6 +155,9 @@ async def delete_task():
                 'message': 'Some error occurred on server side',
                 'success': False
             })
+        
+
+
         
 
 __all__ = ['Tasks']

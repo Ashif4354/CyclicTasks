@@ -1,0 +1,16 @@
+.alert-dialog-description {
+    display: flex;
+    flex-direction: column; 
+}
+
+.tasks-scroll-container {
+    display: flex;
+    flex-direction: column;
+    max-height: 300px;
+    overflow-y: scroll;
+    width: 100%;    
+}
+
+.tasks-scroll-container::-webkit-scrollbar {
+    display: none;
+}

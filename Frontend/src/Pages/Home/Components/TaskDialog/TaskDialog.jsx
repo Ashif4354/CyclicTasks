@@ -149,10 +149,10 @@ const TaskDialog = (props) => {
                 {type} Task
 
                 <IconButton
-                    sx={{ position: 'absolute', right: '5px', top: '5px', '&:hover': { backgroundColor: '#ff000030' } }}
+                    sx={{ position: 'absolute', right: '5px', top: '5px', '&:hover': { backgroundColor: '#ffffff10' } }}
                     onClick={handleCancelClose}
                 >
-                    <CloseIcon sx={{ color: 'black' }} />
+                    <CloseIcon sx={{ color: 'white' }} />
                 </IconButton>
             </DialogTitle>
             <DialogContent>

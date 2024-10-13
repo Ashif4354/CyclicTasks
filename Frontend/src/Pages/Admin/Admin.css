@@ -70,7 +70,8 @@
 }
 
 .console-canvas {
-    margin-top: 40px;
+    margin-top: 25px;
+    margin-bottom: 25px;
     display: flex;
     flex-direction: column;
     min-width: 400px;

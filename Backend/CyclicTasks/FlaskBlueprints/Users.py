@@ -127,6 +127,74 @@ async def block_user():
                 'message': 'Some error occurred',
                 'success': False
             })
+        
+@Users.route('/getusertasks', methods=['POST'])
+async def get_user_tasks():
+    async with ClientSession() as session:
+        logger = Logger(session)
+
+        try:
+            user_email: str = request.json['email']
+            FS = Firestore(initialized=True)
+
+            user_tasks: list = await FS.get_all_task_of_user(user_email)
+
+            await logger.LOG_EVENT(f'FlaskApp/Admin/Users/get_user_tasks/{currentframe().f_lineno}',
+                                    'FlaskApp',
+                                    f'Tasks fetched for user: {user_email}',
+                                    None,
+                                    labels={
+                                        'user_email': user_email
+                                    })
+
+            return jsonify({
+                'success': True,
+                'tasks': user_tasks
+            })
+        except Exception as e:
+            await logger.LOG_ERROR(f'FlaskApp/Admin/Users/get_user_tasks/{currentframe().f_lineno}', e, None)
+
+            return jsonify({
+                'message': 'Some error occurred',
+                'success': False
+            })
+      
+       
+@Users.route('/suspendtasks', methods=['POST'])
+async def suspend_tasks():
+    """
+    This endpoint is used to suspend the tasks of the user.
+    """
+    tasks = request.json['tasks']
+    async with ClientSession() as session:
+        logger = Logger(session)
+        try:
+            FS = Firestore(initialized=True)
+            for task in tasks:
+                task['active'] = False
+                await stop_task_queue.put(task.copy())
+                await FS.update_task(task.copy())
+
+                await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 
+                                       'FlaskApp', 
+                                       f'Task suspended: {task["id"]}', 
+                                       task,
+                                       labels={
+                                           'event_type': 'suspend_task'
+                                       })
+
+            await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 'FlaskApp', f'Tasks suspended: {len(tasks)}', None)
+
+            return jsonify({
+                'message': 'Tasks have been suspended',
+                'success': True
+            })
+        except Exception as e:
+            await logger.LOG_ERROR(f'FlaskApp/Tasks/suspend_tasks/line {currentframe().f_lineno}', e, None)
+            return jsonify({
+                'message': 'Some error occurred on server side',
+                'success': False
+            })
 
 
 

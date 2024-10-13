@@ -39,17 +39,17 @@ const EachTask = (props) => {
                     <p>{index + 1}.</p>
                 </div>
                 <div className="task-details-container">
-                    <p className='task-detail-text'>Task ID: {currentTask.id}</p>
-                    <p className='task-detail-text'>Task Name: {currentTask.task_name}</p>
-                    <p className='task-detail-text'>Interval: {currentTask.interval}</p>
+                    <p className='task-detail-text'>TASK ID: &nbsp;{currentTask.id}</p>
+                    <p className='task-detail-text'>TASK NAME: &nbsp;{currentTask.task_name}</p>
+                    <p className='task-detail-text'>INTERVAL: &nbsp;{currentTask.interval}</p>
 
                     <div className='status-container'>
-                        <p className='status-text'>Status: </p>
+                        <p className='status-text'>STATUS: </p>
                         {
                             currentTask.active ? (
-                                <p className='task-detail-text-active task-active'>&nbsp;&nbsp;&nbsp;Active</p>
+                                <p className='task-detail-text-active task-active'>ACTIVE</p>
                             ) : (
-                                <p className='task-detail-text-inactive task-inactive'>&nbsp;&nbsp;&nbsp;Inactive</p>
+                                <p className='task-detail-text-inactive task-inactive'>INACTIVE</p>
                             )
                         }
 

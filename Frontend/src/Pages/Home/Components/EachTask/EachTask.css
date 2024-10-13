@@ -69,9 +69,11 @@
 .task-active{
     color: green;
     font-size: .65rem;
+    margin-left:10px
 }
 
 .task-inactive{
     color: red;
     font-size: .65rem;
+    margin-left:10px
 }

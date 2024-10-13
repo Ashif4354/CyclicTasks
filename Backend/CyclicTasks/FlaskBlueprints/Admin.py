@@ -5,6 +5,7 @@ from inspect import currentframe
 from os import environ
 
 from ..lib.Logger import Logger
+from ..lib.Firestore import Firestore
 from ..lib.Authentication import Authentication
 from ..CyclicTasks import CyclicTasks
 
@@ -44,7 +45,7 @@ async def before_request():
                     })
                 
         elif request.method == 'POST':
-            if request.path in ('/admin/verifyadminpwd', '/admin/usersignin'):
+            if request.path in ('/admin/verifyadminpwd',):
                 pass
             else:
                 if 'password' not in request.json:
@@ -106,48 +107,6 @@ async def verify_admin_pwd():
                 'message': 'Admin Pwd not found',
                 'success': False
             })
-        
-# @Admin.route('/usersignin', methods=['POST'])
-# async def user_signin():
-
-#     async with ClientSession() as session:
-#         logger = Logger(session)
-
-#         try:
-#             token = request.headers.get('Authorization')
-#             token = token.split('Bearer ')[1]
-
-#             if not token:
-#                 return jsonify({
-#                     'message': 'Not Authorized',
-#                     'success': False
-#                 })
-            
-#             decoded_token = auth.verify_id_token(token)
-
-#             custom_claims = auth.get_user(decoded_token['uid']).custom_claims
-
-#             if 'blocked' in custom_claims:
-#                 return jsonify({
-#                     'message': 'User Configuration Success',
-#                     'success': True
-#                 }) 
-            
-#             auth.set_custom_user_claims(decoded_token['uid'], {'blocked': False})
-
-#             return jsonify({
-#                 'message': 'User Configuration Success',
-#                 'success': True
-#             })
-        
-#         except Exception as e:
-#             await logger.LOG_ERROR(f'FlaskApp/Admin/UserSignIn/{currentframe().f_lineno}', e, None)
-
-#             return jsonify({
-#                 'message': 'Some error occurred',
-#                 'success': False
-#             })  
-
 
 
 @Admin.route('/getrunningtasks', methods=['GET'])
@@ -163,7 +122,8 @@ async def get_running_tasks():
         try:
             tasks = CyclicTasks.RUNNING_TASKS
             return jsonify({
-                'tasks': tasks
+                'tasks': tasks,
+                'success': True
             })
         except Exception as e:
             await logger.ALERT(f'FlaskApp/Admin/GetRunningTasks/{currentframe().f_lineno}', 
@@ -230,6 +190,7 @@ async def get_users():
 
     async with ClientSession() as session:
         logger = Logger(session)
+
         try:
             auth = Authentication(initialized=True)
 
@@ -242,6 +203,40 @@ async def get_users():
             })
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Admin/GetUsers/{currentframe().f_lineno}', e, None)
+
+            return jsonify({
+                'message': 'Internal Server Error',
+                'success': False
+            })
+        
+    
+@Admin.route('/getalltasks', methods=['POST'])
+async def get_all_tasks():
+    """
+    This endpoint will return the list of all tasks.\n
+    Need to be authorized by the ADMIN_PWD.
+    """
+
+    async with ClientSession() as session:
+        logger = Logger(session)
+        
+        try:
+            FS = Firestore(initialized=True)
+            tasks: list[dict] = await FS.get_all_tasks(include_inactive_tasks=True)
+
+            await logger.LOG_EVENT(f'FlaskApp/Admin/GetAllTasks/{currentframe().f_lineno}', 
+                        'FlaskApp', 
+                        f'All Tasks fetched for admin: {len(tasks)}', 
+                        None)
+        
+            return jsonify({
+                'success': True,
+                'tasks': tasks
+            })
+        
+        except Exception as e:
+            await logger.LOG_ERROR(f'FlaskApp/Admin/GetAllTasks/{currentframe().f_lineno}', e, None)
+
             return jsonify({
                 'message': 'Internal Server Error',
                 'success': False

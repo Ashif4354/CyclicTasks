@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { CircularProgress, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
@@ -34,10 +34,10 @@ const BlockUnblockUserDialog = (props) => {
                         position: 'absolute',
                         right: '10px',
                         top: '10px',
-                        '&:hover': { backgroundColor: '#ff000030' }
+                        '&:hover': { backgroundColor: '#ffffff10' }
                     }}
                 >
-                    <CloseIcon />
+                    <CloseIcon color='white'/>
                 </IconButton>
             </DialogTitle>
             <DialogContent>

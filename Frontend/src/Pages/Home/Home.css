@@ -1,4 +1,4 @@
-@import url(https://db.onlinewebfonts.com/c/afe27afa1552f15b1f4f7090a35260bb?family=Vicasso);
+
 
 p {
   margin-block-start: 0px;
@@ -6,7 +6,7 @@ p {
 }
 
 .main-container {
-  font-family: 'Vicasso';
+  font-family: "Anta", sans-serif;;
   flex-direction: column;
   height: 100vh;
   width: 100vw;
@@ -16,21 +16,6 @@ p {
 }
 
 
-.btn {
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: black;
-  border: none;
-  height: 30px;
-  border-radius: 20px;
-}
-
-.btn:hover {
-  background-color: #bdbdbd;
-  border: none;
-}
 
 .content-container {
   display: flex;
@@ -76,6 +61,7 @@ p {
   margin-block-start: 0px;
   margin-block-end: 0px;
   font-size: small;
+  font-family: "Anta", sans-serif;;
 }
 
 .task-container {

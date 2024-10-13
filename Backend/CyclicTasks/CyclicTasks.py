@@ -6,6 +6,7 @@ from inspect import currentframe
 from .lib.Firestore import Firestore
 from .lib.Discord import Discord
 from .lib.Logger import Logger
+from .lib.GetIstTime import get_ist_time
 from . import start_tasks_queue, stop_task_queue, dummy_task
 
 class CyclicTasks(Firestore, Logger):
@@ -64,9 +65,8 @@ class CyclicTasks(Firestore, Logger):
             self.RUNNING_TASKS[task['id']] = {
                 'running_tasks': {},
                 'current_running_task': None,
-                'task_name': task['task_name'],
-                'user_name': task['user_name'],
-                'user_email': task['user_email']
+                'start_time': get_ist_time(),
+                'task_data': task
             }
 
             await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task added to RUNNING_TASKS map: {task['id']}', task, labels = {'event_type': 'add_to_running_tasks'})

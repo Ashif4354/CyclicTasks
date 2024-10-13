@@ -17,6 +17,8 @@ const Admin = () => {
     const [pwdDialogOpen, setPwdDialogOpen] = useState(false);
     const [signedIn, setSignedIn] = useState(true);
 
+    const [showTasksUser, setShowTasksUser] = useState(null);
+
     return (
         <div className='main-container'>
             <Header />
@@ -31,8 +33,15 @@ const Admin = () => {
                             </div>
 
                             <div className='second-pane'>
-                                <Users adminPassword={adminPassword}/>
-                                <Tasks/>
+                                <Users
+                                    adminPassword={adminPassword}
+                                    setShowTasksUser={setShowTasksUser}
+                                />
+                                <Tasks 
+                                    adminPassword={adminPassword}
+                                    showTasksUser={showTasksUser}
+                                    setShowTasksUser={setShowTasksUser}
+                                />
                             </div>
 
                         </div>

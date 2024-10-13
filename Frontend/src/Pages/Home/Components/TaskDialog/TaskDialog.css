@@ -6,7 +6,7 @@
     display:flex;
     font-size: 1rem;
     justify-content: center;
-    background-color: #1a1a1a;
+    background-color: white;
     align-items: center;
     border: none;
     border-radius: 20px;
@@ -15,14 +15,15 @@
     font-family: 'Vicasso';
     padding: 0px;
     cursor: pointer;
+    color: #1a1a1a
 }
 
 .dialog-btns:hover {
-    background-color: #2f2f2f;
+    background-color: #bdbdbd;
 }
 
 .dialog-btns:disabled {
-    background-color: #2f2f2f;
+    background-color: #bdbdbd;
     cursor: not-allowed;
 }
 

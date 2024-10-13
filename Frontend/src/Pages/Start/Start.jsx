@@ -38,17 +38,17 @@ const Start = () => {
                         />
                     </div>
                     <div className='text-container'>
-                        <h1>Boost Your Server Uptime with CyclicTasks!</h1>
+                        <span className='start-heading'>Boost Your Server Uptime with CyclicTasks!</span>
                         <p className='homepage-text'>Tired of your backend going offline on free hosting services?</p>
                         <p className='homepage-text'>CyclicTasks is here to help. Our app sends automated pulses to your server apps, keeping them live 24/7 even when using free deployment services! Don't let downtime slow you down.</p>
                         <p />
                         <div className='get-started-btn-container'>
                             <button className='btn get-started-btn' onClick={() => navigate('/home')}>Get Started</button>
                         </div>
-                        <h2>Who is it for?</h2>
+                        <span className='start-sub-heading'>Who is it for?</span>
                         <p className='homepage-text'>Anyone hosting their apps on platforms that don't offer round-the-clock uptime. CyclicTasks is your simple, effective solution to maintain constant availability.</p>
-                        <h2>Key Benefits:</h2>
-                        <ul style={{ textAlign: 'left' }}>
+                        <span className='start-sub-heading'>Key Benefits:</span>
+                        <ul style={{ textAlign: 'left', marginTop:'0px' }}>
                             <li className='homepage-text'>Keep your servers running non-stop</li>
                             <li className='homepage-text'>Simple to use</li>
                             <li className='homepage-text'>Works with any backend system</li>

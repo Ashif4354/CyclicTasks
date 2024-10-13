@@ -67,9 +67,6 @@ async def before_request() -> Response | None:
                         'message': 'Host token verification failed',
                         'success': False
                     })
-                
-            elif request.path in ('/admin/usersignin',):
-                pass
 
             else:
 

@@ -11,6 +11,8 @@ import SnackBar from '../../../../../Components/SnackBar/Snackbar';
 
 const Users = (props) => {
 
+    const { adminPassword, setShowTasksUser } = props;
+
     const [users, setUsers] = useState([]);
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [searchText, setSearchText] = useState('');
@@ -59,10 +61,6 @@ const Users = (props) => {
 
 
     useEffect(() => {
-        // console.log(selectedUsers);
-    }, [selectedUsers])
-
-    useEffect(() => {
         if (selectedUsers.length == 0) {
             setSelectionBtnsDisabled(true);
         } else {
@@ -83,7 +81,7 @@ const Users = (props) => {
             },
             body: JSON.stringify({
                 recaptchaToken,
-                password: props.adminPassword
+                password: adminPassword
 
             })
         })
@@ -191,15 +189,8 @@ const Users = (props) => {
                                                 setSelectedUsers={setSelectedUsers}
                                                 selectNone={selectNone}
                                                 setSelectNone={setSelectNone}
-                                                adminPassword={props.adminPassword}
-                                            />
-                                            <EachUser
-                                                user={user}
-                                                selectedUsers={selectedUsers}
-                                                setSelectedUsers={setSelectedUsers}
-                                                selectNone={selectNone}
-                                                setSelectNone={setSelectNone}
-                                                adminPassword={props.adminPassword}
+                                                adminPassword={adminPassword}
+                                                setShowTasksUser={setShowTasksUser}
                                             />
                                         </div>
                                     )
@@ -267,7 +258,7 @@ const Users = (props) => {
                 setSelectNone={setSelectNone}
                 setSuccessSnackBarOpen={setSelectedSuspendUsersTasksSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setSelectedSuspendUsersTasksFailedSnackBarOpen}
-                adminPassword={props.adminPassword}
+                adminPassword={adminPassword}
             />
 
             <BlockUnblockUserDialog
@@ -278,7 +269,7 @@ const Users = (props) => {
                 block={block}
                 setSuccessSnackBarOpen={setSelectedBlockUnblockUsersSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setSelectedBlockUnblockUsersFailedSnackBarOpen}
-                adminPassword={props.adminPassword}
+                adminPassword={adminPassword}
             />
 
 
