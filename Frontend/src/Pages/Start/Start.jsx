@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Player } from '@lottiefiles/react-lottie-player';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import { onAuthStateChanged } from 'firebase/auth';
 
 
 import './Start.css'
@@ -10,24 +11,11 @@ import Footer from '../../Components/Footer/Footer';
 import cycle from '../../assets/images/cycle.json';
 
 const Start = () => {
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
-
-    useEffect(() => {
-        const loggedInUser = localStorage.getItem('user');
-        const User = JSON.parse(loggedInUser);
-
-        if (loggedInUser) {
-            setUser(User);
-        } else {
-            return;
-        }
-
-    }, []);
 
     return (
         <div className='main-container'>
-            <Header user={user} setUser={setUser} />
+            <Header/>
             <div className='content-container'>
                 <div className='middle-box'>
                     <div className='lottie-container'>

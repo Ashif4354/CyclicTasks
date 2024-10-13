@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { Skeleton } from '@mui/material';
-
-import { analytics } from '../../config/firebase';
 import { logEvent } from 'firebase/analytics';
+import { onAuthStateChanged } from 'firebase/auth';
+import { analytics, auth } from '../../config/firebase';
 
 import './Home.css'
 import EachTask from './Components/EachTask/EachTask';
@@ -24,18 +24,17 @@ const Home = () => {
 
     const onAddTask = () => {
         logEvent(analytics, 'add-task-dialog-open')
-        setDialogOpen(true);    
+        setDialogOpen(true);
     }
 
     useEffect(() => {
-        const loggedInUser = localStorage.getItem('user');
-        const User = JSON.parse(loggedInUser);
-
-        if (loggedInUser) {
-            setUser(User);
-        } else {
-            return;
-        }
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                setUser(user);
+            } else {
+                setUser(null);
+            }
+        })
 
     }, []);
 
@@ -51,7 +50,7 @@ const Home = () => {
 
     return (
         <div className='main-container'>
-            <Header user={user} setUser={setUser} />
+            <Header/>
 
             <div className='content-container'>
                 <div className='middle-container'>
@@ -59,9 +58,9 @@ const Home = () => {
                         {
                             user ? (
                                 <>
-                                    <img src={user?.photo} alt="user" className='user-image' />
+                                    <img src={user?.photoURL} alt="user" className='user-image' />
                                     <div className='user-text-container'>
-                                        <p className='user-text'>User Name: {user?.name}</p>
+                                        <p className='user-text'>User Name: {user?.displayName}</p>
                                         <p className='user-text'>User Email: {user?.email}</p>
 
                                     </div>
@@ -152,7 +151,7 @@ const Home = () => {
             <Footer />
             <TaskDialog
                 open={dialogOpen} setOpen={setDialogOpen} type={'Add'}
-                task={null} setTask={null} tasks={tasks} setTasks={setTasks}                
+                task={null} setTask={null} tasks={tasks} setTasks={setTasks}
                 setSuccessAddSnackBarOpen={setSuccessAddSnackBarOpen}
                 setFailedAddSnackBarOpen={setFailedAddSnackBarOpen}
             />
@@ -180,7 +179,7 @@ const Home = () => {
                 open={failedDeleteSnackBarOpen}
                 handleClose={() => setFailedDeleteSnackBarOpen(false)}
                 success={false}
-                message='Failed to delete task! Try again.' 
+                message='Failed to delete task! Try again.'
             />
         </div>
     )

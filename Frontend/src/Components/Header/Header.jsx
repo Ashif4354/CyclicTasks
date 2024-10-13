@@ -1,10 +1,24 @@
-
+import { useEffect, useState } from 'react';
 import { GoogleLogin, logout } from '../../scripts/Session'
+import { auth } from '../../config/firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import './Header.css'
 
 
-const Header = (props) => {
-    const {user, setUser} = props;
+const Header = () => {
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                setUser(user);
+            } else {
+                setUser(null);
+            }
+        })        
+    }, [])
+
+    // console.log(auth.currentUser)
 
     return (
         <header className='header'>

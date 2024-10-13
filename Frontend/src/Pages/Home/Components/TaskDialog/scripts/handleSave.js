@@ -1,4 +1,4 @@
-import { analytics } from "../../../../../config/firebase";
+import { analytics, auth } from "../../../../../config/firebase";
 import { logEvent } from "firebase/analytics";
 
 const handleSave = async (type, task, taskName, url, interval,
@@ -30,7 +30,7 @@ const handleSave = async (type, task, taskName, url, interval,
     recaptchaRef.current.reset();
     setFormDisabled(true);
 
-    const user = JSON.parse(localStorage.getItem('user'))
+    const user = auth.currentUser
 
     const newData = {
         id: (type == 'Add' ? 'no id' : task.id),
@@ -40,7 +40,7 @@ const handleSave = async (type, task, taskName, url, interval,
         active: active,
         discord_webhook_url: discordWebhookUrl,
         discord_webhook_color: discordWebhookColor,
-        user_name: (task != undefined ? task.user_name : user.name),
+        user_name: (task != undefined ? task.user_name : user.displayName),
         user_email: (task != undefined ? task.user_email : user.email),
         notify_admin: (task ? task.notify_admin : false),
     }
