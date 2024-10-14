@@ -23,7 +23,9 @@ async def before_request():
     async with ClientSession() as session:
         logger = Logger(session)
         if request.method in ('GET', 'POST'):
-            if not request.headers.get('Authorization') or not request.headers.get('Authorization').startswith('Bearer '):
+            if request.headers.get('host-token') == environ['host-token']:
+                pass
+            elif not request.headers.get('Authorization') or not request.headers.get('Authorization').startswith('Bearer '):
                 await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
                             'Authorization failed', 
                             request,

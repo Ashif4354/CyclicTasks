@@ -23,14 +23,21 @@ async def suspend_user():
     """
     async with ClientSession() as session:
         logger = Logger(session)
-        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
+        try:
+            accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
+        except:
+            if request.headers.get('host-token'):
+                accessed_admin = 'HOST, because the suspenduserstasks endpoint is triggered by the host to suspend blocked user tasks'
+            else:
+                return jsonify({
+                    'message': 'Unauthorized access',
+                    'success': False
+                })
 
         try:
             users_emails: list[str] = request.json['emails']
 
-            FS = Firestore(initialized=True)
-
-            
+            FS = Firestore(initialized=True)            
 
             for user_email in users_emails:
 
@@ -116,6 +123,16 @@ async def block_user():
                                                 'event_type': 'user_blocked',
                                                 'accessed_admin': accessed_admin
                                             })
+                    
+                    await session.post(environ['CT_SERVER_URL'] + '/admin/users/suspenduserstasks',                                       
+                                        json={'emails': [user_email]},
+                                        headers={'host-token': environ['host-token']}
+                                        )
+                                             
+                    
+                                 
+
+
                 else:
                     await Auth.unblock_user(user_email)
                     

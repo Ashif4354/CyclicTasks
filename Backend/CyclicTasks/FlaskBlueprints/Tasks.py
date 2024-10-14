@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from aiohttp import ClientSession
 from inspect import currentframe
+from asyncio import get_event_loop
 from firebase_admin import auth
 
 from .. import dummy_task, start_tasks_queue, stop_task_queue
@@ -21,10 +22,8 @@ async def before_request():
         logger = Logger(session)
         if request.method == 'POST':
             if request.path in ('/tasks/newtask', '/tasks/updatetask', '/tasks/deletetask'):
-                print(user_blocked(request.headers.get('Authorization').split(' ')[1]))
 
                 if not request.headers.get('Authorization') and not request.headers.get('Authorization').startswith('Bearer '):
-                    print('inside auth failed')
                     await logger.ALERT(f'FlaskApp/Tasks/before_request/{currentframe().f_lineno}', 
                                         'Authorization failed', 
                                         request,
@@ -37,7 +36,6 @@ async def before_request():
                     })
                 
                 elif user_blocked(request.headers.get('Authorization').split(' ')[1]):
-                    print('inside user_blocked')
                     await logger.ALERT(f'FlaskApp/Tasks/before_request/{currentframe().f_lineno}', 
                                         'User is blocked', 
                                         request,
@@ -122,7 +120,9 @@ async def new_task():
 
 
             if task['active']:
-                await start_tasks_queue.put(task)
+                event_loop = get_event_loop()
+                event_loop.call_soon_threadsafe(start_tasks_queue.put_nowait, task)
+                
                 await logger.LOG_EVENT(f'FlaskApp/Tasks/new_task/{currentframe().f_lineno}', 
                                         'FlaskApp', 
                                         f'Task Queued for Starting: {task["id"]}', 
@@ -188,7 +188,8 @@ async def update_task():
                                     })
 
             if task['active']:
-                await start_tasks_queue.put(task)
+                event_loop = get_event_loop()
+                event_loop.call_soon_threadsafe(start_tasks_queue.put_nowait, task)
 
                 await logger.LOG_EVENT(f'FlaskApp/Tasks/update_task/{currentframe().f_lineno}', 
                                         'FlaskApp', 

@@ -71,9 +71,9 @@ async def before_request() -> Response | None:
                                            'event_type': 'recaptcha_verification_success'
                                        })
             
-            elif 'host_token' in request.json:
+            elif request.headers.get('host-token'):
 
-                if request.json['host_token'] == environ['host_token']:
+                if request.headers.get('host-token') == environ['host-token']:
                     pass
                 else:
                     await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
