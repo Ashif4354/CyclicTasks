@@ -4,7 +4,7 @@ from inspect import currentframe
 from asyncio import get_event_loop
 from firebase_admin import auth
 
-from .. import dummy_task, start_tasks_queue, stop_task_queue
+from .. import dummy_task, start_tasks_queue, stop_task_queue, scheduler_event_loop
 from ..lib.Logger import Logger
 from ..lib.Firestore import Firestore
 from ..CyclicTasks import CyclicTasks
@@ -120,8 +120,7 @@ async def new_task():
 
 
             if task['active']:
-                event_loop = get_event_loop()
-                event_loop.call_soon_threadsafe(start_tasks_queue.put_nowait, task)
+                scheduler_event_loop.call_soon_threadsafe(start_tasks_queue.put_nowait, task)
                 
                 await logger.LOG_EVENT(f'FlaskApp/Tasks/new_task/{currentframe().f_lineno}', 
                                         'FlaskApp', 
@@ -175,8 +174,8 @@ async def update_task():
                                     labels={
                                         'event_type': 'task_to_be_restarted'
                                     })
-            
-            await stop_task_queue.put(task)
+                
+            scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task)
 
             await logger.LOG_EVENT(f'FlaskApp/Tasks/update_task/{currentframe().f_lineno}', 
                                     'FlaskApp', 
@@ -188,8 +187,7 @@ async def update_task():
                                     })
 
             if task['active']:
-                event_loop = get_event_loop()
-                event_loop.call_soon_threadsafe(start_tasks_queue.put_nowait, task)
+                scheduler_event_loop.call_soon_threadsafe(start_tasks_queue.put_nowait, task)
 
                 await logger.LOG_EVENT(f'FlaskApp/Tasks/update_task/{currentframe().f_lineno}', 
                                         'FlaskApp', 
@@ -236,7 +234,7 @@ async def delete_task():
                                         'event_type': 'task_deleted'
                                     })
 
-            await stop_task_queue.put(task)
+            scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task)
 
             await logger.LOG_EVENT(f'FlaskApp/Tasks/delete_task/{currentframe().f_lineno}', 
                                     'FlaskApp', 

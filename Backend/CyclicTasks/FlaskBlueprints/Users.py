@@ -7,7 +7,7 @@ from firebase_admin import auth
 from ..lib.Logger import Logger
 from ..lib.Firestore import Firestore
 from ..lib.Authentication import Authentication
-from .. import stop_task_queue
+from .. import stop_task_queue, scheduler_event_loop
 
 Users = Blueprint('users', __name__, url_prefix='/users')
 
@@ -58,7 +58,7 @@ async def suspend_user():
                 for task in user_tasks:
                     task['active'] = False
                     
-                    await stop_task_queue.put(task.copy())
+                    scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task.copy())
                     await FS.update_task(task)
 
                 await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}',
@@ -222,7 +222,8 @@ async def suspend_tasks():
             FS = Firestore(initialized=True)
             for task in tasks:
                 task['active'] = False
-                await stop_task_queue.put(task.copy())
+                
+                scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task.copy())
                 await FS.update_task(task.copy())
 
                 await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 
