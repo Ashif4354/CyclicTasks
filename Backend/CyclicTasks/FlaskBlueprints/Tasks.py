@@ -15,7 +15,7 @@ Tasks = Blueprint('tasks', __name__, url_prefix='/tasks')
 @Tasks.before_request
 async def before_request():
     """
-    It will check for task data and validate it.\n
+    It will check for task data and validate it.
     """    
     async with ClientSession() as session:
         logger = Logger(session)

@@ -18,6 +18,9 @@ async def before_request():
 
 @Users.route('/suspenduserstasks', methods=['POST'])
 async def suspend_user():
+    """ 
+    This endpoint is used to suspend the tasks of a specific user.
+    """
     async with ClientSession() as session:
         logger = Logger(session)
         accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
@@ -88,6 +91,9 @@ async def suspend_user():
 
 @Users.route('/blockuser', methods=['POST'])
 async def block_user():
+    """ 
+    This endpoint is used to block/unblock a specific user.
+    """
     async with ClientSession() as session:
         logger = Logger(session)
         accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
@@ -151,6 +157,9 @@ async def block_user():
         
 @Users.route('/getusertasks', methods=['POST'])
 async def get_user_tasks():
+    """ 
+    This endpoint is used to get the tasks of a specific user.
+    """
     async with ClientSession() as session:
         logger = Logger(session)
 

@@ -17,6 +17,9 @@ Admin.register_blueprint(Users)
 
 @Admin.before_request
 async def before_request():
+    """
+    This function will run before every request to the Admin Blueprint.
+    """
     async with ClientSession() as session:
         logger = Logger(session)
         if request.method in ('GET', 'POST'):
@@ -49,6 +52,9 @@ async def before_request():
 
 @Admin.route('/verifyadmin', methods=['POST'])
 async def verify_admin():
+    """
+    This endpoint will verify if the user is an admin or not.
+    """
     user = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])
 
     if 'owner' in user and user['owner']:
@@ -66,8 +72,7 @@ async def verify_admin():
 @Admin.route('/getrunningtasks', methods=['GET'])
 async def get_running_tasks():
     """
-    This endpoint will return the list of tasks that are currently running.\n
-    Need to be authorized by the ADMIN_PWD.
+    This endpoint will return the list of tasks that are currently running.
     """
 
     async with ClientSession() as session:
@@ -94,8 +99,7 @@ async def get_running_tasks():
 @Admin.route('/loggingstatus', methods=['GET', 'POST'])
 async def logging_status():
     """
-    This endpoint will return the status of the logging.\n
-    Need to be authorized by the ADMIN_PWD.
+    This endpoint will return the status of the logging.
     """
     async with ClientSession() as session:
         logger = Logger(session)
@@ -146,8 +150,7 @@ async def logging_status():
 @Admin.route('/getusers', methods=['POST'])
 async def get_users():
     """
-    This endpoint will return the list of users.\n
-    Need to be authorized by the ADMIN_PWD.
+    This endpoint will return the list of users.
     """
 
     async with ClientSession() as session:
@@ -175,8 +178,7 @@ async def get_users():
 @Admin.route('/getalltasks', methods=['POST'])
 async def get_all_tasks():
     """
-    This endpoint will return the list of all tasks.\n
-    Need to be authorized by the ADMIN_PWD.
+    This endpoint will return the list of all tasks.
     """
 
     async with ClientSession() as session:
@@ -211,8 +213,7 @@ async def get_all_tasks():
 @Admin.route('/getadmins', methods=['GET'])
 async def get_admins():
     """
-    This endpoint will return the list of admins.\n
-    Need to be authorized by the ADMIN_PWD.
+    This endpoint will return the list of admins.
     """
 
     async with ClientSession() as session:
@@ -248,8 +249,7 @@ async def get_admins():
 @Admin.route('/grantrevokeadmin', methods=['POST'])
 async def make_admin():
     """
-    This endpoint will make a user an admin.\n
-    Need to be authorized by the ADMIN_PWD.
+    This endpoint will grant or revoke the admin role to the user.
     """
 
     async with ClientSession() as session:
