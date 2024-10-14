@@ -23,15 +23,16 @@
     - [Stackoverflow](https://stackoverflow.com/)
     - [GeeeksforGeeks](https://www.geeksforgeeks.org/)
 
-
-
-
 - Youtube Videos referenced
     - [Python logging tutorial by Tech with Tim](https://www.youtube.com/watch?v=urrfJgHwIJA)
 
 - Youtube Channels
     - [Tech with Tim](https://www.youtube.com/@TechWithTim)
     - [NeuralNine](https://www.youtube.com/@NeuralNine)
+
+- Images / Icons
+    - [Photo by Tirachard Kumtanom from Pexels](https://www.pexels.com/photo/gray-surface-450055/)
+    - [FavIcon](https://www.freepik.com/icon/maintenance_9703641)
 
 All praises to the Almighty for the knowledge and wisdom to complete this project. 
 
