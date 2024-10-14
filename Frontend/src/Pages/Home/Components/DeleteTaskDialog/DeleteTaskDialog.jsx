@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-import { analytics } from '../../../../config/firebase';
+import { analytics, auth } from '../../../../config/firebase';
 import { logEvent } from 'firebase/analytics';
 
 import './DeleteTaskDialog.css'
@@ -30,7 +30,8 @@ const DeleteTaskDialog = (props) => {
         fetch(import.meta.env.VITE_CT_SERVER_URL + '/tasks/deletetask', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
             },
             body: JSON.stringify({
                 task: task,

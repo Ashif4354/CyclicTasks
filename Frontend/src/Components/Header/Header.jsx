@@ -5,7 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import './Header.css'
 
 
-const Header = () => {
+const Header = (props) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const Header = () => {
         <header className='header'>
             <div className='heading-text-container'>
                 <div className='heading-text'>
-                    <p className='header-heading-text'>Cyclic Tasks</p>
+                    <p className='header-heading-text'>{props.heading}</p>
                 </div>
             </div>
 

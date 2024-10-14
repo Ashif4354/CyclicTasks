@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 import { Paper, TextField, MenuItem, Menu, Skeleton } from '@mui/material';
 import SnackBar from '../../../../../../../Components/SnackBar/Snackbar';
 import SuspendTasksDialog from '../SuspendTasksDialog/SuspendTasksDialog';
+import { auth } from '../../../../../../../config/firebase';
 
 const Panel = (props) => {
-    const { tabValue, user, recaptchaRef, adminPassword, tasks, setTasks } = props;
+    const { tabValue, user, recaptchaRef, tasks, setTasks } = props;
 
     const [searchText, setSearchText] = useState('');
     const [searchBy, setSearchBy] = useState('task_name');
@@ -39,9 +40,9 @@ const Panel = (props) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
             },
             body: JSON.stringify({
-                password: adminPassword,
                 recaptchaToken: recaptchaToken
             })
         })
@@ -105,7 +106,7 @@ const Panel = (props) => {
                                 value={searchText}
                                 onChange={onSearchTextChange}
                                 sx={{
-                                    width: '600px',
+                                    width: '480px',
                                     color: 'white',
                                     backgroundColor: '#393939',
                                     borderRadius: '5px',
@@ -162,6 +163,9 @@ const Panel = (props) => {
                     <div />
                 )
             }
+            <div className='total-container'>
+                <span>Total Tasks: {tasks.length}</span>
+            </div>
 
             <div className='panel-tasks-container'>
 
@@ -198,7 +202,6 @@ const Panel = (props) => {
                                         setSelectNone={setSelectNone}
                                         selectedTasks={selectedTasks}
                                         setSelectedTasks={setSelectedTasks}
-                                        adminPassword={adminPassword}
                                     />
                                 </div>
                             )
@@ -234,7 +237,7 @@ const Panel = (props) => {
             {
                 tasks.length != 0 ? (
                     <div className='panel-selected-tasks-container'>
-                        <span style={{ marginTop: '10px' }}>Selection: </span>
+                        <span style={{ marginTop: '10px' }}>Total Selected: {selectedTasks.length}</span>
 
                         <div className='selection-btns'>
                             <button className='user-btn' onClick={onSelectNone} disabled={selectedTasks.length == 0}> Select None</button>
@@ -265,7 +268,6 @@ const Panel = (props) => {
                 setOpen={setSuspendDialogOpen}
                 setLoading={(x) => x}
                 tasks={selectedTasks}
-                adminPassword={adminPassword}
                 onSelectNone={onSelectNone}
                 setSuccessSnackBarOpen={setSuspendSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setSuspendFailedSnackBarOpen}

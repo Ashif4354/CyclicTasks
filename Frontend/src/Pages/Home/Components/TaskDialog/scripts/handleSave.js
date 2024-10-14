@@ -53,7 +53,8 @@ const handleSave = async (type, task, taskName, url, interval,
     fetch(import.meta.env.VITE_CT_SERVER_URL + (type == 'Add' ? '/tasks/newtask' : '/tasks/updatetask'), {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
         },
         body: JSON.stringify(body)
     })
@@ -73,7 +74,7 @@ const handleSave = async (type, task, taskName, url, interval,
                     setSuccessUpdateSnackBarOpen(true);
                 }
                 setOpen(false);
-                setFormDisabled(false);
+                
             } else {
                 if (type == 'Add') {
                     logEvent(analytics, 'failed-add-task')
@@ -87,6 +88,7 @@ const handleSave = async (type, task, taskName, url, interval,
             
             setLoadingOpen(false);
             setSaveBtnDisabled(false);
+            setFormDisabled(false);
         })
         .catch(error => {
             if (type == 'Add') {

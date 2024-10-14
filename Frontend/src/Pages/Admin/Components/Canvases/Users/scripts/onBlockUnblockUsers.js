@@ -1,7 +1,7 @@
-
+import { auth } from '../../../../../../config/firebase';
 
 const onBlockUnblockUser = async ( 
-    setLoading, setBtnDisabled, recaptchaRef, adminPassword, users, setSelectNone, block, setSuccessSnackBarOpen, setOpen, setFailedSnackBarOpen, setErrorText
+    setLoading, setBtnDisabled, recaptchaRef, users, setSelectNone, block, setSuccessSnackBarOpen, setOpen, setFailedSnackBarOpen, setErrorText
 ) => {
     setLoading(true);
     setBtnDisabled(true);
@@ -12,11 +12,11 @@ const onBlockUnblockUser = async (
     fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/users/blockuser', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
         },
         body: JSON.stringify({
             recaptchaToken: recaptchaToken,
-            password: adminPassword,
             emails: users.map(user => user.email),
             block: block
         })

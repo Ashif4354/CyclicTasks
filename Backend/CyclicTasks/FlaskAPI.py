@@ -32,6 +32,20 @@ async def before_request() -> Response | None:
         await logger.REQUESTS(request) # Log the incoming request
         
         if request.method == "POST":
+
+            if not request.json:
+                await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                    'Request data not found', 
+                                    request,
+                                    labels={
+                                        'alert_type': 'request_data_not_found'
+                                    })
+
+                return jsonify({
+                    'message': 'Request data not found',
+                    'success': False
+                })
+            
             if 'recaptchaToken' in request.json:
                 recaptcha_token = request.json['recaptchaToken']
                 verified = await verify_recaptcha(session, recaptcha_token, environ['G_RECAPTCHA_SECRET_KEY'])
@@ -41,7 +55,7 @@ async def before_request() -> Response | None:
                                         'Recaptcha verification failed', 
                                         request,
                                         labels={
-                                            'alert_type': 'Recaptcha Verification Failed'
+                                            'alert_type': 'recaptcha_verification_failed'
                                         })
 
                     return jsonify({
@@ -49,7 +63,13 @@ async def before_request() -> Response | None:
                         'success': False
                     })
                 
-                await logger.LOG_EVENT(f'FlaskApp/before_request/{currentframe().f_lineno}', 'FlaskApp', 'Recaptcha verification success', None)
+                await logger.LOG_EVENT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                       'FlaskApp', 
+                                       'Recaptcha verification success', 
+                                       None,
+                                       labels={
+                                           'event_type': 'recaptcha_verification_success'
+                                       })
             
             elif 'host_token' in request.json:
 
@@ -74,7 +94,7 @@ async def before_request() -> Response | None:
                                     'Recaptcha token not found', 
                                     request,
                                     labels={
-                                        'alert_type': 'Recaptcha Token Not Found'
+                                        'alert_type': 'recaptcha_token_not_found'
                                     })
 
                 return jsonify({

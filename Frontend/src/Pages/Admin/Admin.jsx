@@ -1,27 +1,39 @@
-import React, { useState } from 'react';
-import Header from './Components/Header/Header';
-import Footer from './../../Components/Footer/Footer'
+import React, { useState, useEffect } from 'react';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../../config/firebase';
 
 import './Admin.css';
-import PasswordDialog from './Components/PasswordDialog/PasswordDialog';
+import Header from '../../Components/Header/Header';
+import Footer from './../../Components/Footer/Footer'
+import AdminVerifyDialog from './Components/AdminVerifyDialog/AdminVerifyDialog';
 import ServerStats from './Components/Canvases/ServerStats/ServerStats';
 import EnableDisableLogs from './Components/Canvases/EnableDisableLogs/EnableDisableLogs';
 import Tasks from './Components/Canvases/Tasks/Tasks';
 import Users from './Components/Canvases/Users/Users';
+import AdminAccess from './Components/Canvases/AdminAccess/AdminAccess';
 
 
-const Admin = () => {
+const Admin = (props) => {
 
-    const [user, setUser] = useState(null);
-    const [adminPassword, setAdminPassword] = useState('admin');
-    const [pwdDialogOpen, setPwdDialogOpen] = useState(false);
-    const [signedIn, setSignedIn] = useState(true);
+    const [adminVerifyDialog, setAdminVerifyDialogOpen] = useState(true);
+    const [signedIn, setSignedIn] = useState(false);
+    const [admin, setAdmin] = useState(null);
+    const [owner, setOwner] = useState(false);
 
+    const [users, setUsers] = useState([]);
     const [showTasksUser, setShowTasksUser] = useState(null);
+
+    useEffect(() => {
+        onAuthStateChanged(auth, (user) => {
+            setSignedIn(false)
+            setAdminVerifyDialogOpen(true);
+            setAdmin(user);
+        });
+    }, []);
 
     return (
         <div className='main-container'>
-            <Header />
+            <Header heading='Cyclic Tasks Admin Console' />
 
             <div className='console-container'>
                 {
@@ -29,16 +41,23 @@ const Admin = () => {
                         <div className='canvases'>
                             <div className='first-pane'>
                                 <ServerStats />
-                                <EnableDisableLogs adminPassword={adminPassword} />
+                                <EnableDisableLogs />
+                                {
+                                    owner ? (
+                                        <AdminAccess admin={admin} users={users}/>
+                                    ) : (
+                                        <div />
+                                    )
+                                }
                             </div>
 
                             <div className='second-pane'>
                                 <Users
-                                    adminPassword={adminPassword}
+                                    users={users}
+                                    setUsers={setUsers}
                                     setShowTasksUser={setShowTasksUser}
                                 />
-                                <Tasks 
-                                    adminPassword={adminPassword}
+                                <Tasks
                                     showTasksUser={showTasksUser}
                                     setShowTasksUser={setShowTasksUser}
                                 />
@@ -48,10 +67,10 @@ const Admin = () => {
                     ) : (
                         <div className='nothing-container'>
                             {
-                                pwdDialogOpen ? (
+                                adminVerifyDialog ? (
                                     <div />
                                 ) : (
-                                    <h2>Refresh the page to sign in again</h2>
+                                    <h2>Refresh the page to sign in</h2>
                                 )
                             }
                         </div>
@@ -60,7 +79,7 @@ const Admin = () => {
             </div>
 
             <Footer />
-            <PasswordDialog open={pwdDialogOpen} setOpen={setPwdDialogOpen} setSignedIn={setSignedIn} setAdminPassword={setAdminPassword} />
+            <AdminVerifyDialog open={adminVerifyDialog} setOpen={setAdminVerifyDialogOpen} setSignedIn={setSignedIn} setOwner={setOwner}/>
 
         </div>
     );

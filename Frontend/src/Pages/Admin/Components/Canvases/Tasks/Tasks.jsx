@@ -7,10 +7,11 @@ import ReCAPTCHA from 'react-google-recaptcha';
 
 import './Tasks.css';
 import Panel from './Components/Panel/Panel';
+import { auth } from '../../../../../config/firebase';
 
 const Tasks = (props) => {
 
-    const { adminPassword, showTasksUser, setShowTasksUser } = props
+    const { showTasksUser, setShowTasksUser } = props
 
     const [tabValue, setTabValue] = useState('2');
     const [runningTasks, setRunningTasks] = useState([]);
@@ -33,9 +34,9 @@ const Tasks = (props) => {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
             },
             body: JSON.stringify({
-                password: adminPassword,
                 email: showTasksUser.email,
                 recaptchaToken: recaptchaToken
             })
@@ -55,7 +56,13 @@ const Tasks = (props) => {
 
     const getRunningTasks = async () => {
 
-        fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/getrunningtasks?pwd=' + adminPassword)
+        fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/getrunningtasks',{
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
+            }
+
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -113,17 +120,16 @@ const Tasks = (props) => {
                         <Panel
                             tabValue={tabValue}
                             recaptchaRef={recaptchaRef}
-                            adminPassword={adminPassword}
                             tasks={allTasks}
                             setTasks={setAllTasks}
 
                         />
                     </TabPanel>
                     <TabPanel value="2" sx={{ padding: '0px' }}>
-                        <Panel tasks={runningTasks} tabValue={tabValue} adminPassword={adminPassword} />
+                        <Panel tasks={runningTasks} tabValue={tabValue} />
                     </TabPanel>
                     <TabPanel value="3" sx={{ padding: '0px' }}>
-                        <Panel tasks={userTasks} tabValue={tabValue} user={showTasksUser} adminPassword={adminPassword} />
+                        <Panel tasks={userTasks} tabValue={tabValue} user={showTasksUser} />
                     </TabPanel>
                 </TabContext>
 

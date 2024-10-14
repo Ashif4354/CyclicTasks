@@ -8,7 +8,7 @@ from ..lib.Logger import Logger
 from ..lib.Firestore import Firestore
 from ..lib.Authentication import Authentication
 from ..CyclicTasks import CyclicTasks
-
+from .lib.ValidateUser import admin
 from .Users import Users
 
 
@@ -19,95 +19,49 @@ Admin.register_blueprint(Users)
 async def before_request():
     async with ClientSession() as session:
         logger = Logger(session)
-
-        if request.method == 'GET':
-            if 'pwd' not in request.args:
-
+        if request.method in ('GET', 'POST'):
+            if not request.headers.get('Authorization') or not request.headers.get('Authorization').startswith('Bearer '):
                 await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
-                            'Admin Pwd not found in request', 
-                            request)
+                            'Authorization failed', 
+                            request,
+                            labels={
+                                'alert_type': 'authorization_failed'
+                            })
                 
                 return jsonify({
-                    'message': 'Admin Pwd not found in request',
+                    'message': 'Authorization failed',
                     'success': False
                 })
             
-            else:
-                if request.args['pwd'] != environ['ADMIN_PWD']:
-
-                    await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
-                                'Admin Pwd mismatch', 
-                                request)
-                    
-                    return jsonify({
-                        'message': 'Admin Pwd mismatch',
-                        'success': False
-                    })
-                
-        elif request.method == 'POST':
-            if request.path in ('/admin/verifyadminpwd',):
-                pass
-            else:
-                if 'password' not in request.json:
-
-                    await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
-                                'Admin Pwd not found', 
-                                request)
-                    
-                    return jsonify({
-                        'message': 'Admin Pwd not found',
-                        'success': False
-                    })
-                else:
-                    if request.json['password'] != environ['ADMIN_PWD']:
-
-                        await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
-                                    'Admin Pwd mismatch', 
-                                    request)
-                        
-                        return jsonify({
-                            'message': 'Admin Pwd mismatch',
-                            'success': False
-                        })
-
-            
-
-@Admin.route('/verifyadminpwd', methods=['POST'])
-async def verify_admin_pwd():
-    """
-    This endpoint will verify the ADMIN_PWD.\n
-    Need to be authorized by the ADMIN_PWD.
-    """
-    async with ClientSession() as session:
-        logger = Logger(session)
-
-        if 'password' in request.json:
-            if request.json['password'] == environ['ADMIN_PWD']:
-                return jsonify({
-                    'message': 'Admin Pwd verified',
-                    'success': True,
-                    'verified': True
-                })
-            else:
-                await logger.ALERT(f'FlaskApp/Admin/VerifyAdminPwd/{currentframe().f_lineno}', 
-                            'Admin Pwd mismatch', 
-                            request)
+            elif not admin(request.headers.get('Authorization').split(' ')[1]):
+                await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
+                            'User is not an Admin', 
+                            request,
+                            labels={
+                                'alert_type': 'not_an_admin'
+                            })
                 
                 return jsonify({
-                    'message': 'Admin Pwd mismatch',
-                    'success': True,
-                    'verified': False
+                    'message': 'You are not an Admin',
+                    'success': False
                 })
-        else:
-            await logger.ALERT(f'FlaskApp/Admin/VerifyAdminPwd/{currentframe().f_lineno}',
-                        'Admin Pwd not found', 
-                        request)
-            
-            return jsonify({
-                'message': 'Admin Pwd not found',
-                'success': False
-            })
 
+
+@Admin.route('/verifyadmin', methods=['POST'])
+async def verify_admin():
+    user = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])
+
+    if 'owner' in user and user['owner']:
+        return jsonify({
+            'success': True,
+            'owner': True
+        })
+    else:
+        return jsonify({
+            'success': True,
+            'owner': False
+        })
+    
 
 @Admin.route('/getrunningtasks', methods=['GET'])
 async def get_running_tasks():
@@ -128,7 +82,10 @@ async def get_running_tasks():
         except Exception as e:
             await logger.ALERT(f'FlaskApp/Admin/GetRunningTasks/{currentframe().f_lineno}', 
                                 f'Error: {e}', 
-                                request)
+                                request,
+                                labels={
+                                    'alert_type': 'just_exception'
+                                })
             return jsonify({
                 'message': 'Internal Server Error',
                 'success': False
@@ -144,6 +101,7 @@ async def logging_status():
         logger = Logger(session)
 
         if request.method == 'GET':
+
             return jsonify({
                 'success': True,
                 'google': True if environ['ENABLE_GOOGLE_CLOUD_LOGS'] == 'True' else False,
@@ -173,7 +131,11 @@ async def logging_status():
             await logger.LOG_EVENT(f'FlaskApp/Admin/LoggingStatus/{currentframe().f_lineno}', 
                             'FlaskApp', 
                             'Logging status updated', 
-                            None)
+                            None,
+                            labels={
+                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                                'event_type': 'logging_status_updated'
+                            })
 
             return jsonify({
                 'success': True,
@@ -222,12 +184,15 @@ async def get_all_tasks():
         
         try:
             FS = Firestore(initialized=True)
-            tasks: list[dict] = await FS.get_all_tasks(include_inactive_tasks=True)
+            tasks: list[dict] = await FS.get_all_tasks(for_='FlaskApp', include_inactive_tasks=True)
 
             await logger.LOG_EVENT(f'FlaskApp/Admin/GetAllTasks/{currentframe().f_lineno}', 
                         'FlaskApp', 
                         f'All Tasks fetched for admin: {len(tasks)}', 
-                        None)
+                        None,
+                        labels={
+                            'event_type': 'fetch_all_tasks',
+                        })
         
             return jsonify({
                 'success': True,
@@ -241,7 +206,106 @@ async def get_all_tasks():
                 'message': 'Internal Server Error',
                 'success': False
             })
+        
 
+@Admin.route('/getadmins', methods=['GET'])
+async def get_admins():
+    """
+    This endpoint will return the list of admins.\n
+    Need to be authorized by the ADMIN_PWD.
+    """
+
+    async with ClientSession() as session:
+        logger = Logger(session)
+
+        try:
+            Auth = Authentication(initialized=True)
+            admins: list[dict] = await Auth.get_admins()
+
+            await logger.LOG_EVENT(f'FlaskApp/Admin/GetAdmins/{currentframe().f_lineno}',
+                        'FlaskApp',
+                        f'Admins fetched: {len(admins)}',
+                        None,
+                        labels={
+                            'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                            'event_type': 'fetch_admins'
+                        })
+            
+            return jsonify({
+                'success': True,
+                'admins': admins
+            })
+        
+        except Exception as e:
+            await logger.LOG_ERROR(f'FlaskApp/Admin/GetAdmins/{currentframe().f_lineno}', e, None)
+
+            return jsonify({
+                'message': 'Internal Server Error',
+                'success': False
+            })
+        
+
+@Admin.route('/grantrevokeadmin', methods=['POST'])
+async def make_admin():
+    """
+    This endpoint will make a user an admin.\n
+    Need to be authorized by the ADMIN_PWD.
+    """
+
+    async with ClientSession() as session:
+        logger = Logger(session)
+        
+        admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])        
+        if 'owner' in admin and not admin['owner']:
+            await logger.ALERT(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}',
+                               'A user tried to make an admin without being the owner',
+                                 request,
+                                 labels={
+                                     'alert_type': 'not_owner'
+                                 })
+            
+            return jsonify({
+                'message': 'You are not the owner of the application',
+                'success': False
+            })
+
+        try:
+            Auth = Authentication(initialized=True)
+            if request.json['admin']:
+                await Auth.add_admin(request.json['email'])
+
+                await logger.LOG_EVENT(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}',
+                            'FlaskApp',
+                            f'User {request.json["email"]} granted admin role',
+                            None,
+                            labels={
+                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                                'event_type': 'grant_admin'
+                            })
+            
+            else:
+                await Auth.revoke_admin(request.json['email'])
+
+                await logger.LOG_EVENT(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}',
+                            'FlaskApp',
+                            f'User {request.json["email"]} revoked from admin role',
+                            None,
+                            labels={
+                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                                'event_type': 'revoke_admin'
+                            })
+
+            return jsonify({
+                'success': True
+            })
+        
+        except Exception as e:
+            await logger.LOG_ERROR(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}', e, None)
+
+            return jsonify({
+                'message': 'Internal Server Error',
+                'success': False
+            })
 
 
 __all__ = ['Admin']

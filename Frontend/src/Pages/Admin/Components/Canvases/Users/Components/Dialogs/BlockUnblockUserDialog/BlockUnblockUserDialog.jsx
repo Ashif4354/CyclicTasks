@@ -9,7 +9,7 @@ import onBlockUnblockUser from '../../../scripts/onBlockUnblockUsers';
 
 
 const BlockUnblockUserDialog = (props) => {
-    const { open, setOpen, users, setSelectNone, block, setSuccessSnackBarOpen, setFailedSnackBarOpen, adminPassword } = props;
+    const { open, setOpen, users, setSelectNone, block, setSuccessSnackBarOpen, setFailedSnackBarOpen } = props;
 
     const [loading, setLoading] = useState(false);
     const [btnDisabled, setBtnDisabled] = useState(false);
@@ -88,7 +88,6 @@ const BlockUnblockUserDialog = (props) => {
                             setLoading,
                             setBtnDisabled,
                             recaptchaRef,
-                            adminPassword,
                             users,
                             setSelectNone,
                             block,

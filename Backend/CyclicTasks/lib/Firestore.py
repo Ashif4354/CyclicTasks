@@ -20,7 +20,7 @@ class Firestore(FirebaseConfig, Logger):
         self.tasks_collection = self.db.collection('Tasks')
         self.users_collection = self.db.collection('Users')
 
-    async def get_all_tasks(self, include_inactive_tasks: bool = False) -> list[dict]:
+    async def get_all_tasks(self, for_: str, include_inactive_tasks: bool = False) -> list[dict]:
         """
         Fetches all the tasks from the Firestore database
         Returns only the active tasks
@@ -41,9 +41,21 @@ class Firestore(FirebaseConfig, Logger):
             self.fetched_tasks.append(task_)
 
         if self.fetched_tasks == []:
-            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 'CyclicTasks', 'No tasks available', None)
+            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 
+                                for_, 
+                                'No tasks available', 
+                                None,
+                                labels={
+                                    'event_type': 'no_tasks_available'
+                                })
         else:
-            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 'CyclicTasks', f'Tasks fetched: {len(self.fetched_tasks)}', None)
+            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 
+                                for_, 
+                                f'Tasks fetched: {len(self.fetched_tasks)}', 
+                                None,
+                                labels={
+                                    'event_type': 'tasks_fetched_from_firestore'
+                                })
 
         return self.fetched_tasks
     

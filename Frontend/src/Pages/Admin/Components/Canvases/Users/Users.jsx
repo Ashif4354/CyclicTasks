@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { TextField, MenuItem, Skeleton, CircularProgress } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { auth } from '../../../../../config/firebase';
 
 import './Users.css';
 import EachUser from './Components/EachUser';
@@ -11,9 +12,8 @@ import SnackBar from '../../../../../Components/SnackBar/Snackbar';
 
 const Users = (props) => {
 
-    const { adminPassword, setShowTasksUser } = props;
-
-    const [users, setUsers] = useState([]);
+    const { setShowTasksUser, users, setUsers } = props;
+    
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchBy, setSearchBy] = useState('name');
@@ -58,8 +58,6 @@ const Users = (props) => {
 
     }
 
-
-
     useEffect(() => {
         if (selectedUsers.length == 0) {
             setSelectionBtnsDisabled(true);
@@ -67,6 +65,8 @@ const Users = (props) => {
             setSelectionBtnsDisabled(false);
         }
     }, [selectedUsers])
+
+    
 
 
     const getUsers = async () => {
@@ -77,11 +77,11 @@ const Users = (props) => {
         fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/getusers', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
             },
             body: JSON.stringify({
                 recaptchaToken,
-                password: adminPassword
 
             })
         })
@@ -169,6 +169,9 @@ const Users = (props) => {
                     </div>
 
                     <div className='users-list-container'>
+                        <div className='total-container'>
+                            <span>Total Users: {users.length}</span>
+                        </div>
                         {
                             users.length > 0 ? (
 
@@ -189,7 +192,6 @@ const Users = (props) => {
                                                 setSelectedUsers={setSelectedUsers}
                                                 selectNone={selectNone}
                                                 setSelectNone={setSelectNone}
-                                                adminPassword={adminPassword}
                                                 setShowTasksUser={setShowTasksUser}
                                             />
                                         </div>
@@ -228,7 +230,7 @@ const Users = (props) => {
                         }
                     </div>
                     <div className='users-selection-btns-container'>
-                        <span style={{ alignSelf: 'center' }}>Selection: </span>
+                        <span style={{ alignSelf: 'center' }}>Selected Users: {selectedUsers.length}</span>
 
                         <div className='selection-btns'>
                             <button className='user-btn' onClick={onSelectNone} disabled={selectionBtnsDisabled}>Select None</button>
@@ -258,7 +260,6 @@ const Users = (props) => {
                 setSelectNone={setSelectNone}
                 setSuccessSnackBarOpen={setSelectedSuspendUsersTasksSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setSelectedSuspendUsersTasksFailedSnackBarOpen}
-                adminPassword={adminPassword}
             />
 
             <BlockUnblockUserDialog
@@ -269,7 +270,6 @@ const Users = (props) => {
                 block={block}
                 setSuccessSnackBarOpen={setSelectedBlockUnblockUsersSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setSelectedBlockUnblockUsersFailedSnackBarOpen}
-                adminPassword={adminPassword}
             />
 
 

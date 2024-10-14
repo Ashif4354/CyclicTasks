@@ -10,7 +10,7 @@ import SnackBar from '../../../../../../../Components/SnackBar/Snackbar';
 
 
 const EachPanelTask = (props) => {
-    const { task, tabValue, selectedTasks, setSelectedTasks, adminPassword, selectNone, setSelectNone } = props;
+    const { task, tabValue, selectedTasks, setSelectedTasks, selectNone, setSelectNone } = props;
 
     const [checked, setChecked] = useState(false);
     const [active, setActive] = useState(task.active);
@@ -99,7 +99,6 @@ const EachPanelTask = (props) => {
                 open={suspendDialogOpen}
                 setOpen={setSuspendDialogOpen}
                 tasks={[{ task, setActive }]}
-                adminPassword={adminPassword}
                 setSuccessSnackBarOpen={setSuspendSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setSuspendFailedSnackBarOpen}
                 onSelectNone={setSelectNone}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Checkbox from '@mui/material/Checkbox';
 
+
 import './EachUser.css';
 import SnackBar from '../../../../../../Components/SnackBar/Snackbar';
 import SuspendTasksDialog from './Dialogs/SuspendTaskDialog/SuspendTaskDialog';
@@ -8,11 +9,13 @@ import BlockUnblockUserDialog from './Dialogs/BlockUnblockUserDialog/BlockUnbloc
 
 
 const EachUser = (props) => {
-    const { user, selectNone, setSelectNone, selectedUsers, setSelectedUsers, 
-        adminPassword, setShowTasksUser } = props;
+    const { user, owner, selectNone, setSelectNone, selectedUsers, setSelectedUsers,
+        setShowTasksUser } = props;
 
+    
     const [blocked, setBlocked] = useState(user.blocked);
     const [checked, setChecked] = useState(false);
+
 
     const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
     const [suspendSuccessSnackBarOpen, setSuspendSuccessSnackBarOpen] = useState(false);
@@ -27,11 +30,11 @@ const EachUser = (props) => {
 
         if (e.target.checked) {
             setSelectNone(false);
-            setSelectedUsers([...selectedUsers, {...user, setBlocked: setBlocked}]);
+            setSelectedUsers([...selectedUsers, { ...user, setBlocked: setBlocked }]);
         } else {
             setSelectedUsers(selectedUsers.filter(selectedUser => selectedUser.email !== user.email));
         }
-    }  
+    }
 
     const onSuspendTasks = () => {
         setSuspendDialogOpen(true);
@@ -42,6 +45,8 @@ const EachUser = (props) => {
             setChecked(false);
         }
     }, [selectNone])
+
+    
 
     return (
         <div className='each-user-container'>
@@ -113,18 +118,16 @@ const EachUser = (props) => {
                 setSelectNone={(x) => x}
                 setSuccessSnackBarOpen={setSuspendSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setSuspendFailedSnackBarOpen}
-                adminPassword={adminPassword}
             />
 
             <BlockUnblockUserDialog
                 open={blockUnblockDialogOpen}
                 setOpen={setBlockUnblockDialogOpen}
-                users={[{...user, setBlocked: setBlocked}]}
+                users={[{ ...user, setBlocked: setBlocked }]}
                 setSelectNone={(x) => x}
                 block={!blocked}
                 setSuccessSnackBarOpen={setBlockUnblockSuccessSnackBarOpen}
                 setFailedSnackBarOpen={setBlockUnblockFailedSnackBarOpen}
-                adminPassword={adminPassword}
             />
 
 

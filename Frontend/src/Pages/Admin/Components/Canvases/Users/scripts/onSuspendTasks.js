@@ -1,21 +1,24 @@
+import { auth } from '../../../../../../config/firebase';
 
-const onSuspendTasks = async (setLoading, setBtnDisabled, recaptchaRef, adminPassword,
+const onSuspendTasks = async (setLoading, setBtnDisabled, recaptchaRef,
     emails, setSelectNone, setSuccessSnackBarOpen, setOpen, setFailedSnackBarOpen, setErrorText
 ) => {
     setLoading(true);
     setBtnDisabled(true);
-
+    
+    console.log(1)
     const recaptchaToken = await recaptchaRef.current.executeAsync();
     recaptchaRef.current.reset();
+    console.log(2)
 
     fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/users/suspenduserstasks', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
         },
         body: JSON.stringify({
             recaptchaToken: recaptchaToken,
-            password: adminPassword,
             emails: emails
         })
     })

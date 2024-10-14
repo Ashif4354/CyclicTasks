@@ -15,7 +15,7 @@ const Start = () => {
 
     return (
         <div className='main-container'>
-            <Header/>
+            <Header heading='Cyclic Tasks'/>
             <div className='content-container'>
                 <div className='middle-box'>
                     <div className='lottie-container'>

@@ -1,4 +1,6 @@
-const suspendTasks = async (tasks, recaptchaRef, adminPassword, setDialogOpen,
+import { auth } from '../../../../../../../../config/firebase';
+
+const suspendTasks = async (tasks, recaptchaRef, setDialogOpen,
     setLoading, setSuccessSnackBarOpen, setFailedSnackBarOpen, setErrorText, onSelectNone) => {
 
     setLoading(true);   
@@ -11,9 +13,9 @@ const suspendTasks = async (tasks, recaptchaRef, adminPassword, setDialogOpen,
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
         },
         body: JSON.stringify({
-            password: adminPassword,
             recaptchaToken: recaptchaToken,
             tasks: tasks.map(task => task.task)
         })

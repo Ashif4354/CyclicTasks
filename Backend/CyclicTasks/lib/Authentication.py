@@ -67,4 +67,55 @@ class Authentication(FirebaseConfig):
 
         except Exception as e:
             print(e)
+
+
+    async def get_admins(self) -> list[dict]:
+        """
+        Fetches all the admins from the Firestore database
+        """
+        self.fetched_admins: list[dict] = []
         
+        page = auth.list_users()
+
+        while page:
+            for user in page.users:
+
+                user_custom_claims = user.custom_claims or {}
+
+                if 'admin' not in user_custom_claims:
+                    continue
+
+                self.fetched_admins.append({'email': user.email, 'name': user.display_name})
+
+            page = page.get_next_page()
+
+        return self.fetched_admins
+        
+
+    async def add_admin(self, user_email: str) -> None:
+        """
+        Adds an admin to the application
+        """
+        try:
+            user = auth.get_user_by_email(user_email)
+            user_custom_claims = user.custom_claims or {}
+
+            user_custom_claims['admin'] = True  
+            auth.update_user(user.uid, custom_claims=user_custom_claims)
+
+        except Exception as e:
+            print(e)
+
+    async def revoke_admin(self, user_email: str) -> None:
+        """
+        Removes an admin from the application
+        """
+        try:
+            user = auth.get_user_by_email(user_email)
+            user_custom_claims = user.custom_claims or {}
+
+            user_custom_claims['admin'] = False  
+            auth.update_user(user.uid, custom_claims=user_custom_claims)
+
+        except Exception as e:
+            print(e)

@@ -74,6 +74,8 @@ const TaskDialog = (props) => {
             setActive(false);
             setDiscordWebhookUrl('');
             setDiscordWebhookColor('');
+        } else if (!open && type == 'Update') {
+            setSaveBtnDisabled(true);
         }
     }, [open])
 

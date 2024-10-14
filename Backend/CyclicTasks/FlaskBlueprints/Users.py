@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from aiohttp import ClientSession
 from inspect import currentframe
 from os import environ
+from firebase_admin import auth
 
 from ..lib.Logger import Logger
 from ..lib.Firestore import Firestore
@@ -19,10 +20,14 @@ async def before_request():
 async def suspend_user():
     async with ClientSession() as session:
         logger = Logger(session)
+        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
+
         try:
             users_emails: list[str] = request.json['emails']
 
             FS = Firestore(initialized=True)
+
+            
 
             for user_email in users_emails:
 
@@ -34,7 +39,9 @@ async def suspend_user():
                                         f'No tasks found for user: {user_email}', 
                                         None,
                                         labels={
-                                                'user_email': user_email
+                                                'user_email': user_email,
+                                                'event_type': 'no_tasks_found_for_user', 
+                                                'accessed_admin': accessed_admin                                          
                                         })
                     continue
 
@@ -49,7 +56,9 @@ async def suspend_user():
                                         f'User tasks suspended: {user_email}',
                                         None,
                                         labels={
-                                            'user_email': user_email
+                                            'user_email': user_email,
+                                            'event_type': 'user_tasks_suspended',
+                                            'accessed_admin': accessed_admin
                                         })
 
             await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}', 
@@ -58,6 +67,10 @@ async def suspend_user():
                                 None,
                                 extra_payload={
                                     'users_emails': '\n'.join(users_emails)
+                                },
+                                labels={
+                                    'event_type': 'users_tasks_suspended',
+                                    'accessed_admin': accessed_admin
                                 })
             
             return jsonify({
@@ -77,6 +90,7 @@ async def suspend_user():
 async def block_user():
     async with ClientSession() as session:
         logger = Logger(session)
+        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
 
         try:
             user_emails: str = request.json['emails']
@@ -92,7 +106,9 @@ async def block_user():
                                             f'User blocked: {user_email}',
                                             None,
                                             labels={
-                                                'user_email': user_email
+                                                'user_email': user_email,
+                                                'event_type': 'user_blocked',
+                                                'accessed_admin': accessed_admin
                                             })
                 else:
                     await Auth.unblock_user(user_email)
@@ -102,7 +118,9 @@ async def block_user():
                                             f'User unblocked: {user_email}',
                                             None,
                                             labels={
-                                                'user_email': user_email
+                                                'user_email': user_email,
+                                                'event_type': 'user_unblocked',
+                                                'accessed_admin': accessed_admin
                                             })
             
             await logger.LOG_EVENT(f'FlaskApp/Admin/Users/block_user/{currentframe().f_lineno}',
@@ -111,6 +129,10 @@ async def block_user():
                                     None,
                                     extra_payload={
                                         'users_emails': '\n'.join(user_emails)
+                                    },
+                                    labels={
+                                        'event_type': 'users_blocked' if request.json['block'] else 'users_unblocked',
+                                        'accessed_admin': accessed_admin
                                     })
                    
             return jsonify({
@@ -143,7 +165,8 @@ async def get_user_tasks():
                                     f'Tasks fetched for user: {user_email}',
                                     None,
                                     labels={
-                                        'user_email': user_email
+                                        'user_email': user_email,
+                                        'event_type': 'user_tasks_fetched'                                        
                                     })
 
             return jsonify({
@@ -167,6 +190,8 @@ async def suspend_tasks():
     tasks = request.json['tasks']
     async with ClientSession() as session:
         logger = Logger(session)
+        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
+
         try:
             FS = Firestore(initialized=True)
             for task in tasks:
@@ -175,14 +200,25 @@ async def suspend_tasks():
                 await FS.update_task(task.copy())
 
                 await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 
-                                       'FlaskApp', 
-                                       f'Task suspended: {task["id"]}', 
-                                       task,
-                                       labels={
-                                           'event_type': 'suspend_task'
-                                       })
+                                        'FlaskApp', 
+                                        f'Task suspended: {task["id"]}', 
+                                        task,
+                                        labels={
+                                            'event_type': 'suspend_task',
+                                            'accessed_admin': accessed_admin
+                                        })
 
-            await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 'FlaskApp', f'Tasks suspended: {len(tasks)}', None)
+            await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 
+                                   'FlaskApp', 
+                                   f'Tasks suspended: {len(tasks)}', 
+                                   None,
+                                   extra_payload={
+                                       'tasks': '\n'.join([task['id'] for task in tasks])
+                                   },
+                                   labels={
+                                       'event_type': 'suspend_tasks',
+                                       'accessed_admin': accessed_admin
+                                   })
 
             return jsonify({
                 'message': 'Tasks have been suspended',

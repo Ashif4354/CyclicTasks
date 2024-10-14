@@ -1,0 +1,29 @@
+
+.admin-user-text-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    margin-left: 20px;
+    margin-right: 20px;
+
+}
+
+.revoke-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media (max-width: 750px) {
+    .revoke-btn-container {
+        margin-top: 10px;
+    }
+}
+
+.grant-revoke-btn {
+    width:fit-content;
+    min-width: 70px;
+    /* background */
+}

@@ -9,7 +9,7 @@ import suspendTasks from '../Panel/scripts/suspendTasks';
 
 const SuspendTasksDialog = (props) => {
 
-    const { open, setOpen, tasks, adminPassword, setSuccessSnackBarOpen, setFailedSnackBarOpen, onSelectNone } = props;
+    const { open, setOpen, tasks, setSuccessSnackBarOpen, setFailedSnackBarOpen, onSelectNone } = props;
 
     const recaptchaRef = useRef();
     const [errorText, setErrorText] = useState('');
@@ -26,7 +26,6 @@ const SuspendTasksDialog = (props) => {
         suspendTasks(
             tasks,
             recaptchaRef,
-            adminPassword,
             setOpen,
             setLoading,
             setSuccessSnackBarOpen,

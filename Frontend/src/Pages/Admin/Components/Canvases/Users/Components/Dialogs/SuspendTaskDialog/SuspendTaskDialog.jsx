@@ -8,7 +8,7 @@ import './SuspendTaskDialog.css'
 import onSuspendTasks from '../../../scripts/onSuspendTasks';
 
 const SuspendTasksDialog = (props) => {
-    const { open, setOpen, users, setSelectNone, setSuccessSnackBarOpen, setFailedSnackBarOpen, adminPassword } = props;
+    const { open, setOpen, users, setSelectNone, setSuccessSnackBarOpen, setFailedSnackBarOpen } = props;
 
     const [loading, setLoading] = useState(false);
     const [btnDisabled, setBtnDisabled] = useState(false);
@@ -63,7 +63,6 @@ const SuspendTasksDialog = (props) => {
                             setLoading,  
                             setBtnDisabled,
                             recaptchaRef,
-                            adminPassword,
                             users.map(user => user.email),
                             setSelectNone,
                             setSuccessSnackBarOpen,

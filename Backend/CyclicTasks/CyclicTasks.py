@@ -97,7 +97,7 @@ class CyclicTasks(Firestore, Logger):
         global start_tasks_queue
         await self.LOG_EVENT(f'CyclicTasks/starter_task/{currentframe().f_lineno}', 'CyclicTasks', 'Starter Task Started', None, labels = {'event_type': 'starter_task_started'})
 
-        tasks: list[dict] = await self.get_all_tasks()
+        tasks: list[dict] = await self.get_all_tasks(for_='CyclicTasks')
 
         tasks.append(dummy_task)
         await self.LOG_EVENT(f'CyclicTasks/starter_task/{currentframe().f_lineno}', 'CyclicTasks', 'Dummy Task Added', dummy_task, labels = {'event_type': 'dummy_task_added'})

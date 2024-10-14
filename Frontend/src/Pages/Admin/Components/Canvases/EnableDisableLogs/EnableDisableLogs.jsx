@@ -1,6 +1,7 @@
 import { Switch } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
 import ReCAPTCHA from 'react-google-recaptcha';
+import { auth } from '../../../../../config/firebase';
 
 import './EnableDisableLogs.css';
 import SnackBar from '../../../../../Components/SnackBar/Snackbar';
@@ -26,7 +27,12 @@ const EnableDisableLogs = (props) => {
     const recaptchaRef = useRef();
 
     const getLoggingStatus = async () => {
-        fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/loggingstatus' + `?pwd=${props.adminPassword}`)
+        fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/loggingstatus', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
+            }
+        })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
@@ -54,14 +60,14 @@ const EnableDisableLogs = (props) => {
         fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/loggingstatus', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
             },
             body: JSON.stringify({
                 google: googleLogsEnabled,
                 discord: discordLogsEnabled,
                 terminal: terminalLogsEnabled,
                 recaptchaToken: recaptchaToken,
-                password: props.adminPassword
             })
         }).then(response => response.json())
             .then(response => {
@@ -83,8 +89,8 @@ const EnableDisableLogs = (props) => {
                     setGoogleLogsEnabled(loggingStatus.google);
                     setDiscordLogsEnabled(loggingStatus.discord);
                     setTerminalLogsEnabled(loggingStatus.terminal);
-                    
-                }                
+
+                }
             })
             .catch(error => {
                 console.error("ERROR", error); // required log

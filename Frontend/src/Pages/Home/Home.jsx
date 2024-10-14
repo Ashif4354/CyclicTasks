@@ -50,7 +50,7 @@ const Home = () => {
 
     return (
         <div className='main-container'>
-            <Header/>
+            <Header heading='Cyclic Tasks'/>
 
             <div className='content-container'>
                 <div className='middle-container'>
