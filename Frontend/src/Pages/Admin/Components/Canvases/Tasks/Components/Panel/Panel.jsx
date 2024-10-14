@@ -1,13 +1,16 @@
 import './Panel.css';
 import EachPanelTask from '../EachPanelTask/EachPanelTask';
-import { useEffect, useState } from 'react';
-import { Paper, TextField, MenuItem, Menu, Skeleton } from '@mui/material';
+import { useState } from 'react';
+import { Paper, TextField, MenuItem, Skeleton } from '@mui/material';
+import { IconButton } from '@mui/material';
+import ReplayIcon from '@mui/icons-material/Replay';
 import SnackBar from '../../../../../../../Components/SnackBar/Snackbar';
 import SuspendTasksDialog from '../SuspendTasksDialog/SuspendTasksDialog';
 import { auth } from '../../../../../../../config/firebase';
+import { setLogLevel } from 'firebase/app';
 
 const Panel = (props) => {
-    const { tabValue, user, recaptchaRef, tasks, setTasks } = props;
+    const { tabValue, user, recaptchaRef, tasks, setTasks, getTasks } = props;
 
     const [searchText, setSearchText] = useState('');
     const [searchBy, setSearchBy] = useState('task_name');
@@ -165,6 +168,20 @@ const Panel = (props) => {
             }
             <div className='total-container'>
                 <span>Total Tasks: {tasks.length}</span>
+                <IconButton
+                    onClick={
+                        tabValue === '1' ? getAllTasks : getTasks
+                    }
+                    sx={{
+                        '&:hover': { backgroundColor: '#00000050' },
+                        marginLeft: '10px',
+                        display: tasksLoading ? 'none' : 'flex'
+                    }}
+                >
+                    <ReplayIcon
+                        sx={{ color: 'white' }}
+                    />
+                </IconButton>
             </div>
 
             <div className='panel-tasks-container'>

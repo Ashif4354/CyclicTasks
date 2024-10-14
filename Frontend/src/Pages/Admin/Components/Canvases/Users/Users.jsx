@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { TextField, MenuItem, Skeleton, CircularProgress } from '@mui/material';
 import Paper from '@mui/material/Paper';
+import { IconButton } from '@mui/material';
+import ReplayIcon from '@mui/icons-material/Replay';
 import ReCAPTCHA from 'react-google-recaptcha';
 import { auth } from '../../../../../config/firebase';
 
@@ -13,7 +15,7 @@ import SnackBar from '../../../../../Components/SnackBar/Snackbar';
 const Users = (props) => {
 
     const { setShowTasksUser, users, setUsers } = props;
-    
+
     const [selectedUsers, setSelectedUsers] = useState([]);
     const [searchText, setSearchText] = useState('');
     const [searchBy, setSearchBy] = useState('name');
@@ -21,6 +23,7 @@ const Users = (props) => {
     const [errorText, setErrorText] = useState('');
     const [block, setBlock] = useState(false);
     const [selectionBtnsDisabled, setSelectionBtnsDisabled] = useState(true);
+    const [usersLoading, setUsersLoading] = useState(true);
 
     const [selectedSuspendUsersTasksDialogOpen, setSelectedSuspendUsersTasksDialogOpen] = useState(false);
     const [selectedSuspendUsersTasksSuccessSnackBarOpen, setSelectedSuspendUsersTasksSuccessSnackBarOpen] = useState(false);
@@ -66,10 +69,11 @@ const Users = (props) => {
         }
     }, [selectedUsers])
 
-    
+
 
 
     const getUsers = async () => {
+        setUsersLoading(true);
 
         const recaptchaToken = await recaptchaRef.current.executeAsync();
         recaptchaRef.current.reset();
@@ -92,9 +96,11 @@ const Users = (props) => {
                 } else {
                     console.error(data.message); // required log
                 }
+                setUsersLoading(false);
             })
             .catch(error => {
                 console.error(error); // required log
+                setUsersLoading(false);
             })
 
     }
@@ -171,6 +177,18 @@ const Users = (props) => {
                     <div className='users-list-container'>
                         <div className='total-container'>
                             <span>Total Users: {users.length}</span>
+                            <IconButton
+                                onClick={getUsers}
+                                sx={{
+                                    '&:hover': { backgroundColor: '#00000050' },
+                                    marginLeft: '10px',
+                                    display: usersLoading ? 'none' : 'flex'
+                                }}
+                            >
+                                <ReplayIcon
+                                    sx={{ color: 'white' }}
+                                />
+                            </IconButton>
                         </div>
                         {
                             users.length > 0 ? (

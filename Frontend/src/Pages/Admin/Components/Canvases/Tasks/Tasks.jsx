@@ -126,10 +126,10 @@ const Tasks = (props) => {
                         />
                     </TabPanel>
                     <TabPanel value="2" sx={{ padding: '0px' }}>
-                        <Panel tasks={runningTasks} tabValue={tabValue} />
+                        <Panel tasks={runningTasks} tabValue={tabValue} getTasks={getRunningTasks}/>
                     </TabPanel>
                     <TabPanel value="3" sx={{ padding: '0px' }}>
-                        <Panel tasks={userTasks} tabValue={tabValue} user={showTasksUser} />
+                        <Panel tasks={userTasks} tabValue={tabValue} user={showTasksUser} getTasks={getUserTasks}/>
                     </TabPanel>
                 </TabContext>
 

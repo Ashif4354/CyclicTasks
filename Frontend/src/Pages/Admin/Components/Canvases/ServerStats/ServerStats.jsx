@@ -157,7 +157,7 @@ const ServerStats = () => {
                             sx={{
                                 '&:hover': { backgroundColor: '#00000050' },
                                 marginLeft: '10px',
-                                display: serverStatusLoading ? 'none' : 'block'
+                                display: serverStatusLoading ? 'none' : 'flex'
                             }}
                         >
                             <ReplayIcon
@@ -205,8 +205,8 @@ const ServerStats = () => {
                             onClick={getServerUpStartTime}
                             sx={{
                                 '&:hover': { backgroundColor: '#00000050' },
-                                marginLeft: '10px',
-                                display: serverUpTimeLoading ? 'none' : 'block'
+                                marginLeft: '10px',  
+                                display: serverUpTimeLoading ? 'none' : 'flex'
                             }}
                         >
                             <ReplayIcon
