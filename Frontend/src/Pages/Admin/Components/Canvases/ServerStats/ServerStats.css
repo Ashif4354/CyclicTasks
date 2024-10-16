@@ -28,6 +28,7 @@
 
 
 }
+
 .loading-text {
     margin-left: 10px;
 }
@@ -35,6 +36,7 @@
 .stat-value-text {
     margin-left: 10px;
 }
+
 .status-text-online {
     color: green;
     font-size: 1rem;

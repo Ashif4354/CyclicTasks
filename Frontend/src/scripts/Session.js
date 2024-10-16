@@ -10,6 +10,7 @@ const GoogleLogin = async (setOpen) => {
             logEvent(analytics, 'user-login', {
                 method: 'google',
             });
+            
             setOpen(false);
         })
 }

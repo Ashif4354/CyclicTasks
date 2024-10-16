@@ -66,8 +66,6 @@ const Tasks = (props) => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-
-                    // setRunningTasks(Object.keys(data.tasks).map((id) => data.tasks[id].task_data))
                     setRunningTasks(Object.keys(data.tasks).map((id) => {
                         return {
                             ...data.tasks[id].task_data, 
@@ -101,6 +99,7 @@ const Tasks = (props) => {
             <div className='console-canvas-heading-container'>
                 <h2 className='console-canvas-heading'>Tasks</h2>
             </div>
+
             <div className='console-canvas-content'>
                 <TabContext value={tabValue}>
                     <TabList onChange={handleChange} TabIndicatorProps={{ sx: { backgroundColor: 'white' } }}>
@@ -134,12 +133,12 @@ const Tasks = (props) => {
                 </TabContext>
 
             </div>
+
             <ReCAPTCHA
                 sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
                 ref={recaptchaRef}
                 size="invisible"
             />
-
         </div>
     );
 }

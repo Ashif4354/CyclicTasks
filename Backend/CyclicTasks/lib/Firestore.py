@@ -48,6 +48,7 @@ class Firestore(FirebaseConfig, Logger):
                                 labels={
                                     'event_type': 'no_tasks_available'
                                 })
+            
         else:
             await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 
                                 for_, 
@@ -134,3 +135,6 @@ class Firestore(FirebaseConfig, Logger):
                 self.fetched_tasks.append(task)
 
         return self.fetched_tasks
+    
+    
+__all__ = ['Firestore']

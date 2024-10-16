@@ -222,7 +222,6 @@ const TaskDialog = (props) => {
                         fullWidth={true}
                         value={discordWebhookUrl}
                         margin="normal"
-                        // helperText='The discord webhook url to send the notifications'
                         helperText={discordWebhookUrlHelperText}
                         onChange={(e) => {
                             handleDataChange(e, 'discordWebhookUrl', task?.discord_webhook_url, setDiscordWebhookUrl);
@@ -256,7 +255,6 @@ const TaskDialog = (props) => {
                             disabled={formDisabled}
                             checked={active}
                             onChange={(e) => {
-                                // setActive(e.target.checked)
                                 handleDataChange(e, 'active', task?.active, setActive);
                             }}
                         />

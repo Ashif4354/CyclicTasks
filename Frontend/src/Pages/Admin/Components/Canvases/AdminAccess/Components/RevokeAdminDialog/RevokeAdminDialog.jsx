@@ -70,7 +70,6 @@ const RevokeAdminDialog = (props) => {
                         loading ? <CircularProgress size={25} color='inherit' /> : 'Revoke'
                     }
                 </button>
-
             </DialogActions>
             <ReCAPTCHA
                 sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}

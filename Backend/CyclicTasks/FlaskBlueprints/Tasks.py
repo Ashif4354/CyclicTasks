@@ -1,8 +1,6 @@
 from flask import Blueprint, jsonify, request
 from aiohttp import ClientSession
 from inspect import currentframe
-from asyncio import get_event_loop
-from firebase_admin import auth
 
 from .. import dummy_task, start_tasks_queue, stop_task_queue, scheduler_event_loop
 from ..lib.Logger import Logger
@@ -20,6 +18,7 @@ async def before_request():
     """    
     async with ClientSession() as session:
         logger = Logger(session)
+        
         if request.method == 'POST':
             if request.path in ('/tasks/newtask', '/tasks/updatetask', '/tasks/deletetask'):
 
@@ -30,6 +29,7 @@ async def before_request():
                                         labels={
                                             'alert_type': 'authorization_failed'
                                         })
+                    
                     return jsonify({
                         'message': 'Authorization failed',
                         'success': False
@@ -42,6 +42,7 @@ async def before_request():
                                         labels={
                                             'alert_type': 'user_is_blocked'
                                         })
+                    
                     return jsonify({
                         'message': 'You are Blocked',
                         'success': False
@@ -54,6 +55,7 @@ async def before_request():
                                         labels={
                                             'alert_type': 'task_data_not_found'
                                         })
+                    
                     return jsonify({
                         'message': 'Task data not found',
                         'success': False
@@ -136,8 +138,10 @@ async def new_task():
                 'success': True,
                 'new_task_id': id
             })
+            
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Tasks/new_task/line {currentframe().f_lineno}', e, task)
+            
             return jsonify({
                 'message': 'Some error occurred on server side',
                 'success': False
@@ -152,11 +156,13 @@ async def update_task():
     task = request.json['task']
     async with ClientSession() as session:
         logger = Logger(session)
+        
         try:        
             id = task['id']
 
             FS = Firestore(initialized=True)
             await FS.update_task(task)
+            
             task['id'] = id
 
             await logger.LOG_EVENT(f'FlaskApp/Tasks/update_task/{currentframe().f_lineno}', 
@@ -205,6 +211,7 @@ async def update_task():
     
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Tasks/update_task/line {currentframe().f_lineno}', e, task)
+            
             return jsonify({
                 'message': 'Some error occurred on server side',
                 'success': False
@@ -220,10 +227,12 @@ async def delete_task():
 
     async with ClientSession() as session:
         logger = Logger(session)
+        
         try:
 
             FS = Firestore(initialized=True)
             await FS.delete_task(task['id'], task['user_email'])
+            
             CyclicTasks.RUNNING_TASKS[task['id']]['deleted'] = True
 
             await logger.LOG_EVENT(f'FlaskApp/Tasks/delete_task/{currentframe().f_lineno}', 
@@ -249,8 +258,10 @@ async def delete_task():
                 'message': 'Task has been deleted',
                 'success': True
             })
+            
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Tasks/delete_task/line {currentframe().f_lineno}', e, task)
+            
             return jsonify({
                 'message': 'Some error occurred on server side',
                 'success': False

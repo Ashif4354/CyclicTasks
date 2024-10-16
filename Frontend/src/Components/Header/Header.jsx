@@ -23,8 +23,6 @@ const Header = (props) => {
         })
     }, [])
 
-    // console.log(auth.currentUser)
-
     return (
         <header className='header'>
             <div className='heading-text-container'>
@@ -57,6 +55,7 @@ const LoginDialog = (props) => {
     return (
         <Dialog open={open} onClose={() => setOpen(false)}>
             <DialogTitle alignSelf={'center'}>Login</DialogTitle>
+
             <DialogContent>
                 <div>
                     <span>You should accept our <Link to='/tc'>Terms and Conditions</Link> to Login</span>
@@ -66,6 +65,7 @@ const LoginDialog = (props) => {
                     </div>
                 </div>
             </DialogContent>
+            
             <DialogActions sx={{ justifyContent: 'center' }}>
                 <button className='dialog-btns' onClick={() => GoogleLogin(setOpen)} disabled={!checked}>Login</button>
             </DialogActions>

@@ -148,13 +148,16 @@ const Home = () => {
                     }
                 </div>
             </div>
+
             <Footer />
+
             <TaskDialog
                 open={dialogOpen} setOpen={setDialogOpen} type={'Add'}
                 task={null} setTask={null} tasks={tasks} setTasks={setTasks}
                 setSuccessAddSnackBarOpen={setSuccessAddSnackBarOpen}
                 setFailedAddSnackBarOpen={setFailedAddSnackBarOpen}
             />
+            
             <SnackBar
                 open={successAddSnackBarOpen}
                 handleClose={() => setSuccessAddSnackBarOpen(false)}

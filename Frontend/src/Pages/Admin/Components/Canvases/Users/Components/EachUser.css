@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: row;
     height: 100px;
-    /* width: 95%; */
     background-color: rgba(18, 18, 18, 0.5);
     margin-bottom: 10px;
     border-radius: 20px;
@@ -47,10 +46,8 @@
 .user-actions-container {
     display: grid;
     grid-template-columns: auto auto auto auto;
-    /* flex-direction: row; */
     width: 100%;
     height: 50%;
-    /* align-items: end; */
     justify-content: center;
 }
 
@@ -59,7 +56,6 @@
         grid-template-columns: auto auto;
     }
 }
-
 
 .user-btn {
     margin-right: 10px;

@@ -6,9 +6,6 @@ import './EachPanelTask.css';
 import SuspendTasksDialog from '../SuspendTasksDialog/SuspendTasksDialog';
 import SnackBar from '../../../../../../../Components/SnackBar/Snackbar';
 
-
-
-
 const EachPanelTask = (props) => {
     const { task, tabValue, selectedTasks, setSelectedTasks, selectNone, setSelectNone } = props;
 
@@ -55,6 +52,7 @@ const EachPanelTask = (props) => {
                     }}
                 />
             </div>
+
             <div className='task-inner-container'>
                 <div className='task-detail-container'>
                     <span className='each-panel-task-detail'>Task id: {task.id}</span>
@@ -117,8 +115,6 @@ const EachPanelTask = (props) => {
                 message='Failed to Suspend Task'
                 handleClose={() => setSuspendFailedSnackBarOpen(false)}
             />
-
-
         </div>
     )
 }

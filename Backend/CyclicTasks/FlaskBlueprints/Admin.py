@@ -25,6 +25,7 @@ async def before_request():
         if request.method in ('GET', 'POST'):
             if request.headers.get('host-token') == environ['host-token']:
                 pass
+            
             elif not request.headers.get('Authorization') or not request.headers.get('Authorization').startswith('Bearer '):
                 await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
                             'Authorization failed', 
@@ -80,6 +81,7 @@ async def verify_admin():
             'success': True,
             'owner': True
         })
+        
     else:
         return jsonify({
             'success': True,
@@ -92,7 +94,6 @@ async def get_running_tasks():
     """
     This endpoint will return the list of tasks that are currently running.
     """
-
     async with ClientSession() as session:
         logger = Logger(session)
 
@@ -102,6 +103,7 @@ async def get_running_tasks():
                 'tasks': tasks,
                 'success': True
             })
+            
         except Exception as e:
             await logger.ALERT(f'FlaskApp/Admin/GetRunningTasks/{currentframe().f_lineno}', 
                                 f'Error: {e}', 
@@ -170,20 +172,18 @@ async def get_users():
     """
     This endpoint will return the list of users.
     """
-
     async with ClientSession() as session:
         logger = Logger(session)
 
         try:
             auth = Authentication(initialized=True)
-
             users: list[dict] = await auth.get_all_users()
-
 
             return jsonify({
                 'success': True,
                 'users': users
             })
+            
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Admin/GetUsers/{currentframe().f_lineno}', e, None)
 
@@ -198,7 +198,6 @@ async def get_all_tasks():
     """
     This endpoint will return the list of all tasks.
     """
-
     async with ClientSession() as session:
         logger = Logger(session)
         
@@ -233,7 +232,6 @@ async def get_admins():
     """
     This endpoint will return the list of admins.
     """
-
     async with ClientSession() as session:
         logger = Logger(session)
 
@@ -269,11 +267,11 @@ async def make_admin():
     """
     This endpoint will grant or revoke the admin role to the user.
     """
-
     async with ClientSession() as session:
         logger = Logger(session)
         
-        admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)        
+        admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)      
+          
         if 'owner' in admin and not admin['owner']:
             await logger.ALERT(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}',
                                'A user tried to make an admin without being the owner',
@@ -289,6 +287,7 @@ async def make_admin():
 
         try:
             Auth = Authentication(initialized=True)
+            
             if request.json['admin']:
                 await Auth.grant_admin(request.json['email'])
 

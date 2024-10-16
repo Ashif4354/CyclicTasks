@@ -28,6 +28,7 @@ class CyclicTasks(Firestore, Logger):
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], task['discord_webhook_color'], notify_admin=task['notify_admin'])
             
             await self.LOG_EVENT(f'CyclicTasks/get_request/{currentframe().f_lineno}', 'CyclicTasks', f'One pulse sent: {task['id']}', task, labels = {'event_type': 'pulse'})
+        
         except Exception as e:
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], success=False, notify_admin=task['notify_admin'])
             
@@ -37,8 +38,7 @@ class CyclicTasks(Firestore, Logger):
     async def create_task(self, task: dict, running_id: int) -> Task:
         """
         Creates a task that will run the get request at the given interval and returns it.
-        """
-        
+        """        
         async def runner_task() -> None:
             task_id: str = task['id']
 
@@ -51,6 +51,7 @@ class CyclicTasks(Firestore, Logger):
                 await sleep(task['interval'])
         
         async_task: Task = asyncio_create_task(runner_task())
+        
         await self.LOG_EVENT(f'CyclicTasks/create_task/{currentframe().f_lineno}', 'CyclicTasks', f'Runner Task Created: {task['id']}', task, labels = {'event_type': 'create_task'})
 
         return async_task
@@ -60,7 +61,6 @@ class CyclicTasks(Firestore, Logger):
         """
         Starts the task and adds it to the RUNNING_TASK
         """
-
         if task['id'] not in self.RUNNING_TASKS:
             self.RUNNING_TASKS[task['id']] = {
                 'running_tasks': {},
@@ -69,12 +69,20 @@ class CyclicTasks(Firestore, Logger):
                 'task_data': task
             }
 
-            await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task added to RUNNING_TASKS map: {task['id']}', task, labels = {'event_type': 'add_to_running_tasks'})
+            await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 
+                                 'CyclicTasks', 
+                                 f'Task added to RUNNING_TASKS map: {task['id']}', 
+                                 task, 
+                                 labels = {'event_type': 'add_to_running_tasks'})
 
         
         running_id: str = str(len(self.RUNNING_TASKS[task['id']]['running_tasks']))
-        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Running ID Assigned: {running_id} : {task['id']}', task, labels = {'event_type': 'running_id_assigned'})
-
+        
+        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 
+                             'CyclicTasks', 
+                             f'Running ID Assigned: {running_id} : {task['id']}', 
+                             task, 
+                             labels = {'event_type': 'running_id_assigned'})
 
         self.RUNNING_TASKS[task['id']]['current_running_task'] = running_id
         self.RUNNING_TASKS[task['id']]['running_tasks'][running_id] = True
@@ -83,7 +91,11 @@ class CyclicTasks(Firestore, Logger):
 
         async_task: Task = await self.create_task(task, running_id)   
 
-        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Started: {task['id']}', task, labels = {'event_type': 'task_started'})     
+        await self.LOG_EVENT(f'CyclicTasks/start_task/{currentframe().f_lineno}', 
+                             'CyclicTasks', 
+                             f'Task Started: {task['id']}', 
+                             task, 
+                             labels = {'event_type': 'task_started'})     
 
         await async_task
 
@@ -134,6 +146,7 @@ class CyclicTasks(Firestore, Logger):
             await self.LOG_EVENT(f'CyclicTasks/stop_task/{currentframe().f_lineno}', 'CyclicTasks', f'Task Stopped: {task['id']}', task, labels = {'event_type': 'task_stopped'})
 
             await self.send_stop_task_acknowledgement(task)
+            
         except Exception as e:
             await self.LOG_ERROR(f'CyclicTasks/stop_task/{currentframe().f_lineno}', e, task)
 
@@ -161,7 +174,6 @@ class CyclicTasks(Firestore, Logger):
         It starts both the starter_task and stopper_task asynchronously.
         Call this function to start the engine.
         """
-
         STARTER_TASK: Task = asyncio_create_task(self.starter_task())
         STOPPER_TASK: Task = asyncio_create_task(self.stopper_task())
         await self.LOG_EVENT(f'CyclicTasks/run/{currentframe().f_lineno}', 'CyclicTasks', 'CyclicTasks Engine Started', None, labels = {'event_type': 'engine_started'})
@@ -169,4 +181,4 @@ class CyclicTasks(Firestore, Logger):
         await gather(STARTER_TASK, STOPPER_TASK)
 
 
-__all__ = ['CyclicTasks'] # Exports 
+__all__ = ['CyclicTasks']

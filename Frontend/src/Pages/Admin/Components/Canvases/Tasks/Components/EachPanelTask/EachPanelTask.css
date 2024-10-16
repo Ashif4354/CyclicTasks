@@ -4,7 +4,6 @@
     flex-direction: row;
     border-radius: 20px;
     max-height: 250px;
-    /* width: 700px; */
     background-color: rgba(18, 18, 18, 0.5);
     margin-top: 10px;
 }
@@ -16,9 +15,8 @@
     width: 100%;
 }
 
-@media (max-width: 750px) {
+@media screen and (max-width: 750px) {
     .task-inner-container {
-        /* height: 200px; */
         grid-template-columns: auto;
     }
 }
@@ -27,7 +25,6 @@
     display: flex;
     flex:1;
     flex-direction: column;
-    /* height: 100%; */
     margin: 20px 0px 20px 20px;    
 }
 
@@ -48,9 +45,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
-    /* background-color: aqua; */
-    /* height: 100%; */
 }
 
 .panel-task-action-button {

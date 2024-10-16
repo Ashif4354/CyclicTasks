@@ -11,11 +11,10 @@ const SuspendTasksDialog = (props) => {
 
     const { open, setOpen, tasks, setSuccessSnackBarOpen, setFailedSnackBarOpen, onSelectNone } = props;
 
-    const recaptchaRef = useRef();
     const [errorText, setErrorText] = useState('');
     const [loading, setLoading] = useState(false);
-
-
+    
+    const recaptchaRef = useRef();
 
     const handleClose = () => {
         setOpen(false);
@@ -61,6 +60,7 @@ const SuspendTasksDialog = (props) => {
 
 
             </DialogTitle>
+
             <DialogContent>
                 <DialogContentText className="alert-dialog-description">
                     Are you sure you want to suspend the selected tasks?
@@ -82,6 +82,7 @@ const SuspendTasksDialog = (props) => {
                     <span className='error-text' style={{ color: 'red', fontWeight: 'bold' }}>{errorText}</span>
                 </DialogContentText>
             </DialogContent>
+
             <DialogActions>
                 <button onClick={handleClose} className='dialog-btns'>Cancel</button>
                 <button onClick={onSuspendTasks} className='dialog-btns'>
@@ -100,7 +101,6 @@ const SuspendTasksDialog = (props) => {
                 size='invisible'
                 ref={recaptchaRef}
             />
-
         </Dialog>
     )
 }

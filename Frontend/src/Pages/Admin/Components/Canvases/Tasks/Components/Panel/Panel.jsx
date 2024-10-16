@@ -31,8 +31,6 @@ const Panel = (props) => {
         setSelectedTasks([]);
     }
 
-
-
     const getAllTasks = async () => {
         setTasksLoading(true);
         const recaptchaToken = await recaptchaRef.current.executeAsync();

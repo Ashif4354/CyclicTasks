@@ -38,6 +38,7 @@ const EachTask = (props) => {
                 <div className='task-number-container'>
                     <p>{index + 1}.</p>
                 </div>
+
                 <div className="task-details-container">
                     <div>
                         <p className='task-detail-text'>TASK ID: &nbsp;{currentTask.id}</p>
@@ -58,6 +59,7 @@ const EachTask = (props) => {
                     </div>
                 </div>
             </div>
+
             <div className='edit-btn-container'>
                 <IconButton
                     sx={{ '&:hover': { backgroundColor: '#242424' } }}
@@ -79,18 +81,21 @@ const EachTask = (props) => {
                 setSuccessUpdateSnackBarOpen={setSuccessUpdateSnackBarOpen}
                 setFailedUpdateSnackBarOpen={setFailedUpdateSnackBarOpen}
             />
+
             <DeleteTaskDialog
                 open={deleteTaskDialogOpen} setOpen={setDeleteTaskDialogOpen}
                 task={currentTask} tasks={tasks} setTasks={setTasks}
                 setSuccessDeleteSnackBarOpen={setSuccessDeleteSnackBarOpen}
                 setFailedDeleteSnackBarOpen={setFailedDeleteSnackBarOpen}
             />
+
             <SnackBar
                 open={successUpdateSnackBarOpen}
                 handleClose={() => setSuccessUpdateSnackBarOpen(false)}
                 success={true}
                 message='Task updated successfully!'
             />
+            
             <SnackBar
                 open={failedUpdateSnackBarOpen}
                 handleClose={() => setFailedUpdateSnackBarOpen(false)}

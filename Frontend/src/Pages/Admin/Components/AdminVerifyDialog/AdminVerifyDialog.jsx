@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { CircularProgress, Dialog, DialogContent, DialogTitle } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import ReCAPTCHA from 'react-google-recaptcha';
 
+import './AdminVerifyDialog.css';
 import { analytics, auth } from '../../../../config/firebase';
 import { logEvent } from 'firebase/analytics';
 
-import './AdminVerifyDialog.css';
 
 const AdminVerifyDialog = (props) => {
     const { open, setOpen, setSignedIn, setOwner } = props;
@@ -31,8 +31,7 @@ const AdminVerifyDialog = (props) => {
             setErrorText('Log in to continue');
             setLoading(false);
             return;
-        }
-        
+        }        
         
         fetch(import.meta.env.VITE_CT_SERVER_URL + '/admin/verifyadmin', {
             method: 'POST',
@@ -84,6 +83,7 @@ const AdminVerifyDialog = (props) => {
                     <CloseIcon />
                 </IconButton>
             </DialogTitle>
+
             <DialogContent >
                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                     {
@@ -97,6 +97,7 @@ const AdminVerifyDialog = (props) => {
                 </div>
 
             </DialogContent>
+            
             <ReCAPTCHA
                 sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
                 size='invisible'

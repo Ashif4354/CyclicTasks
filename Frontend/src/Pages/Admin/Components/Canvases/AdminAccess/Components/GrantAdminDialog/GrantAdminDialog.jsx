@@ -103,9 +103,6 @@ const GrantAdminDialog = (props) => {
                                 '&.Mui-focused fieldset': {
                                     border: !emailError ? '2px solid #ffffff' : '2px solid #f44336',
                                 },
-                            },
-                            '& input': {
-                                // color: 'white',
                             }
 
                         }}

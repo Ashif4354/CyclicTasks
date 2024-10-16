@@ -27,9 +27,9 @@ async def before_request() -> Response | None:
     """
     
     async with ClientSession() as session:
-        logger = Logger(session) # Logger object to log events
+        logger = Logger(session)
         
-        await logger.REQUESTS(request) # Log the incoming request
+        await logger.REQUESTS(request)
         
         if request.method == "POST":
 

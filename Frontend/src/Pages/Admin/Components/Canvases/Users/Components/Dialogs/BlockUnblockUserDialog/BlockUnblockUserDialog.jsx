@@ -40,6 +40,7 @@ const BlockUnblockUserDialog = (props) => {
                     <CloseIcon color='white'/>
                 </IconButton>
             </DialogTitle>
+
             <DialogContent>
                 <div className='block-unblock-dialog-content'>
                     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -70,9 +71,9 @@ const BlockUnblockUserDialog = (props) => {
                         size='invisible'
                         ref={recaptchaRef}
                     />
-
                 </div>
             </DialogContent>
+
             <DialogActions>
                 <button
                     className='dialog-btns'

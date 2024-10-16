@@ -9,8 +9,8 @@ def user_not_owner(task: dict, user_token: str) -> bool:
 
         if user['email'] != task['user_email']:
             return True
-    except Exception as e:
         
+    except Exception as _:        
         return False
     
     return False
@@ -29,7 +29,7 @@ def user_blocked(user_token: str) -> bool:
         else:
             return False
         
-    except Exception as e:
+    except Exception as _:
         return True
     
 def admin(user_token: str) -> bool:
@@ -47,8 +47,7 @@ def admin(user_token: str) -> bool:
         else:
             return False
         
-    except Exception as e:
-        print('EXCEPTION IN CHECK ADMIN', e)
+    except Exception as _:
         return False
 
 __all__ = ['validate_accessing_user', 'user_blocked', 'admin']

@@ -58,9 +58,10 @@ def validate_incoming_task(task: dict) -> bool:
         return False
     
     if not task['url']:
-        return False
-    
+        return False    
+
 
     return True
-    
-    
+
+
+__all__ = ['validate_incoming_task']

@@ -28,10 +28,12 @@ async def suspend_user():
         
         try:
             accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email']
+            
         except:
             if request.headers.get('host-token'):
                 from_user_block = True
                 accessed_admin = "HOST, because the suspenduserstasks endpoint is triggered by the host to suspend blocked user's tasks"
+                
             else:
                 return jsonify({
                     'message': 'Unauthorized access',
@@ -73,7 +75,16 @@ async def suspend_user():
                         
                     if not from_user_block:                    
                         await email.send_suspend_tasks_email(user_email, task['user_name'], [task['task_name'] for task in user_tasks if task['active'] == True])
-
+                        await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}',
+                                                'FlaskApp',
+                                                f'Tasks suspended email sent to user: {user_email}',
+                                                None,
+                                                labels={
+                                                    'user_email': user_email,
+                                                    'event_type': 'tasks_suspended_email_sent',
+                                                    'accessed_admin': accessed_admin
+                                                })
+                        
                     await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}',
                                             'FlaskApp',
                                             f'User tasks suspended: {user_email}',
@@ -100,6 +111,7 @@ async def suspend_user():
                 'message': 'Users tasks suspended',
                 'success': True
             })
+            
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}', e, None)
 
@@ -176,7 +188,6 @@ async def block_user():
                 'success': True
             })  
 
-
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Admin/Users/block_user/{currentframe().f_lineno}', e, None)
 
@@ -184,6 +195,7 @@ async def block_user():
                 'message': 'Some error occurred',
                 'success': False
             })
+            
         
 @Users.route('/getusertasks', methods=['POST'])
 async def get_user_tasks():
@@ -212,6 +224,7 @@ async def get_user_tasks():
                 'success': True,
                 'tasks': user_tasks
             })
+            
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Admin/Users/get_user_tasks/{currentframe().f_lineno}', e, None)
 
@@ -263,6 +276,16 @@ async def suspend_tasks():
             async with Email() as email:
                 for user_email in users:
                     await email.send_suspend_tasks_email(user_email, users[user_email]['name'], users[user_email]['tasks'])
+                    
+                    await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}',
+                                            'FlaskApp',
+                                            f'Tasks suspended email sent to user: {user_email}',
+                                            None,
+                                            labels={
+                                                'user_email': user_email,
+                                                'event_type': 'tasks_suspended_email_sent',
+                                                'accessed_admin': accessed_admin
+                                            })
 
             await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 
                                    'FlaskApp', 
@@ -280,18 +303,13 @@ async def suspend_tasks():
                 'message': 'Tasks have been suspended',
                 'success': True
             })
+            
         except Exception as e:
             await logger.LOG_ERROR(f'FlaskApp/Tasks/suspend_tasks/line {currentframe().f_lineno}', e, None)
+            
             return jsonify({
                 'message': 'Some error occurred on server side',
                 'success': False
             })
-
-
-
-
-
-
-
 
 __all__ = ['Users']

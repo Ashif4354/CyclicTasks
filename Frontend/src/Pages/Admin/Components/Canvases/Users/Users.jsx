@@ -70,8 +70,6 @@ const Users = (props) => {
     }, [selectedUsers])
 
 
-
-
     const getUsers = async () => {
         setUsersLoading(true);
 
@@ -94,12 +92,12 @@ const Users = (props) => {
                 if (data.success) {
                     setUsers(data.users);
                 } else {
-                    console.error(data.message); // required log
+                    console.error(data.message);
                 }
                 setUsersLoading(false);
             })
             .catch(error => {
-                console.error(error); // required log
+                console.error(error);
                 setUsersLoading(false);
             })
 

@@ -86,7 +86,6 @@ const Admin = (props) => {
 
             <Footer />
             <AdminVerifyDialog open={adminVerifyDialog} setOpen={setAdminVerifyDialogOpen} setSignedIn={setSignedIn} setOwner={setOwner}/>
-
         </div>
     );
 }

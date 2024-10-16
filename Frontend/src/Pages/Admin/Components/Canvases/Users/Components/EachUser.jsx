@@ -16,7 +16,6 @@ const EachUser = (props) => {
     const [blocked, setBlocked] = useState(user.blocked);
     const [checked, setChecked] = useState(false);
 
-
     const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
     const [suspendSuccessSnackBarOpen, setSuspendSuccessSnackBarOpen] = useState(false);
     const [suspendFailedSnackBarOpen, setSuspendFailedSnackBarOpen] = useState(false);
@@ -44,9 +43,7 @@ const EachUser = (props) => {
         if (selectNone) {
             setChecked(false);
         }
-    }, [selectNone])
-
-    
+    }, [selectNone])    
 
     return (
         <div className='each-user-container'>
@@ -62,6 +59,7 @@ const EachUser = (props) => {
                     }}
                 />
             </div>
+            
             <div className='inner-container'>
                 <div className='user-info-container'>
                     <span>{user.name}&nbsp;&nbsp;</span>

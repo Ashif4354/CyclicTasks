@@ -25,7 +25,6 @@ client = Client.from_service_account_info(google_cloud_logger_json) # Creates a 
 flask_app_logging_handler = CloudLoggingHandler(client, name='flask_app', async_=True, buffer_size=10, flush_interval=2)
 CyclicTasks_logging_handler = CloudLoggingHandler(client, name='cyclic_tasks', async_=True, buffer_size=10, flush_interval=2)
 
-
 # Initializing the Flask_app logger
 flask_app_logger = getLogger('flask_app')
 flask_app_logger.addHandler(flask_app_logging_handler)

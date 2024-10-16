@@ -140,3 +140,6 @@ class Authentication(FirebaseConfig):
 
         except Exception as e:
             print(e)
+
+
+__all__ = ['Authentication']

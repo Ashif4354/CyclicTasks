@@ -35,5 +35,5 @@ Thread(target=run_main_in_thread).start()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-    # RUN command "hypercorn main:asgi_app --bind "0.0.0.0:5000""
+    # PRODUCTION RUN command "hypercorn main:asgi_app --bind "0.0.0.0:5000""
 

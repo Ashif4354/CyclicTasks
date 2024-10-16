@@ -5,19 +5,14 @@ import ReplayIcon from '@mui/icons-material/Replay';
 
 import './ServerStats.css';
 
-
 const ServerStats = () => {
     const [hostAddress, setHostAddress] = useState(import.meta.env.VITE_CT_SERVER_URL);
 
     const [serverStatus, setServerStatus] = useState(false);
     const [serverStatusLoading, setServerStatusLoading] = useState(true);
-
     const [serverVersion, setServerVersion] = useState('');
-
-
     const [serverUpTime, setServerUpTime] = useState('');
     const [serverUpTimeLoading, setServerUpTimeLoading] = useState(true);
-
     const [serverStartTime, setServerStartTime] = useState('N/A');
 
     const getHostAddress = async () => {
@@ -69,7 +64,6 @@ const ServerStats = () => {
     const getServerUpStartTime = async () => {
         setServerUpTimeLoading(true);
 
-
         fetch(`${hostAddress}/getserveruptime`)
             .then(response => response.json())
             .then(data => {
@@ -111,6 +105,7 @@ const ServerStats = () => {
             <div className='console-canvas-heading-container'>
                 <h2 className='console-canvas-heading'>Server Stats</h2>
             </div>
+
             <div className='console-canvas-content'>
                 <div className='server-stat'>
                     <span>Host address :  {hostAddress}</span>
@@ -215,9 +210,6 @@ const ServerStats = () => {
                         </IconButton>
                     </div>
                 </div>
-
-
-
             </div>
         </div>
     );

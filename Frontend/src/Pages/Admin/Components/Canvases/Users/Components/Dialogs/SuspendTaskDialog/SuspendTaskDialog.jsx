@@ -32,6 +32,7 @@ const SuspendTasksDialog = (props) => {
                     <CloseIcon sx={{ color: 'white' }} />
                 </IconButton>
             </DialogTitle>
+
             <DialogContent>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <span> Are you sure you want to suspend these user's task?</span>
@@ -53,6 +54,7 @@ const SuspendTasksDialog = (props) => {
                     ref={recaptchaRef}
                 />
             </DialogContent>
+
             <DialogActions>
                 <button className='dialog-btns' onClick={handleCancelClose}>Cancel</button>
                 <button
@@ -76,7 +78,6 @@ const SuspendTasksDialog = (props) => {
                     }
                 </button>
             </DialogActions>
-
         </Dialog>
     )
 }

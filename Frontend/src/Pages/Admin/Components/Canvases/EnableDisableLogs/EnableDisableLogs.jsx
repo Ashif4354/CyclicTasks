@@ -1,9 +1,10 @@
 import { Switch } from '@mui/material';
 import { useEffect, useState, useRef } from 'react';
+import { CircularProgress } from '@mui/material';
 import ReCAPTCHA from 'react-google-recaptcha';
-import { auth } from '../../../../../config/firebase';
 
 import './EnableDisableLogs.css';
+import { auth } from '../../../../../config/firebase';
 import SnackBar from '../../../../../Components/SnackBar/Snackbar';
 
 const EnableDisableLogs = (props) => {
@@ -41,11 +42,11 @@ const EnableDisableLogs = (props) => {
                     setDiscordLogsEnabled(data.discord);
                     setTerminalLogsEnabled(data.terminal);
                 } else {
-                    console.error("else", data.message); // required log
+                    console.error("else", data.message);
                 }
             })
             .catch(error => {
-                console.error("ERROR", error); // required log
+                console.error("ERROR", error);
             })
     }
 
@@ -72,15 +73,15 @@ const EnableDisableLogs = (props) => {
         }).then(response => response.json())
             .then(response => {
                 if (response.success) {
-                    // setSaveBtnLoading(false);
-                    // setSaveBtnDisabled(false);
+                    setSaveBtnLoading(false);
+                    setSaveBtnDisabled(false);
                     setSwitchDisabled(false);
 
                     setLoggingStatus({ google: googleLogsEnabled, discord: discordLogsEnabled, terminal: terminalLogsEnabled });
                     setSuccessSnackBarOpen(true);
 
                 } else {
-                    console.error("else", response.message); // required log
+                    console.error("else", response.message);
                     setSaveBtnLoading(false);
                     setSaveBtnDisabled(false);
                     setSwitchDisabled(false);
@@ -93,7 +94,7 @@ const EnableDisableLogs = (props) => {
                 }
             })
             .catch(error => {
-                console.error("ERROR", error); // required log
+                console.error("ERROR", error);
                 setSaveBtnLoading(false);
                 setSaveBtnDisabled(false);
                 setSwitchDisabled(false);
@@ -147,11 +148,6 @@ const EnableDisableLogs = (props) => {
         }
     }
 
-
-
-
-
-
     useEffect(() => {
         getLoggingStatus();
     }, []);
@@ -197,23 +193,30 @@ const EnableDisableLogs = (props) => {
                         onChange={(e) => onChange(e.target.checked, 'terminal', loggingStatus.terminal, setTerminalLogsEnabled)}
                     />
                 </div>
+
                 <div className='save-button-container'>
-                    <button disabled={saveBtnDisabled} className='btn' onClick={onSaveLoggingStatus}>Save</button>
+                    <button disabled={saveBtnDisabled} className='btn' onClick={onSaveLoggingStatus}>
+                        {
+                            saveBtnLoading ? <CircularProgress size={25} color='inherit' /> : 'Save'
+                        }
+                    </button>
                 </div>
 
             </div>
+
             <ReCAPTCHA
                 sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
                 size='invisible'
                 ref={recaptchaRef}
-
             />
+
             <SnackBar
                 open={successSnackBarOpen}
                 message='Changes Saved Successfully'
                 success={true}
                 handleClose={() => setSuccessSnackBarOpen(false)}
             />
+
             <SnackBar
                 open={failedSnackBarOpen}
                 message='Failed to Save Changes'

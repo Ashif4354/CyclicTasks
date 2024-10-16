@@ -48,6 +48,7 @@ FLASK API -
     23. suspend_tasks
     24. tasks_fetched_from_firestore
     25. no_tasks_available
+    26. tasks_suspended_email_sent
 
 Cyclic Tasks - 
     1. pulse

@@ -8,7 +8,7 @@
     margin-top: 5px
 }
 
-@media (max-width: 750px) {
+@media screen and (max-width: 750px) {
     .admins-container {
         grid-template-columns: 1fr;
     }

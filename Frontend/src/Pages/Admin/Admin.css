@@ -18,8 +18,6 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     justify-content: center;
-    /* flex-direction: column; */
-    /* align-items: center; */
     width: 85%;
     height: 100%;
     overflow-y: scroll;
@@ -57,7 +55,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* margin-right: 25px; */
     padding-right: 25px;
 }
 

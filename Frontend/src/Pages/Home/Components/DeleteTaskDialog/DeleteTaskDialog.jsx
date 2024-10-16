@@ -64,9 +64,7 @@ const DeleteTaskDialog = (props) => {
                 setDeleteBtnDisabled(false);
                 setFailedDeleteSnackBarOpen(true);
                 setServerErrorMessage("*An error occurred. Please try again later.");
-            });
-
-        
+            });        
     }
 
     const handleCancelClose = () => {
@@ -114,7 +112,6 @@ const DeleteTaskDialog = (props) => {
                             "Delete"
                         )
                     }
-
                 </button>
             </DialogActions>
         </Dialog>

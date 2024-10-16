@@ -68,9 +68,7 @@ class Discord:
     async def send_vitals(self, url: str, task_name: str, color: int=0xff0000, success: bool=True, notify_admin: bool=False) -> None:
         """
         Send an acknowledgement to the discord channel that the pulse has been sent.
-        """
-        
-
+        """ 
         data: dict = {
             'embeds': [
                 {
@@ -89,11 +87,6 @@ class Discord:
     async def send_to_webhook(self, url: str, data: dict):
         """
         This function sends the embed to the discord webhook.
-        
-
-        Args:
-            url (str): The webhook url.
-            data (dict): The data to be sent to the webhook.
         """        
         if url == '':
             return
@@ -108,9 +101,12 @@ class Discord:
                 headers=headers,
                 json=data
             )
+            
         except Exception as e:
             await self.LOG_ERROR(f'Discord/send_to_webhook/{currentframe().f_lineno}', e, None, labels = {'error_type': 'send_embed'})
 
+
+__all__ = ['Discord']   
 
 
     

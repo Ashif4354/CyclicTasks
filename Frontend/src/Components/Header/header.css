@@ -6,7 +6,6 @@
   flex-direction: row;
   align-items: center;
   background-color: rgba(18, 18, 18, 0.50);
-  ;
   color: white;
 }
 
@@ -28,16 +27,12 @@
   display: flex;
   position: absolute;
   right: 0px;
-  /* bottom: 0px; */
   align-items: center;
   justify-content: right;
   height: 8vh;
   width: 20%;
   padding-right: 20px;
-  /* background-color: aqua; */
 }
-
-
 
 .loginout-btn {
   display: flex;
@@ -69,27 +64,11 @@
   }
 }
 
-.login-dialog-container {
-  display: flex;
-  position: absolute;
-  top: 8vh;
-  z-index: 1;
-  right: 10px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-size: small;
-  height: 10vh;
-  width: 250px;
-  background-color: aqua;
-}
-
 .check-box-container {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-
 }
 
 @media screen and (max-width: 750px) {

@@ -81,6 +81,7 @@ class Email:
         
         await self.send_email(recipient_email, subject, body)
         
+        
     async def grant_admin(self, recipient_email: str, recipient_name: str):
         """ 
         Send an email to the user informing them that they have been granted admin privileges.
@@ -100,6 +101,7 @@ class Email:
         )
         
         await self.send_email(recipient_email, subject, body)
+        
         
     async def revoke_admin(self, recipient_email: str, recipient_name: str):
         """ 
@@ -132,20 +134,11 @@ class Email:
         msg['Subject'] = subject
         msg.attach(MIMEText(body, 'html'))
         self.server.sendmail(msg['From'], msg['To'], msg.as_string())
+        
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         self.server.quit()
         
-
-if __name__ == "__main__":
-    from dotenv import load_dotenv
-    load_dotenv()   
-    from asyncio import run
-    
-    async def main():
-        async with Email() as email:
-            # await email.send_suspend_tasks_email('ashif.abhas@gmail.com', 'Ashif', ['Task 1', 'Task 2', 'Task 3'])
-            await email.grant_admin('ashif.abhas@gmail.com', 'Ashif')
         
-    run(main())
+__all__ = ['Email']
     

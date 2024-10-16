@@ -16,7 +16,6 @@
     margin-right:10px;
     margin-left:10px;
     flex-direction: column;
-    /* overflow-y: scroll; */
     overflow: hidden;
     font-size: 1.4rem;
     justify-content: center;
@@ -60,9 +59,7 @@
 
 .homepage-text {
     font-size: 1.3rem;
-    /* margin-bottom: 30px; */
     font-family: 'Vicasso';
-    /* color:aqua */
 }
 
 @media screen and (max-width: 750px) {
@@ -88,12 +85,9 @@
 
 .lottie-container {
     position: absolute;
-    /* height: 100%; */
     width: 250%;
     z-index: 0;
     opacity: .15;
-    /* rotate: -90deg; */
-    /* color:aqua; */
 }
 
 @media screen and (max-width: 450px) {
@@ -106,7 +100,6 @@
 
 .scroll-text-container {
     display: flex;
-    /* justify-content: center; */
     align-items: center;
     position: absolute;
     bottom: 45px;
