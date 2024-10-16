@@ -53,6 +53,7 @@ const LoginDialog = (props) => {
     const { open, setOpen } = props;
 
     const [checked, setChecked] = useState(false);
+    
     return (
         <Dialog open={open} onClose={() => setOpen(false)}>
             <DialogTitle alignSelf={'center'}>Login</DialogTitle>
@@ -66,7 +67,7 @@ const LoginDialog = (props) => {
                 </div>
             </DialogContent>
             <DialogActions sx={{ justifyContent: 'center' }}>
-                <button className='dialog-btns' onClick={() => GoogleLogin()} disabled={!checked}>Login</button>
+                <button className='dialog-btns' onClick={() => GoogleLogin(setOpen)} disabled={!checked}>Login</button>
             </DialogActions>
         </Dialog>
     )

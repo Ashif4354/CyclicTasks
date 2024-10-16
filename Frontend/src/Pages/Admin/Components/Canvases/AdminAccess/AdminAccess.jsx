@@ -29,7 +29,6 @@ const AdminAccess = (props) => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        console.log(data.admins)
                         setAdmins(data.admins);
                     } else {
                         console.log(data.message);
@@ -52,9 +51,8 @@ const AdminAccess = (props) => {
                     {
                         admins.map((user, index) => {
                             return (
-                                <>
+                                <div key={index}>
                                     <EachAdmin
-                                        key={index}
                                         index={index}
                                         user={user}
                                         admin={admin}
@@ -63,7 +61,7 @@ const AdminAccess = (props) => {
                                         setRevokeFailedSnackBarOpen={setRevokeFailedSnackBarOpen}
                                         setRevokeSuccessSnackBarOpen={setRevokeSuccessSnackBarOpen}
                                     />
-                                </>
+                                </div>
                             )
                         })
                     }

@@ -4,12 +4,13 @@ import { auth, provider } from "../config/firebase";
 import { analytics } from "../config/firebase";
 import { logEvent } from "firebase/analytics";
 
-const GoogleLogin = async () => {
+const GoogleLogin = async (setOpen) => {
     signInWithPopup(auth, provider)
         .then((result) => {
             logEvent(analytics, 'user-login', {
                 method: 'google',
             });
+            setOpen(false);
         })
 }
 
