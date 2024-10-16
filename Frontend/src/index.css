@@ -1,3 +1,6 @@
+@import url(https://db.onlinewebfonts.com/c/afe27afa1552f15b1f4f7090a35260bb?family=Vicasso);
+@import url('https://fonts.googleapis.com/css2?family=Anta&display=swap');
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -17,15 +20,4 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
-}
-
-
-button {
-  border-radius: 8px;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
 }

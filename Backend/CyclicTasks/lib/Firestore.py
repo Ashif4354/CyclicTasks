@@ -4,20 +4,23 @@ from random import choices
 from inspect import currentframe
 
 from ..config.Firebase import FirebaseConfig
+from .Logger import Logger
 
-class Firestore(FirebaseConfig):
-    def __init__(self, initialized=False) -> None:
+class Firestore(FirebaseConfig, Logger):
+    def __init__(self, initialized: bool = False) -> None:
         super().__init__()
         
         if not initialized:
             self.initialize_firebase()
+
+        Logger.__init__(self)            
 
         self.db = firestore.client()
 
         self.tasks_collection = self.db.collection('Tasks')
         self.users_collection = self.db.collection('Users')
 
-    async def get_all_tasks(self) -> list[dict]:
+    async def get_all_tasks(self, for_: str, include_inactive_tasks: bool = False) -> list[dict]:
         """
         Fetches all the tasks from the Firestore database
         Returns only the active tasks
@@ -29,7 +32,8 @@ class Firestore(FirebaseConfig):
             task_: dict = task.to_dict()
 
             if not task_['active']:
-                continue
+                if not include_inactive_tasks:
+                    continue
 
             task_['id'] = task.id
 
@@ -37,9 +41,22 @@ class Firestore(FirebaseConfig):
             self.fetched_tasks.append(task_)
 
         if self.fetched_tasks == []:
-            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 'CyclicTasks', 'No tasks available', None)
+            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 
+                                for_, 
+                                'No tasks available', 
+                                None,
+                                labels={
+                                    'event_type': 'no_tasks_available'
+                                })
+            
         else:
-            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 'CyclicTasks', f'Tasks fetched: {len(self.fetched_tasks)}', None)
+            await self.LOG_EVENT(f'Firestore/get_all_tasks/{currentframe().f_lineno}', 
+                                for_, 
+                                f'Tasks fetched: {len(self.fetched_tasks)}', 
+                                None,
+                                labels={
+                                    'event_type': 'tasks_fetched_from_firestore'
+                                })
 
         return self.fetched_tasks
     
@@ -90,9 +107,9 @@ class Firestore(FirebaseConfig):
                 'tasks': firestore.ArrayRemove([task_id])
             })
 
-    async def edit_task(self, task: dict) -> None:
+    async def update_task(self, task: dict) -> None:
         """
-        This function is used to edit a task in the Firestore database.
+        This function is used to update a task in the Firestore database.
         """
         taskRef = self.tasks_collection.document(task['id'])
         del task['id']
@@ -100,4 +117,24 @@ class Firestore(FirebaseConfig):
         taskRef.update(task)
 
 
-  
+    async def get_all_task_of_user(self, user_email: str) -> list[dict]:
+        """
+        Fetches all the tasks of the user from the Firestore database
+        """
+        self.fetched_tasks: list = []
+        
+        userDoc = self.users_collection.document(user_email).get()
+
+        if userDoc.exists:
+            tasks = userDoc.to_dict()['tasks']
+
+            for task_id in tasks:
+                task = self.tasks_collection.document(task_id).get().to_dict()
+                task['id'] = task_id
+
+                self.fetched_tasks.append(task)
+
+        return self.fetched_tasks
+    
+    
+__all__ = ['Firestore']

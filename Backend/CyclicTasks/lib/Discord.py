@@ -39,7 +39,7 @@ class Discord:
         if task['notify_admin']:
             await self.send_to_webhook(self.dev_webhook_url, data)
 
-        await self.LOG_EVENT(f'Discord/send_start_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Start Task Acknowledgement sent in discord', task)
+        await self.LOG_EVENT(f'Discord/send_start_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Start Task Acknowledgement sent in discord', task, labels = {'event_type': 'acknowledgement_sent'})
 
 
     async def send_stop_task_acknowledgement(self, task: dict) -> None:
@@ -61,15 +61,14 @@ class Discord:
         if task['notify_admin']:
             await self.send_to_webhook(self.dev_webhook_url, data)
 
-        await self.LOG_EVENT(f'Discord/send_stop_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Stop Task Acknowledgement sent in discord', task)
+        await self.LOG_EVENT(f'Discord/send_stop_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Stop Task Acknowledgement sent in discord', task, labels = {'event_type': 'acknowledgement_sent'})
 
 
 
     async def send_vitals(self, url: str, task_name: str, color: int=0xff0000, success: bool=True, notify_admin: bool=False) -> None:
         """
         Send an acknowledgement to the discord channel that the pulse has been sent.
-        """
-
+        """ 
         data: dict = {
             'embeds': [
                 {
@@ -87,8 +86,8 @@ class Discord:
 
     async def send_to_webhook(self, url: str, data: dict):
         """
-        This functiomn sends the embed to the discord webhook.
-        """
+        This function sends the embed to the discord webhook.
+        """        
         if url == '':
             return
 
@@ -102,9 +101,12 @@ class Discord:
                 headers=headers,
                 json=data
             )
+            
         except Exception as e:
-            await self.LOG_ERROR(f'Discord/send_to_webhook/{currentframe().f_lineno}', e, None)
+            await self.LOG_ERROR(f'Discord/send_to_webhook/{currentframe().f_lineno}', e, None, labels = {'error_type': 'send_embed'})
 
+
+__all__ = ['Discord']   
 
 
     

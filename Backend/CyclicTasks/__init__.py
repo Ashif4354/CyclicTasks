@@ -5,12 +5,17 @@ except:
     pass
 
 from os import environ
-from asyncio import Queue
+from datetime import datetime
+from random import choices
+from string import ascii_letters, digits
+from asyncio import Queue, new_event_loop
 
 from .config.GoogleCloudLogging import *   # Initialize Google Cloud Logging
 
 start_tasks_queue: Queue = Queue()
 stop_task_queue: Queue = Queue()
+
+scheduler_event_loop = new_event_loop()
 
 dummy_task = {
     'id': 'dummy',
@@ -25,9 +30,13 @@ dummy_task = {
     'url': environ['CT_SITE_URL']
 }
 
+environ['host-token'] = ''.join(choices(ascii_letters + digits, k=50))
+environ['start_time'] = datetime.now().replace(microsecond=0).strftime('%Y-%m-%d %H:%M:%S')
+
 __all__ = [
     'start_tasks_queue',
     'stop_task_queue',
-    'dummy_task'
+    'dummy_task',
+    'scheduler_event_loop'
 ]
 

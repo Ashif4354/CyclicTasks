@@ -4,7 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import ReCAPTCHA from 'react-google-recaptcha';
 
-import { analytics } from '../../../../config/firebase';
+import { analytics, auth } from '../../../../config/firebase';
 import { logEvent } from 'firebase/analytics';
 
 import './DeleteTaskDialog.css'
@@ -15,21 +15,23 @@ const DeleteTaskDialog = (props) => {
     const [currentTask, setCurrentTask] = useState(task);
     const [loadingOpen, setLoadingOpen] = useState(false);
     const [deleteBtnDisabled, setDeleteBtnDisabled] = useState(false);
-    const [serverErrorMessage, setServerErrorMesssage] = useState('');
+    const [serverErrorMessage, setServerErrorMessage] = useState('');
 
     const recaptchaRef = useRef();
 
     const onDelete = async () => {
         setDeleteBtnDisabled(true);
         setLoadingOpen(true);
-        setServerErrorMesssage('');
+        setServerErrorMessage('');
 
         const recaptchaToken = await recaptchaRef.current.executeAsync();
+        recaptchaRef.current.reset();
 
-        fetch(import.meta.env.VITE_CT_SERVER_URL + '/deletetask', {
+        fetch(import.meta.env.VITE_CT_SERVER_URL + '/tasks/deletetask', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + await auth.currentUser.getIdToken(true)
             },
             body: JSON.stringify({
                 task: task,
@@ -49,7 +51,7 @@ const DeleteTaskDialog = (props) => {
                 } else {
                     logEvent(analytics, 'failed-delete-task')
                     setFailedDeleteSnackBarOpen(true);
-                    setServerErrorMesssage("*" + response.message);
+                    setServerErrorMessage("*" + response.message);
                 }
 
                 setLoadingOpen(false);
@@ -61,10 +63,8 @@ const DeleteTaskDialog = (props) => {
                 setLoadingOpen(false);
                 setDeleteBtnDisabled(false);
                 setFailedDeleteSnackBarOpen(true);
-                setServerErrorMesssage("*An error occurred. Please try again later.");
-            });
-
-        recaptchaRef.current.reset();
+                setServerErrorMessage("*An error occurred. Please try again later.");
+            });        
     }
 
     const handleCancelClose = () => {
@@ -73,7 +73,7 @@ const DeleteTaskDialog = (props) => {
         setOpen(false);
         setLoadingOpen(false);
         setDeleteBtnDisabled(false);
-        setServerErrorMesssage('');
+        setServerErrorMessage('');
     }
 
     return (
@@ -81,10 +81,10 @@ const DeleteTaskDialog = (props) => {
             <DialogTitle className='dialog-title' fontWeight={'bold'} fontFamily={'Vicasso'} fontSize={'1.5rem'}>
                 Delete Task
                 <IconButton
-                    sx={{ position: 'absolute', right: '5px', top: '5px', '&:hover': { backgroundColor: '#ff000030' } }}
+                    sx={{ position: 'absolute', right: '5px', top: '5px', '&:hover': { backgroundColor: '#ffffff10' } }}
                     onClick={handleCancelClose}
                 >
-                    <CloseIcon sx={{ color: 'black' }} />
+                    <CloseIcon sx={{ color: 'white' }} />
                 </IconButton>
             </DialogTitle>
 
@@ -112,7 +112,6 @@ const DeleteTaskDialog = (props) => {
                             "Delete"
                         )
                     }
-
                 </button>
             </DialogActions>
         </Dialog>

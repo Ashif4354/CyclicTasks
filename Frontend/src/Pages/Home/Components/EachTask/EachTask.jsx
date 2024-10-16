@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import './EachTask.css';
 import { TaskDialog } from '../TaskDialog/TaskDialog';
 import { DeleteTaskDialog } from '../DeleteTaskDialog/DeleteTaskDialog';
-import SnackBar from '../SnackBar/Snackbar';
+import SnackBar from '../../../../Components/SnackBar/Snackbar';
 
 import { analytics } from '../../../../config/firebase';
 import { logEvent } from 'firebase/analytics';
@@ -38,24 +38,28 @@ const EachTask = (props) => {
                 <div className='task-number-container'>
                     <p>{index + 1}.</p>
                 </div>
+
                 <div className="task-details-container">
-                    <p className='task-detail-text'>Task ID: {currentTask.id}</p>
-                    <p className='task-detail-text'>Task Name: {currentTask.task_name}</p>
-                    <p className='task-detail-text'>Interval: {currentTask.interval}</p>
+                    <div>
+                        <p className='task-detail-text'>TASK ID: &nbsp;{currentTask.id}</p>
+                        <p className='task-detail-text'>TASK NAME: &nbsp;{currentTask.task_name}</p>
+                        <p className='task-detail-text'>INTERVAL: &nbsp;{currentTask.interval}</p>
+                    </div>
 
                     <div className='status-container'>
-                        <p className='status-text'>Status: </p>
+                        <p className='status-text'>STATUS: </p>
                         {
                             currentTask.active ? (
-                                <p className='task-detail-text-active task-active'>&nbsp;&nbsp;&nbsp;Active</p>
+                                <p className='task-detail-text-active task-active'>ACTIVE</p>
                             ) : (
-                                <p className='task-detail-text-inactive task-inactive'>&nbsp;&nbsp;&nbsp;Inactive</p>
+                                <p className='task-detail-text-inactive task-inactive'>INACTIVE</p>
                             )
                         }
 
                     </div>
                 </div>
             </div>
+
             <div className='edit-btn-container'>
                 <IconButton
                     sx={{ '&:hover': { backgroundColor: '#242424' } }}
@@ -77,18 +81,21 @@ const EachTask = (props) => {
                 setSuccessUpdateSnackBarOpen={setSuccessUpdateSnackBarOpen}
                 setFailedUpdateSnackBarOpen={setFailedUpdateSnackBarOpen}
             />
+
             <DeleteTaskDialog
                 open={deleteTaskDialogOpen} setOpen={setDeleteTaskDialogOpen}
                 task={currentTask} tasks={tasks} setTasks={setTasks}
                 setSuccessDeleteSnackBarOpen={setSuccessDeleteSnackBarOpen}
                 setFailedDeleteSnackBarOpen={setFailedDeleteSnackBarOpen}
             />
+
             <SnackBar
                 open={successUpdateSnackBarOpen}
                 handleClose={() => setSuccessUpdateSnackBarOpen(false)}
                 success={true}
                 message='Task updated successfully!'
             />
+            
             <SnackBar
                 open={failedUpdateSnackBarOpen}
                 handleClose={() => setFailedUpdateSnackBarOpen(false)}

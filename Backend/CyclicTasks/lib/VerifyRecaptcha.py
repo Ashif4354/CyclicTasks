@@ -15,6 +15,10 @@ async def verify_recaptcha(session: ClientSession, token: str, api_key: str) -> 
         response = await session.post(url, data=data)
         verified = await response.json()    
         return verified['success']
+    
     except:
         return False
+    
+
+__all__ = ['verify_recaptcha']
 

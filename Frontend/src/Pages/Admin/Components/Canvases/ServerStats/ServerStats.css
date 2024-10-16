@@ -1,0 +1,48 @@
+.server-stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.server-status-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.server-version-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.server-uptime-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.server-start-time-container {
+    display: flex;
+    flex-direction: row;
+
+
+}
+
+.loading-text {
+    margin-left: 10px;
+}
+
+.stat-value-text {
+    margin-left: 10px;
+}
+
+.status-text-online {
+    color: green;
+    font-size: 1rem;
+}
+
+.status-text-offline {
+    color: red;
+    font-size: 1rem; 
+}

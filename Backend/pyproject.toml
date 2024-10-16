@@ -18,6 +18,7 @@ hypercorn = "^0.17.3"
 
 [tool.poetry.group.dev.dependencies]
 python-dotenv = "^1.0.1"
+gunicorn = "^23.0.0"
 
 [build-system]
 requires = ["poetry-core"]

@@ -10,7 +10,7 @@ const SnackBar = (props) => {
                 onClose={props.handleClose}
                 severity= {success ? "success" : "error"}
                 variant="filled"
-                sx={{ width: '100%' }}
+                sx={{ width: '100%', color: 'white' }}
             >
                 {message}
             </Alert>

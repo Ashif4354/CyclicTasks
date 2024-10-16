@@ -5,7 +5,7 @@
   width: 100%;
   flex-direction: row;
   align-items: center;
-  background-color: rgba(18, 18, 18, 0.50);;
+  background-color: rgba(18, 18, 18, 0.50);
   color: white;
 }
 
@@ -27,11 +27,52 @@
   display: flex;
   position: absolute;
   right: 0px;
-  /* bottom: 0px; */
+  align-items: center;
+  justify-content: right;
+  height: 8vh;
+  width: 20%;
+  padding-right: 20px;
+}
+
+.loginout-btn {
+  display: flex;
+  font-size: 1rem;
+  justify-content: center;
+  background-color: white;
+  color: black;
+  align-items: center;
+  border: none;
+  border-radius: 20px;
+  width: fit-content;
+  min-width: 94px;
+  height: 35.55px;
+  font-family: 'Vicasso';
+  padding: 0px 10px 0px 10px;
+  cursor: pointer;
+}
+
+.loginout-btn:hover {
+  background-color: #bdbdbd;
+  border: none;
+}
+
+@media screen and (max-width: 750px) {
+  .loginout-btn {
+    font-size: 0.8rem;
+    min-width: 65px;
+    height: 25px;
+  }
+}
+
+.check-box-container {
+  display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
-  height: 8vh;
-  width: 10%;
-  padding-right: 40px;
-  /* background-color: aqua; */
+}
+
+@media screen and (max-width: 750px) {
+  .check-box-container {
+    font-size: small;
+  }
 }

@@ -10,6 +10,12 @@
     background-color: rgba(18, 18, 18, 0.8);
 }
 
+@media screen and (max-width: 750px) {
+    .each-task-container {
+        height: 120px;
+    }    
+}
+
 .details-container {
     display: flex;
     align-items: center;
@@ -32,19 +38,25 @@
 }
 
 .task-details-container {
-    display: flex;
-    flex-direction: column;
-    align-items: cleft;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    align-items: center;
     height: 100%;
     width: 90%;
     color: white;
     padding-left: 10px;
 }
+
+@media screen and (max-width: 750px) {
+    .task-details-container {
+        grid-template-columns: 1fr;
+        overflow: hidden;
+    }
+}
 .edit-btn-container {
     display: flex;
-    flex-direction: column;
     align-items: center;
+    flex-direction: row;
     justify-content: center;
     height: 100%;
     width: 20%;
@@ -52,9 +64,20 @@
     border-radius: 0 20px 20px 0;
 }
 
-.task-detail-text {
-    font-size: .65rem;
+@media screen and (max-width: 750px) {
+    .edit-btn-container {
+        flex-direction: column;
+    }
+}   
 
+.task-detail-text {
+    font-size: 0.9rem;
+}
+
+@media screen and (max-width: 750px) {
+    .task-detail-text {
+        font-size: 0.70rem;
+    }
 }
 
 .status-container {
@@ -63,15 +86,34 @@
 }
 
 .status-text {
-    font-size: .65rem;
+    font-size: 1rem;
 }
 
 .task-active{
     color: green;
-    font-size: .65rem;
+    font-size: 1rem;
+    margin-left:10px
 }
 
 .task-inactive{
     color: red;
-    font-size: .65rem;
+    font-size: 1rem;
+    margin-left:10px
+}
+
+@media screen and (max-width: 750px) {
+    .status-text {
+        font-size: 0.65rem;
+    }
+    .task-active{
+        color: green;
+        font-size: .65rem;
+        margin-left:10px
+    }
+    
+    .task-inactive{
+        color: red;
+        font-size: .65rem;
+        margin-left:10px
+    }
 }

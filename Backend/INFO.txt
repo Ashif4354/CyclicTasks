@@ -1,0 +1,85 @@
+ALL SERVER ENDPOINTS
+
+1. /
+2. /status
+3. /getserveruptime
+4. /getversion
+5. /tasks/newtask
+6. /tasks/updatetask
+7. /tasks/deletetask
+8. /admin/verifyadmin
+9. /admin/getrunningtasks
+10. /admin/loggingstatus
+11. /admin/getusers
+12. /admin/getalltasks
+13. /admin/getadmins
+14. /admin/grantrevokeadmin
+15. /admin/users/suspenduserstasks
+16. /admin/users/blockuser
+17. /admin/users/getusertasks
+18. /admin/users/suspendtasks
+
+
+ALL SERVER EVENT TYPES
+
+FLASK API -
+    1. recaptcha_verification_success
+    2. logging_status_updated
+    3. fetch_all_tasks
+    4. fetch_admins
+    5. grant_admin
+    6. revoke_admin
+    7. new_user_task
+    8. task_queued (start)
+    9. task_updated
+    10. task_updated
+    11. task_to_be_restarted
+    12. task_queued (stop)
+    13. task_deleted
+    14. no_tasks_found_for_user
+    15. user_tasks_suspended
+    16. users_tasks_suspended
+    17. user_blocked
+    18. user_unblocked
+    19. users_blocked
+    20. users_unblocked
+    21. user_tasks_fetched
+    22. suspend_task
+    23. suspend_tasks
+    24. tasks_fetched_from_firestore
+    25. no_tasks_available
+    26. tasks_suspended_email_sent
+
+Cyclic Tasks - 
+    1. pulse
+    2. create_task
+    3. add_to_running_tasks
+    4. running_id_assigned
+    5. task_started
+    6. starter_task_started
+    7. dummy_task_added
+    8. task_queued (start)
+    9. task_dequeued (start)
+    10. task_already_stopped
+    11. task_stopped
+    12. stopper_task_started
+    13. task_dequeued (stop)
+    14. task_not_running
+    15. engine_started
+
+
+ALL SERVER ALERT TYPES
+
+1. request_data_not_found
+2. recaptcha_verification_failed
+3. host_token_verification_failed
+4. recaptcha_token_not_found
+5. authorization_failed
+6. not_an_admin
+7. just_exception
+8. not_owner
+9. user_is_blocked
+10. task_data_not_found
+11. invalid_task_data
+12. non_task_owner_accessing_task
+    

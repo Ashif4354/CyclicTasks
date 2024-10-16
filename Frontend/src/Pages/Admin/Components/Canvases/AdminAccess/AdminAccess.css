@@ -1,0 +1,31 @@
+.admins-container {
+    background-color: rgba(18, 18, 18, 0.585);
+    border-radius: 25px;
+    display: grid;
+    grid-template-columns: 3.5fr 1fr;
+    flex-direction: row;
+    padding: 10px 10px 10px 0px;
+    margin-top: 5px
+}
+
+@media screen and (max-width: 750px) {
+    .admins-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+.admins-scroll-container {
+    overflow-y: auto;
+    max-height: 250px;
+}
+
+.admins-scroll-container::-webkit-scrollbar {
+    display: none;
+}
+
+.grant-btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}

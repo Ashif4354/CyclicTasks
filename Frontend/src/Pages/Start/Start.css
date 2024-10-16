@@ -1,3 +1,14 @@
+.start-heading {
+    font-size: 3rem;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+@media screen and (max-width: 750px) {
+    .start-heading {
+        font-size: 1.9rem;
+    }
+}
 
 .middle-box {
     display: flex;
@@ -5,7 +16,6 @@
     margin-right:10px;
     margin-left:10px;
     flex-direction: column;
-    /* overflow-y: scroll; */
     overflow: hidden;
     font-size: 1.4rem;
     justify-content: center;
@@ -18,9 +28,10 @@
     box-shadow: 0px 0px 150px rgba(0, 0, 0);  
 }
 
-/* .middle-box::-webkit-scrollbar {
-    display: none;
-  } */
+.start-sub-heading {
+    font-size: 1.6rem;
+    margin-top: 30px;
+}
 
 .text-container {
     display: flex;
@@ -47,10 +58,15 @@
   }
 
 .homepage-text {
-    font-size: 1.4rem;
-    /* margin-bottom: 30px; */
+    font-size: 1.3rem;
     font-family: 'Vicasso';
-    /* color:aqua */
+}
+
+@media screen and (max-width: 750px) {
+    .homepage-text {
+        font-size: 0.9rem;
+    }
+    
 }
 
 .get-started-btn-container {
@@ -69,12 +85,9 @@
 
 .lottie-container {
     position: absolute;
-    /* height: 100%; */
     width: 250%;
     z-index: 0;
     opacity: .15;
-    /* rotate: -90deg; */
-    /* color:aqua; */
 }
 
 @media screen and (max-width: 450px) {
@@ -87,7 +100,6 @@
 
 .scroll-text-container {
     display: flex;
-    /* justify-content: center; */
     align-items: center;
     position: absolute;
     bottom: 45px;
