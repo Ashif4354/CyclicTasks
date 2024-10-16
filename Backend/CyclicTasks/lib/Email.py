@@ -36,8 +36,6 @@ class Email:
             EMAIL_CONTENT = email_content
         )
         
-        print(body)
-        
         await self.send_email(recipient_email, subject, body)
         
         
@@ -46,8 +44,8 @@ class Email:
         Send an email to the user informing them that their account has been blocked.
         """
         email_content = (
-            '<p>We regret to inform you that your account has been <span class="red">blocked</span>.<br></p>'
-            '<p><br>Your account has been blocked due to violation of our terms and conditions.</p>'
+            '<p>We regret to inform you that your account has been <span class="red">blocked</span> and your tasks have been suspended.<br></p>'
+            '<p><br>Your account was blocked due to violation of our terms and conditions.</p>'
             '<p><br>While blocked, you will not be able to add / modify your tasks.</p>'
             '<p><br>If you believe this action was taken in error, or if you would like to discuss the matter further, please feel free to reach out to our support team.</p>'
             '<p><br>We take the security and compliance of our platform seriously and appreciate your understanding in this matter.</p>'

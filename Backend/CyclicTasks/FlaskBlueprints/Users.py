@@ -31,7 +31,7 @@ async def suspend_user():
         except:
             if request.headers.get('host-token'):
                 from_user_block = True
-                accessed_admin = 'HOST, because the suspenduserstasks endpoint is triggered by the host to suspend blocked user tasks'
+                accessed_admin = "HOST, because the suspenduserstasks endpoint is triggered by the host to suspend blocked user's tasks"
             else:
                 return jsonify({
                     'message': 'Unauthorized access',
@@ -41,60 +41,60 @@ async def suspend_user():
         try:
             users_emails: list[str] = request.json['emails']
 
-            FS = Firestore(initialized=True)            
+            FS = Firestore(initialized=True)    
+            async with Email() as email:        
 
-            for user_email in users_emails:
+                for user_email in users_emails:
 
-                user_tasks: list = await FS.get_all_task_of_user(user_email)
-                
-                if user_tasks == []:
-                    await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}', 
-                                            'FlaskApp', 
-                                            f'No tasks found for user: {user_email}', 
-                                            None,
-                                            labels={
-                                                    'user_email': user_email,
-                                                    'event_type': 'no_tasks_found_for_user', 
-                                                    'accessed_admin': accessed_admin                                          
-                                            })
-                    continue
-
-                for task in user_tasks:
-                    task_ = task.copy()
+                    user_tasks: list = await FS.get_all_task_of_user(user_email)
                     
-                    if task_['active'] == False:
+                    if user_tasks == []:
+                        await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}', 
+                                                'FlaskApp', 
+                                                f'No tasks found for user: {user_email}', 
+                                                None,
+                                                labels={
+                                                        'user_email': user_email,
+                                                        'event_type': 'no_tasks_found_for_user', 
+                                                        'accessed_admin': accessed_admin                                          
+                                                })
                         continue
-                    
-                    task_['active'] = False
-                    
-                    scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task_.copy())
-                    await FS.update_task(task_)
-                    
-                if not from_user_block:
-                    async with Email() as email:
+
+                    for task in user_tasks:
+                        task_ = task.copy()
+                        
+                        if task_['active'] == False:
+                            continue
+                        
+                        task_['active'] = False
+                        
+                        scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task_.copy())
+                        await FS.update_task(task_)
+                        
+                    if not from_user_block:                    
                         await email.send_suspend_tasks_email(user_email, task['user_name'], [task['task_name'] for task in user_tasks if task['active'] == True])
 
-                await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}',
-                                        'FlaskApp',
-                                        f'User tasks suspended: {user_email}',
-                                        None,
-                                        labels={
-                                            'user_email': user_email,
-                                            'event_type': 'user_tasks_suspended',
-                                            'accessed_admin': accessed_admin
-                                        })
+                    await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}',
+                                            'FlaskApp',
+                                            f'User tasks suspended: {user_email}',
+                                            None,
+                                            labels={
+                                                'user_email': user_email,
+                                                'event_type': 'user_tasks_suspended',
+                                                'accessed_admin': accessed_admin
+                                            })
 
-            await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}', 
-                                'FlaskApp', 
-                                f'Users tasks suspended', 
-                                None,
-                                extra_payload={
-                                    'users_emails': '\n'.join(users_emails)
-                                },
-                                labels={
-                                    'event_type': 'users_tasks_suspended',
-                                    'accessed_admin': accessed_admin
-                                })
+                await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}', 
+                                    'FlaskApp', 
+                                    f'Users tasks suspended', 
+                                    None,
+                                    extra_payload={
+                                        'users_emails': '\n'.join(users_emails)
+                                    },
+                                    labels={
+                                        'event_type': 'users_tasks_suspended',
+                                        'accessed_admin': accessed_admin
+                                    })
             
             return jsonify({
                 'message': 'Users tasks suspended',
