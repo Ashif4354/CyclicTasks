@@ -7,6 +7,7 @@ from firebase_admin import auth
 from ..lib.Logger import Logger
 from ..lib.Firestore import Firestore
 from ..lib.Authentication import Authentication
+from ..lib.Email import Email
 from .. import stop_task_queue, scheduler_event_loop
 
 Users = Blueprint('users', __name__, url_prefix='/users')
@@ -23,10 +24,13 @@ async def suspend_user():
     """
     async with ClientSession() as session:
         logger = Logger(session)
+        from_user_block = False
+        
         try:
-            accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
+            accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email']
         except:
             if request.headers.get('host-token'):
+                from_user_block = True
                 accessed_admin = 'HOST, because the suspenduserstasks endpoint is triggered by the host to suspend blocked user tasks'
             else:
                 return jsonify({
@@ -45,21 +49,30 @@ async def suspend_user():
                 
                 if user_tasks == []:
                     await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}', 
-                                        'FlaskApp', 
-                                        f'No tasks found for user: {user_email}', 
-                                        None,
-                                        labels={
-                                                'user_email': user_email,
-                                                'event_type': 'no_tasks_found_for_user', 
-                                                'accessed_admin': accessed_admin                                          
-                                        })
+                                            'FlaskApp', 
+                                            f'No tasks found for user: {user_email}', 
+                                            None,
+                                            labels={
+                                                    'user_email': user_email,
+                                                    'event_type': 'no_tasks_found_for_user', 
+                                                    'accessed_admin': accessed_admin                                          
+                                            })
                     continue
 
                 for task in user_tasks:
-                    task['active'] = False
+                    task_ = task.copy()
                     
-                    scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task.copy())
-                    await FS.update_task(task)
+                    if task_['active'] == False:
+                        continue
+                    
+                    task_['active'] = False
+                    
+                    scheduler_event_loop.call_soon_threadsafe(stop_task_queue.put_nowait, task_.copy())
+                    await FS.update_task(task_)
+                    
+                if not from_user_block:
+                    async with Email() as email:
+                        await email.send_suspend_tasks_email(user_email, task['user_name'], [task['task_name'] for task in user_tasks if task['active'] == True])
 
                 await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_user/{currentframe().f_lineno}',
                                         'FlaskApp',
@@ -103,7 +116,7 @@ async def block_user():
     """
     async with ClientSession() as session:
         logger = Logger(session)
-        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
+        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email']
 
         try:
             user_emails: str = request.json['emails']
@@ -216,10 +229,11 @@ async def suspend_tasks():
     tasks = request.json['tasks']
     async with ClientSession() as session:
         logger = Logger(session)
-        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=60)['email']
+        accessed_admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email']
 
         try:
             FS = Firestore(initialized=True)
+            
             for task in tasks:
                 task['active'] = False
                 
@@ -234,6 +248,21 @@ async def suspend_tasks():
                                             'event_type': 'suspend_task',
                                             'accessed_admin': accessed_admin
                                         })
+                
+            users = {
+                task['user_email']: {
+                    'name': task['user_name'],
+                    'tasks': []
+                }
+                for task in tasks
+            }
+            
+            for task in tasks:
+                users[task['user_email']]['tasks'].append(task['task_name'])
+                
+            async with Email() as email:
+                for user_email in users:
+                    await email.send_suspend_tasks_email(user_email, users[user_email]['name'], users[user_email]['tasks'])
 
             await logger.LOG_EVENT(f'FlaskApp/Admin/Users/suspend_tasks/{currentframe().f_lineno}', 
                                    'FlaskApp', 

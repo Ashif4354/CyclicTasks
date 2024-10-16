@@ -37,7 +37,7 @@ async def before_request():
                     'message': 'Authorization failed',
                     'success': False
                 })
-            
+                
             elif not admin(request.headers.get('Authorization').split(' ')[1]):
                 await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
                             'User is not an Admin', 
@@ -50,6 +50,22 @@ async def before_request():
                     'message': 'You are not an Admin',
                     'success': False
                 })
+                
+            elif admin(request.headers.get('Authorization').split(' ')[1]):
+                user = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)
+                
+                if 'blocked' in user and user['blocked']:
+                    await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
+                            'Blocked Admin tried to access admin console', 
+                            request,
+                            labels={
+                                'alert_type': 'user_is_blocked'
+                            })
+                    
+                    return jsonify({
+                        'message': 'You are Blocked',
+                        'success': False
+                    })
 
 
 @Admin.route('/verifyadmin', methods=['POST'])
@@ -57,7 +73,7 @@ async def verify_admin():
     """
     This endpoint will verify if the user is an admin or not.
     """
-    user = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])
+    user = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)
 
     if 'owner' in user and user['owner']:
         return jsonify({
@@ -139,7 +155,7 @@ async def logging_status():
                             'Logging status updated', 
                             None,
                             labels={
-                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email'],
                                 'event_type': 'logging_status_updated'
                             })
 
@@ -230,7 +246,7 @@ async def get_admins():
                         f'Admins fetched: {len(admins)}',
                         None,
                         labels={
-                            'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                            'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email'],
                             'event_type': 'fetch_admins'
                         })
             
@@ -257,7 +273,7 @@ async def make_admin():
     async with ClientSession() as session:
         logger = Logger(session)
         
-        admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])        
+        admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)        
         if 'owner' in admin and not admin['owner']:
             await logger.ALERT(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}',
                                'A user tried to make an admin without being the owner',
@@ -274,14 +290,14 @@ async def make_admin():
         try:
             Auth = Authentication(initialized=True)
             if request.json['admin']:
-                await Auth.add_admin(request.json['email'])
+                await Auth.grant_admin(request.json['email'])
 
                 await logger.LOG_EVENT(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}',
                             'FlaskApp',
                             f'User {request.json["email"]} granted admin role',
                             None,
                             labels={
-                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email'],
                                 'event_type': 'grant_admin'
                             })
             
@@ -293,7 +309,7 @@ async def make_admin():
                             f'User {request.json["email"]} revoked from admin role',
                             None,
                             labels={
-                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1])['email'],
+                                'accessed_admin': auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)['email'],
                                 'event_type': 'revoke_admin'
                             })
 

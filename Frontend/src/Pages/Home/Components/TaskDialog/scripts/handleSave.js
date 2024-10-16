@@ -158,6 +158,10 @@ const validate = (
         setIntervalError(true);
         setIntervalHelperText('Interval should be at least 60 seconds');
         validData = false;
+    } else if (parseInt(interval) > 31536000) {
+        setIntervalError(true);
+        setIntervalHelperText('Interval should not exceed 1 year');
+        validData = false;
     } else {
         setIntervalError(false);
         setIntervalHelperText('Interval in seconds');

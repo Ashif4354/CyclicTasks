@@ -1,6 +1,8 @@
 from ..config.Firebase import FirebaseConfig
 from firebase_admin import auth
 
+from .Email import Email
+
 
 class Authentication(FirebaseConfig):
     def __init__(self, initialized: bool = False) -> None:
@@ -46,9 +48,15 @@ class Authentication(FirebaseConfig):
         try:
             user = auth.get_user_by_email(user_email)
             user_custom_claims = user.custom_claims or {}
+            
+            if 'blocked' in user_custom_claims and user_custom_claims['blocked']:
+                return
 
             user_custom_claims['blocked'] = True  
             auth.update_user(user.uid, custom_claims=user_custom_claims)
+            
+            async with Email() as email:
+                await email.block_user(user_email, user.display_name)
 
         except Exception as e:
             print(e)
@@ -61,9 +69,15 @@ class Authentication(FirebaseConfig):
         try:
             user = auth.get_user_by_email(user_email)
             user_custom_claims = user.custom_claims or {}
+            
+            if 'blocked' in user_custom_claims and not user_custom_claims['blocked']:
+                return
 
             user_custom_claims['blocked'] = False  
             auth.update_user(user.uid, custom_claims=user_custom_claims)
+            
+            async with Email() as email:
+                await email.unblock_user(user_email, user.display_name)
 
         except Exception as e:
             print(e)
@@ -84,17 +98,18 @@ class Authentication(FirebaseConfig):
 
                 if 'admin' not in user_custom_claims:
                     continue
-
-                self.fetched_admins.append({'email': user.email, 'name': user.display_name})
+                
+                if user_custom_claims['admin']:
+                    self.fetched_admins.append({'email': user.email, 'name': user.display_name})
 
             page = page.get_next_page()
 
         return self.fetched_admins
         
 
-    async def add_admin(self, user_email: str) -> None:
+    async def grant_admin(self, user_email: str) -> None:
         """
-        Adds an admin to the application
+        Grants an admin access to the application
         """
         try:
             user = auth.get_user_by_email(user_email)
@@ -102,13 +117,16 @@ class Authentication(FirebaseConfig):
 
             user_custom_claims['admin'] = True  
             auth.update_user(user.uid, custom_claims=user_custom_claims)
+            
+            async with Email() as email:
+                await email.grant_admin(user_email, user.display_name)
 
         except Exception as e:
             print(e)
 
     async def revoke_admin(self, user_email: str) -> None:
         """
-        Removes an admin from the application
+        Removes admin access from the application   
         """
         try:
             user = auth.get_user_by_email(user_email)
@@ -116,6 +134,9 @@ class Authentication(FirebaseConfig):
 
             user_custom_claims['admin'] = False  
             auth.update_user(user.uid, custom_claims=user_custom_claims)
+            
+            async with Email() as email:
+                await email.revoke_admin(user_email, user.display_name)
 
         except Exception as e:
             print(e)

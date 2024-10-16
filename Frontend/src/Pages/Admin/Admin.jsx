@@ -12,7 +12,6 @@ import Tasks from './Components/Canvases/Tasks/Tasks';
 import Users from './Components/Canvases/Users/Users';
 import AdminAccess from './Components/Canvases/AdminAccess/AdminAccess';
 
-
 const Admin = (props) => {
 
     const [adminVerifyDialog, setAdminVerifyDialogOpen] = useState(true);
@@ -33,7 +32,7 @@ const Admin = (props) => {
 
     return (
         <div className='main-container'>
-            <Header heading='Cyclic Tasks Admin Console' />
+            <Header heading='Cyclic Tasks' />
 
             <div className='console-container'>
                 {
@@ -41,7 +40,14 @@ const Admin = (props) => {
                         <div className='canvases'>
                             <div className='first-pane'>
                                 <ServerStats />
-                                <EnableDisableLogs />
+                                
+                                {
+                                    owner ? (
+                                        <EnableDisableLogs />
+                                    ) : (
+                                        <div />
+                                    )
+                                }
                                 {
                                     owner ? (
                                         <AdminAccess admin={admin} users={users}/>
@@ -70,7 +76,7 @@ const Admin = (props) => {
                                 adminVerifyDialog ? (
                                     <div />
                                 ) : (
-                                    <h2>Refresh the page to sign in</h2>
+                                    <h2>Refresh the page to sign in to console</h2>
                                 )
                             }
                         </div>

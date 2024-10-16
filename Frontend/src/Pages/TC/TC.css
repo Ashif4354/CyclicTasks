@@ -1,0 +1,43 @@
+.terms-container {
+    display: flex;
+    justify-content: center;
+}
+
+.terms {
+    width : 1000px;
+    border-radius: 10px;
+    margin-bottom: 100px;
+    margin-top: 50px;
+    padding: 30px;
+    box-shadow: 0px 0px 150px rgba(0, 0, 0);
+}
+
+
+@media screen and (max-width: 1300px) {
+    .terms {
+        width: 900px;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    .terms {
+        width: 650px;
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .terms {
+        width: 550px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .terms {
+        width: 350px;
+    }
+}
+
+
+
+
+

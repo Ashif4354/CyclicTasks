@@ -64,6 +64,12 @@ p {
   font-family: "Anta", sans-serif;;
 }
 
+@media screen and (max-width: 750px) {
+  .user-text {
+    font-size: x-small;
+  }
+}
+
 .task-container {
   display: flex;
   align-items: center;
@@ -107,4 +113,31 @@ p {
   height: 100%;
   width: 100%;
   color: white;
+}
+
+.btn {
+  display: flex;
+  font-size: 1rem;
+  justify-content: center;
+  background-color: white;
+  color: black;
+  align-items: center;
+  border: none;
+  border-radius: 20px;
+  width: fit-content;
+  min-width: 94px;
+  height: 35.55px;
+  font-family: 'Vicasso';
+  padding: 0px 10px 0px 10px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background-color: #bdbdbd;
+  border: none;
+}
+
+.btn:disabled {
+  background-color: #bdbdbd;
+  cursor: not-allowed;
 }

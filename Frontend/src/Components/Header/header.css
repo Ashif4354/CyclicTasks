@@ -5,7 +5,8 @@
   width: 100%;
   flex-direction: row;
   align-items: center;
-  background-color: rgba(18, 18, 18, 0.50);;
+  background-color: rgba(18, 18, 18, 0.50);
+  ;
   color: white;
 }
 
@@ -36,7 +37,9 @@
   /* background-color: aqua; */
 }
 
-.btn {
+
+
+.loginout-btn {
   display: flex;
   font-size: 1rem;
   justify-content: center;
@@ -53,12 +56,44 @@
   cursor: pointer;
 }
 
-.btn:hover {
+.loginout-btn:hover {
   background-color: #bdbdbd;
   border: none;
 }
 
-.btn:disabled {
-  background-color: #bdbdbd;
-  cursor: not-allowed;
+@media screen and (max-width: 750px) {
+  .loginout-btn {
+    font-size: 0.8rem;
+    min-width: 65px;
+    height: 25px;
+  }
+}
+
+.login-dialog-container {
+  display: flex;
+  position: absolute;
+  top: 8vh;
+  z-index: 1;
+  right: 10px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: small;
+  height: 10vh;
+  width: 250px;
+  background-color: aqua;
+}
+
+.check-box-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+}
+
+@media screen and (max-width: 750px) {
+  .check-box-container {
+    font-size: small;
+  }
 }

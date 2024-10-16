@@ -39,9 +39,11 @@ const EachTask = (props) => {
                     <p>{index + 1}.</p>
                 </div>
                 <div className="task-details-container">
-                    <p className='task-detail-text'>TASK ID: &nbsp;{currentTask.id}</p>
-                    <p className='task-detail-text'>TASK NAME: &nbsp;{currentTask.task_name}</p>
-                    <p className='task-detail-text'>INTERVAL: &nbsp;{currentTask.interval}</p>
+                    <div>
+                        <p className='task-detail-text'>TASK ID: &nbsp;{currentTask.id}</p>
+                        <p className='task-detail-text'>TASK NAME: &nbsp;{currentTask.task_name}</p>
+                        <p className='task-detail-text'>INTERVAL: &nbsp;{currentTask.interval}</p>
+                    </div>
 
                     <div className='status-container'>
                         <p className='status-text'>STATUS: </p>

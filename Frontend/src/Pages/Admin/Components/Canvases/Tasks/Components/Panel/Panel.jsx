@@ -7,7 +7,6 @@ import ReplayIcon from '@mui/icons-material/Replay';
 import SnackBar from '../../../../../../../Components/SnackBar/Snackbar';
 import SuspendTasksDialog from '../SuspendTasksDialog/SuspendTasksDialog';
 import { auth } from '../../../../../../../config/firebase';
-import { setLogLevel } from 'firebase/app';
 
 const Panel = (props) => {
     const { tabValue, user, recaptchaRef, tasks, setTasks, getTasks } = props;

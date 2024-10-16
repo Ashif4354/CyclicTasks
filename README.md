@@ -25,4 +25,4 @@ If you’re using free hosting services that put your backend to sleep after per
 ---
 
 
-###### [Credits](./Credits.md)
+###### [Credits](./credits.md)

@@ -164,9 +164,10 @@ const TaskDialog = (props) => {
                         error={taskNameError}
                         required
                         id="outlined-basic"
-                        label="Task Name"
+                        label="Task Name (max 30 characters)"
                         variant="outlined"
-                        fullWidth={true}
+                        fullWidth
+                        inputProps={{ maxLength: 50 }}
                         value={taskName}
                         margin="normal"
                         helperText={taskNameHelperText}
