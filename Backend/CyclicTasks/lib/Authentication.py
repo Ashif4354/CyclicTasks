@@ -10,6 +10,9 @@ class Authentication(FirebaseConfig):
     
         if not initialized:
             self.initialize_firebase()
+            
+    async def __aenter__(self):
+        return self
 
     async def get_all_users(self) -> list[dict]:
         """
@@ -140,6 +143,9 @@ class Authentication(FirebaseConfig):
 
         except Exception as e:
             print(e)
+            
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        pass
 
 
 __all__ = ['Authentication']

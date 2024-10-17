@@ -22,6 +22,10 @@ class Logger(Discord):
         self.flask_app_logger = getLogger('flask_app')
         self.cyclic_tasks_logger = getLogger('cyclic_tasks')
         
+        
+    async def __aenter__(self):
+        return self
+    
 
     async def REQUESTS(self, request: LocalProxy, labels: dict = {}) -> None:
         """
@@ -296,6 +300,9 @@ class Logger(Discord):
             }
 
             await self.send_to_webhook(self.dev_logs_event_url, data)
+            
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        pass
 
 
 __all__ = ['Logger']
