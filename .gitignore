@@ -1,9 +1,9 @@
 
 # Environment variables
 .env
-.env.production
+.env*
 
-#Virtual environment
+# Python Virtual environment
 .venv
 
 #tests
@@ -11,7 +11,7 @@ tests
 
 
 
-# Frontend ignores
+# React App
 
 # Logs
 logs
@@ -38,4 +38,12 @@ dist-ssr
 *.sln
 *.sw?
 
+
+
+# Batch files
 *.bat
+
+
+# Deployment files
+Frontend/.firebase
+Frontend/.firebaserc
