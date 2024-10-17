@@ -1,6 +1,7 @@
 
 # Environment variables
 .env
+.env.production
 
 #Virtual environment
 .venv
