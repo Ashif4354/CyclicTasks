@@ -27,83 +27,83 @@ async def before_request() -> Response | None:
     """
     
     async with ClientSession() as session:
-        logger = Logger(session)
+        async with Logger(session) as logger:
         
-        await logger.REQUESTS(request)
-        
-        if request.method == "POST":
-
-            if not request.json:
-                await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
-                                    'Request data not found', 
-                                    request,
-                                    labels={
-                                        'alert_type': 'request_data_not_found'
-                                    })
-
-                return jsonify({
-                    'message': 'Request data not found',
-                    'success': False
-                })
+            await logger.REQUESTS(request)
             
-            if 'recaptchaToken' in request.json:
-                recaptcha_token = request.json['recaptchaToken']
-                verified = await verify_recaptcha(session, recaptcha_token, environ['G_RECAPTCHA_SECRET_KEY'])
+            if request.method == "POST":
 
-                if not verified:
+                if not request.json:
                     await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
-                                        'Recaptcha verification failed', 
+                                        'Request data not found', 
                                         request,
                                         labels={
-                                            'alert_type': 'recaptcha_verification_failed'
+                                            'alert_type': 'request_data_not_found'
                                         })
 
                     return jsonify({
-                        'message': 'Recaptcha verification failed',
+                        'message': 'Request data not found',
                         'success': False
                     })
                 
-                await logger.LOG_EVENT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
-                                       'FlaskApp', 
-                                       'Recaptcha verification success', 
-                                       None,
-                                       labels={
-                                           'event_type': 'recaptcha_verification_success'
-                                       })
-            
-            elif request.headers.get('host-token'):
+                if 'recaptchaToken' in request.json:
+                    recaptcha_token = request.json['recaptchaToken']
+                    verified = await verify_recaptcha(session, recaptcha_token, environ['G_RECAPTCHA_SECRET_KEY'])
 
-                if request.headers.get('host-token') == environ['host-token']:
-                    pass
+                    if not verified:
+                        await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                            'Recaptcha verification failed', 
+                                            request,
+                                            labels={
+                                                'alert_type': 'recaptcha_verification_failed'
+                                            })
+
+                        return jsonify({
+                            'message': 'Recaptcha verification failed',
+                            'success': False
+                        })
+                    
+                    await logger.LOG_EVENT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                        'FlaskApp', 
+                                        'Recaptcha verification success', 
+                                        None,
+                                        labels={
+                                            'event_type': 'recaptcha_verification_success'
+                                        })
+                
+                elif request.headers.get('host-token'):
+
+                    if request.headers.get('host-token') == environ['host-token']:
+                        pass
+                    else:
+                        await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
+                                            'Host token verification failed', 
+                                            request,
+                                            labels={
+                                                'alert_type': 'host_token_verification_failed'
+                                            })
+
+                        return jsonify({
+                            'message': 'Host token verification failed',
+                            'success': False
+                        })
+
                 else:
+
                     await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
-                                        'Host token verification failed', 
+                                        'Recaptcha token not found', 
                                         request,
                                         labels={
-                                            'alert_type': 'host_token_verification_failed'
+                                            'alert_type': 'recaptcha_token_not_found'
                                         })
 
                     return jsonify({
-                        'message': 'Host token verification failed',
+                        'message': 'Recaptcha token not found',
                         'success': False
                     })
-
-            else:
-
-                await logger.ALERT(f'FlaskApp/before_request/{currentframe().f_lineno}', 
-                                    'Recaptcha token not found', 
-                                    request,
-                                    labels={
-                                        'alert_type': 'recaptcha_token_not_found'
-                                    })
-
-                return jsonify({
-                    'message': 'Recaptcha token not found',
-                    'success': False
-                })
-            
-        if request.method == 'GET':
-            pass
+                
+            if request.method == 'GET':
+                pass
             
                 
 @app.route('/', methods=['GET'])

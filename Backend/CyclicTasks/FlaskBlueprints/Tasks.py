@@ -17,8 +17,7 @@ async def before_request():
     """
     It will check for task data and validate it.
     """    
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Logger(session) as logger:
         
         if request.method == 'POST':
             if not request.headers.get('Authorization') and not request.headers.get('Authorization').startswith('Bearer '):
@@ -143,11 +142,9 @@ async def new_task():
     """
     task = request.json['task']
 
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Firestore(initialized=True) as FS, Logger(session) as logger:
 
         try:
-            FS = Firestore(initialized=True)
             id = await FS.add_new_task(task)
             task['id'] = id
 
@@ -193,13 +190,11 @@ async def update_task():
     This endpoint is used to update the task data in the database and queue it for restarting.
     """
     task = request.json['task']
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Firestore(initialized=True) as FS, Logger(session) as logger:
         
         try:        
             id = task['id']
-
-            FS = Firestore(initialized=True)
+            
             await FS.update_task(task)
             
             task['id'] = id
@@ -264,12 +259,9 @@ async def delete_task():
     """
     task = request.json['task']
 
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Firestore(initialized=True) as FS, Logger(session) as logger:
         
         try:
-
-            FS = Firestore(initialized=True)
             await FS.delete_task(task['id'], task['user_email'])
             
             CyclicTasks.RUNNING_TASKS[task['id']]['deleted'] = True
@@ -313,8 +305,7 @@ async def get_my_tasks():
     """
     email = request.json['email']
 
-    async with ClientSession() as session, Firestore(initialized=True) as FS:
-        logger = Logger(session)
+    async with ClientSession() as session, Firestore(initialized=True) as FS, Logger(session) as logger:
 
         try:
             tasks = await FS.get_all_task_of_user(email)
