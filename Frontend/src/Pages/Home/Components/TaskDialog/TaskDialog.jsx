@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
-import { Button, CircularProgress, DialogActions, DialogContent, Switch } from "@mui/material";
+import { CircularProgress, DialogActions, DialogContent, Switch } from "@mui/material";
 import TextField from '@mui/material/TextField';
 import ReCAPTCHA from "react-google-recaptcha";
 import IconButton from '@mui/material/IconButton';

@@ -1,9 +1,6 @@
-import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Player } from '@lottiefiles/react-lottie-player';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
-import { onAuthStateChanged } from 'firebase/auth';
-
 
 import './Start.css'
 import Header from '../../Components/Header/Header';
