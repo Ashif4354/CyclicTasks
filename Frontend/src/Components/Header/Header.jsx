@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Checkbox } from '@mui/material';
 import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 
-import './Header.css'
+import './HeaderCSS.css'
 import { GoogleLogin, logout } from '../../scripts/Session'
 import { auth } from '../../config/firebase';
 
