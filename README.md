@@ -6,9 +6,10 @@ CyclicTasks is a powerful tool designed to keep your backend apps alive 24/7 whe
 
 ---
 Access the live version of the project on the below links:
+- [https://cyclictasks.web.app/](https://cyclictasks.web.app/) 
+- [https://cyclictasks.pages.dev/](https://cyclictasks.pages.dev/)
 - [https://cyclictasks.netlify.app/](https://cyclictasks.netlify.app/)
 - [https://cyclictasks.firebaseapp.com/](https://cyclictasks.firebaseapp.com/)
-- [https://cyclictasks.web.app/](https://cyclictasks.web.app/)
 - [https://cyclictasks.vercel.app/](https://cyclictasks.vercel.app/)
 - [https://cyclictasks.onrender.com/](https://cyclictasks.onrender.com/)
 ---
