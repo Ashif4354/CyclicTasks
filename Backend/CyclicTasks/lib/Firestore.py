@@ -19,6 +19,9 @@ class Firestore(FirebaseConfig, Logger):
 
         self.tasks_collection = self.db.collection('Tasks')
         self.users_collection = self.db.collection('Users')
+        
+    async def __aenter__(self):
+        return self
 
     async def get_all_tasks(self, for_: str, include_inactive_tasks: bool = False) -> list[dict]:
         """
@@ -135,6 +138,9 @@ class Firestore(FirebaseConfig, Logger):
                 self.fetched_tasks.append(task)
 
         return self.fetched_tasks
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        self.db.close()
     
     
 __all__ = ['Firestore']

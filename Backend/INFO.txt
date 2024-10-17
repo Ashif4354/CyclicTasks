@@ -49,6 +49,9 @@ FLASK API -
     24. tasks_fetched_from_firestore
     25. no_tasks_available
     26. tasks_suspended_email_sent
+    27. user_not_found-invalid_token
+    28. unauthorized_access
+    29. email_not_found
 
 Cyclic Tasks - 
     1. pulse
