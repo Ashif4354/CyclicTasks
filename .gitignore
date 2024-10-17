@@ -47,3 +47,4 @@ dist-ssr
 # Deployment files
 Frontend/.firebase
 Frontend/.firebaserc
+Frontend/.wrangler
