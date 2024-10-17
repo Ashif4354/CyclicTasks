@@ -31,7 +31,7 @@ const AdminAccess = (props) => {
                     if (data.success) {
                         setAdmins(data.admins);
                     } else {
-                        console.log(data.message);
+                        console.err(data.message);
                     }
                 })
         })

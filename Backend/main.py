@@ -5,7 +5,7 @@ from asgiref.wsgi import WsgiToAsgi
 
 from CyclicTasks.CyclicTasks import CyclicTasks
 from CyclicTasks.FlaskAPI import app
-from CyclicTasks import scheduler_event_loop
+from CyclicTasks import scheduler_event_loop    
 
 async def main() -> None:
     """

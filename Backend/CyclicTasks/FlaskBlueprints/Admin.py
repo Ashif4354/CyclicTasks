@@ -20,8 +20,8 @@ async def before_request():
     """
     This function will run before every request to the Admin Blueprint.
     """
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Logger(session) as logger:
+            
         if request.method in ('GET', 'POST'):
             if request.headers.get('host-token') == environ['host-token']:
                 pass
@@ -39,7 +39,22 @@ async def before_request():
                     'success': False
                 })
                 
-            elif not admin(request.headers.get('Authorization').split(' ')[1]):
+            try:
+                user = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)
+            except:
+                await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
+                            'User not found', 
+                            request,
+                            labels={
+                                'alert_type': 'user_not_found-invalid_token'
+                            })
+                
+                return jsonify({
+                    'message': 'User not found or Invalid Token',
+                    'success': False
+                })
+                
+            if not admin(user):
                 await logger.ALERT(f'FlaskApp/Admin/before_request/{currentframe().f_lineno}', 
                             'User is not an Admin', 
                             request,
@@ -52,7 +67,7 @@ async def before_request():
                     'success': False
                 })
                 
-            elif admin(request.headers.get('Authorization').split(' ')[1]):
+            elif admin(user):
                 user = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)
                 
                 if 'blocked' in user and user['blocked']:
@@ -94,8 +109,7 @@ async def get_running_tasks():
     """
     This endpoint will return the list of tasks that are currently running.
     """
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Logger(session) as logger:
 
         try:
             tasks = CyclicTasks.RUNNING_TASKS
@@ -121,8 +135,7 @@ async def logging_status():
     """
     This endpoint will return the status of the logging.
     """
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Logger(session) as logger:
 
         if request.method == 'GET':
 
@@ -172,12 +185,10 @@ async def get_users():
     """
     This endpoint will return the list of users.
     """
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Authentication(initialized=True) as Auth, Logger(session) as logger:
 
         try:
-            auth = Authentication(initialized=True)
-            users: list[dict] = await auth.get_all_users()
+            users: list[dict] = await Auth.get_all_users()
 
             return jsonify({
                 'success': True,
@@ -198,11 +209,9 @@ async def get_all_tasks():
     """
     This endpoint will return the list of all tasks.
     """
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Firestore(initialized=True) as FS, Logger(session) as logger:
         
         try:
-            FS = Firestore(initialized=True)
             tasks: list[dict] = await FS.get_all_tasks(for_='FlaskApp', include_inactive_tasks=True)
 
             await logger.LOG_EVENT(f'FlaskApp/Admin/GetAllTasks/{currentframe().f_lineno}', 
@@ -232,11 +241,9 @@ async def get_admins():
     """
     This endpoint will return the list of admins.
     """
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Authentication(initialized=True)as Auth, Logger(session) as logger:
 
         try:
-            Auth = Authentication(initialized=True)
             admins: list[dict] = await Auth.get_admins()
 
             await logger.LOG_EVENT(f'FlaskApp/Admin/GetAdmins/{currentframe().f_lineno}',
@@ -248,7 +255,7 @@ async def get_admins():
                             'event_type': 'fetch_admins'
                         })
             
-            return jsonify({
+            return jsonify({    
                 'success': True,
                 'admins': admins
             })
@@ -267,27 +274,24 @@ async def make_admin():
     """
     This endpoint will grant or revoke the admin role to the user.
     """
-    async with ClientSession() as session:
-        logger = Logger(session)
+    async with ClientSession() as session, Authentication(initialized=True) as Auth, Logger(session) as logger:
         
         admin = auth.verify_id_token(request.headers.get('Authorization').split(' ')[1], clock_skew_seconds=10)      
-          
+        
         if 'owner' in admin and not admin['owner']:
             await logger.ALERT(f'FlaskApp/Admin/MakeAdmin/{currentframe().f_lineno}',
-                               'A user tried to make an admin without being the owner',
-                                 request,
-                                 labels={
-                                     'alert_type': 'not_owner'
-                                 })
+                            'A user tried to make an admin without being the owner',
+                                request,
+                                labels={
+                                    'alert_type': 'not_owner'
+                                })
             
             return jsonify({
                 'message': 'You are not the owner of the application',
                 'success': False
             })
 
-        try:
-            Auth = Authentication(initialized=True)
-            
+        try:            
             if request.json['admin']:
                 await Auth.grant_admin(request.json['email'])
 

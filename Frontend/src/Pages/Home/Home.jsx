@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Skeleton } from '@mui/material';
 import { logEvent } from 'firebase/analytics';
 import { onAuthStateChanged } from 'firebase/auth';
 import { analytics, auth } from '../../config/firebase';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 import './Home.css'
 import EachTask from './Components/EachTask/EachTask';
@@ -17,10 +18,13 @@ const Home = () => {
     const [tasks, setTasks] = useState(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [noTask, setNoTask] = useState(false);
+    const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
     const [successDeleteSnackBarOpen, setSuccessDeleteSnackBarOpen] = useState(false);
     const [failedDeleteSnackBarOpen, setFailedDeleteSnackBarOpen] = useState(false);
     const [successAddSnackBarOpen, setSuccessAddSnackBarOpen] = useState(false);
     const [failedAddSnackBarOpen, setFailedAddSnackBarOpen] = useState(false);
+
+    const recaptchaRef = useRef();
 
     const onAddTask = () => {
         logEvent(analytics, 'add-task-dialog-open')
@@ -28,29 +32,36 @@ const Home = () => {
     }
 
     useEffect(() => {
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                setUser(user);
-            } else {
-                setUser(null);
-            }
-        })
 
-    }, []);
+        if (recaptchaLoaded) {
+
+            const unSubscribe = onAuthStateChanged(auth, user => {
+                if (user) {
+                    setUser(user);
+                } else {
+                    setUser(null);
+                }
+            })
+
+        }
+
+    }, [recaptchaLoaded]);
 
     useEffect(() => {
-        setTasks(null)
         setNoTask(false);
+        setRecaptchaLoaded(false)
 
         if (user) {
-            getTasks(user.email, setTasks, setNoTask);
+            getTasks(user, setTasks, setNoTask, recaptchaRef);
+        } else {
+            setTasks(null);
         }
 
     }, [user])
 
     return (
         <div className='main-container'>
-            <Header heading='Cyclic Tasks'/>
+            <Header heading='Cyclic Tasks' />
 
             <div className='content-container'>
                 <div className='middle-container'>
@@ -157,7 +168,7 @@ const Home = () => {
                 setSuccessAddSnackBarOpen={setSuccessAddSnackBarOpen}
                 setFailedAddSnackBarOpen={setFailedAddSnackBarOpen}
             />
-            
+
             <SnackBar
                 open={successAddSnackBarOpen}
                 handleClose={() => setSuccessAddSnackBarOpen(false)}
@@ -178,12 +189,21 @@ const Home = () => {
                 success={true}
                 message='Task deleted successfully!'
             />
+
             <SnackBar
                 open={failedDeleteSnackBarOpen}
                 handleClose={() => setFailedDeleteSnackBarOpen(false)}
                 success={false}
                 message='Failed to delete task! Try again.'
             />
+
+            <ReCAPTCHA
+                sitekey={import.meta.env.VITE_G_RECAPTCHA_SITE_KEY}
+                asyncScriptOnLoad={() => setRecaptchaLoaded(true)}
+                size='invisible'
+                ref={recaptchaRef}
+            />
+
         </div>
     )
 }
