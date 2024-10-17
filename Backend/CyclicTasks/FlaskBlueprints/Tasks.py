@@ -305,7 +305,12 @@ async def get_my_tasks():
     """
     email = request.json['email']
 
+<<<<<<< HEAD
     async with ClientSession() as session, Firestore(initialized=True) as FS, Logger(session) as logger:
+=======
+    async with ClientSession() as session, Firestore(initialized=True) as FS:
+        logger = Logger(session)
+>>>>>>> 7fbb056 (fetch user from server than from firebase directly)
 
         try:
             tasks = await FS.get_all_task_of_user(email)
