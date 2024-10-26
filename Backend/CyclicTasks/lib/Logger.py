@@ -272,13 +272,13 @@ class Logger(Discord):
                 self.flask_app_logger.info(message, extra={
                     'json_fields': data,
                     'labels': labels_
-                })
+                }) # type: ignore
 
             elif For == 'CyclicTasks':
                 self.cyclic_tasks_logger.info(message, extra={
                     'json_fields': data,
                     'labels': labels_
-                })
+                }) # type: ignore
 
         if environ['ENABLE_TERMINAL_LOGS'] == 'True':
             print(f'EVENT: {message}')
