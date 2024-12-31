@@ -5,13 +5,10 @@
 CyclicTasks is a powerful tool designed to keep your backend apps alive 24/7 when using free deployment services that don't offer full-time uptime. It sends automated pulses to your server apps, ensuring they remain active and responsive.
 
 ---
-Access the live version of the project on the below links:
-- [https://cyclictasks.web.app/](https://cyclictasks.web.app/) 
-- [https://cyclictasks.pages.dev/](https://cyclictasks.pages.dev/)
-- [https://cyclictasks.netlify.app/](https://cyclictasks.netlify.app/)
-- [https://cyclictasks.firebaseapp.com/](https://cyclictasks.firebaseapp.com/)
-- [https://cyclictasks.vercel.app/](https://cyclictasks.vercel.app/)
-- [https://cyclictasks.onrender.com/](https://cyclictasks.onrender.com/)
+Access the live version of the application on the below links:
+- [https://cyclictasks.darkglance.in/](https://cyclictasks.darkglance.in/)
+<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(or)
+- [https://cyclictasks.web.app/](https://cyclictasks.web.app/)
 ---
 Check out [How To Run](./How-to-run.md) for more information on how to run this project.  
 Its open-source and free to use. I AM OPEN TO CONTRIBUTIONS AND SUGGESTIONS.
