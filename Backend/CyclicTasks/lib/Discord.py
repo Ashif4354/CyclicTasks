@@ -39,7 +39,7 @@ class Discord:
         if task['notify_admin']:
             await self.send_to_webhook(self.dev_webhook_url, data)
 
-        await self.LOG_EVENT(f'Discord/send_start_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Start Task Acknowledgement sent in discord', task, labels = {'event_type': 'acknowledgement_sent'})
+        await self.LOG_EVENT(f'Discord/send_start_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', 'Start Task Acknowledgement sent in discord', task, labels = {'event_type': 'acknowledgement_sent'})
 
 
     async def send_stop_task_acknowledgement(self, task: dict) -> None:
@@ -61,7 +61,7 @@ class Discord:
         if task['notify_admin']:
             await self.send_to_webhook(self.dev_webhook_url, data)
 
-        await self.LOG_EVENT(f'Discord/send_stop_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', f'Stop Task Acknowledgement sent in discord', task, labels = {'event_type': 'acknowledgement_sent'})
+        await self.LOG_EVENT(f'Discord/send_stop_task_acknowledgement/{currentframe().f_lineno}', 'CyclicTasks', 'Stop Task Acknowledgement sent in discord', task, labels = {'event_type': 'acknowledgement_sent'})
 
 
 
