@@ -41,7 +41,7 @@ dist-ssr
 
 
 # Batch files
-*.bat
+# *.bat
 
 
 # Deployment files
