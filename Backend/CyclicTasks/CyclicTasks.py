@@ -24,7 +24,8 @@ class CyclicTasks(Firestore, Logger):
         Send a get request to the given URL.
         """
         try:
-            await self.session.get(task['url'])
+            headers: dict = {'User-Agent': 'DarkGlance: CyclicTasks'}
+            await self.session.get(task['url'], headers=headers)
             await self.send_vitals(task['discord_webhook_url'], task['task_name'], task['discord_webhook_color'], notify_admin=task['notify_admin'])
             
             await self.LOG_EVENT(f'CyclicTasks/get_request/{currentframe().f_lineno}', 'CyclicTasks', f'One pulse sent: {task['id']}', task, labels = {'event_type': 'pulse'})
